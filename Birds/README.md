@@ -1,6 +1,6 @@
 # 🐦 Birds (Shared)
 
-This folder contains all the shared code, game logic, and content used by both the desktop and Android versions of the **Birds** application.
+This folder contains all the shared code, game logic, and content used by the platform specific versions of the **Birds** application.
 
 ---
 

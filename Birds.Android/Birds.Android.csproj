@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="Secrets.props" Condition="Exists('Secrets.props')" />
+  <PropertyGroup>
+    <TargetFramework>net8.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>23</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <ApplicationId>com.companyname.Birds.Android</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <AndroidSigningKeyStore>bird_key.keystore</AndroidSigningKeyStore>
+  </PropertyGroup>
+    
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AndroidCreatePackagePerAbi>True</AndroidCreatePackagePerAbi>
+    <TrimMode>link</TrimMode>
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <Debugger>Xamarin</Debugger>
+    <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AndroidCreatePackagePerAbi>True</AndroidCreatePackagePerAbi>
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
+    <RunAOTCompilation>False</RunAOTCompilation>
+    <PublishTrimmed>False</PublishTrimmed>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
+    <PackageReference Include="MonoGame.Framework.Android" Version="3.8.1.303" />
+    <MonoGameContentReference Include="..\Birds\Content\Content.mgcb" Visible="true" />
+  </ItemGroup>
+
+  <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
+    <Message Text="Restoring dotnet tools" Importance="High" />
+    <Exec Command="dotnet tool restore" />
+  </Target>
+
+  <Import Project="..\Birds\Birds.projitems" Label="Shared" />
+
+  <ItemGroup>
+    <MonoGameContent Remove=".config\dotnet-tools.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include=".config\dotnet-tools.json" />
+  </ItemGroup>
+
+</Project>

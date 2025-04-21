@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Birds", "Birds\Birds.shproj", "{E04B22AF-65BE-4357-BAEE-1342CF53C7ED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Birds.Desktop", "Birds.Desktop\Birds.Desktop.csproj", "{7071D1EE-52E8-42F4-8F9F-940528C49A8C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Birds.Android", "Birds.Android\Birds.Android.csproj", "{0706C08C-7C11-4FDB-8653-11EECB95D2C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7071D1EE-52E8-42F4-8F9F-940528C49A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7071D1EE-52E8-42F4-8F9F-940528C49A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7071D1EE-52E8-42F4-8F9F-940528C49A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7071D1EE-52E8-42F4-8F9F-940528C49A8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0706C08C-7C11-4FDB-8653-11EECB95D2C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0706C08C-7C11-4FDB-8653-11EECB95D2C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0706C08C-7C11-4FDB-8653-11EECB95D2C1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0706C08C-7C11-4FDB-8653-11EECB95D2C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0706C08C-7C11-4FDB-8653-11EECB95D2C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0706C08C-7C11-4FDB-8653-11EECB95D2C1}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E15B1281-791C-48C0-AD86-092B5AD0168A}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Birds\Birds.projitems*{0706c08c-7c11-4fdb-8653-11eecb95d2c1}*SharedItemsImports = 5
+		Birds\Birds.projitems*{7071d1ee-52e8-42f4-8f9f-940528c49a8c}*SharedItemsImports = 5
+		Birds\Birds.projitems*{e04b22af-65be-4357-baee-1342cf53c7ed}*SharedItemsImports = 13
+	EndGlobalSection
+EndGlobal

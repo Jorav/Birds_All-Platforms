@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>e04b22af-65be-4357-baee-1342cf53c7ed</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Birds</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Program.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\AxisAlignedBoundingBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\BoundingAreaFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\BoundingCircle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\IBoundingArea.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\OrientedBoundingBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\Background.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\CohesiveController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\Controller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\GameController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\steering\ChaserSteering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\steering\PlayerSteering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\steering\Steering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\entities\IEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\entities\WorldEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Game1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\ICollidable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\BuildControllerState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\Button.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\ButtonContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\DropDownButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\EntityButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\GameState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\IComponent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\MainMenu.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\MenuState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\PauseState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\State.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\TestState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Movable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\PerformanceMeasurer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\Sprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\Camera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\ControllerFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\EntityFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\SpriteFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\IDs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\Input.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\visual\FadingText.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+  </ItemGroup>
+  <ItemGroup>
+    <MonoGameContent Include="$(MSBuildThisFileDirectory).config\dotnet-tools.json" />
+    <MonoGameContent Include="$(MSBuildThisFileDirectory)Content\backgroundGray.png" />
+    <MonoGameContent Include="$(MSBuildThisFileDirectory)Content\backgroundWhite.png" />
+    <MonoGameContent Include="$(MSBuildThisFileDirectory)Content\backgroundWhiteOriginal.png" />
+    <MonoGameContent Include="$(MSBuildThisFileDirectory)Content\bird.png" />
+    <MonoGameContent Include="$(MSBuildThisFileDirectory)Content\button.png" />
+    <MonoGameContent Include="$(MSBuildThisFileDirectory)Content\cloud.png" />
+    <MonoGameContent Include="$(MSBuildThisFileDirectory)Content\entityButton.png" />
+    <MonoGameContent Include="$(MSBuildThisFileDirectory)Content\RotatingHull.png" />
+    <MonoGameContent Include="$(MSBuildThisFileDirectory)Content\solar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\backgroundGray\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\backgroundWhiteOriginal\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\backgroundWhite\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\bird\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\button\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\cloud\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\Content\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\entityButton\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\font\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\RotatingHull\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\bin\DesktopGL\solar\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\backgroundGray\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\backgroundWhiteOriginal\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\backgroundWhite\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\bird\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\button\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\cloud\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\Content\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\entityButton\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\font\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\RotatingHull\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\solar\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory).config\dotnet-tools.json" />
+  </ItemGroup>
+</Project>

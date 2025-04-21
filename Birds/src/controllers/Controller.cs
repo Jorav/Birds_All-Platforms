@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Birds.src.controllers
 {
-  public class Controller : ICollidable
+  public class Controller : IController
   {
     #region Attributes
     protected List<IEntity> entities;
@@ -246,6 +246,13 @@ namespace Birds.src.controllers
       foreach (IEntity c in Entities)
         c.Accelerate(directionalVector);
     }
+    public void AccelerateTo(Vector2 position, float thrust)
+    {
+        foreach(IEntity c in Entities)
+        {
+            c.AccelerateTo(position, thrust);
+        }
+    }
     protected void InternalCollission()
     {
       collisionManager.GetInternalCollissions();
@@ -258,13 +265,6 @@ namespace Birds.src.controllers
     }
     protected void UpdateRadius() //TODO: change this to be more exact for composite entities or, more likely, replace it with an AABBTree wrapping all controllers (long term)
     {
-      if (Entities.Count == 1)
-      {
-        if (Entities[0] != null)
-          Radius = Entities[0].Radius;
-      }
-      else if (Entities.Count > 1)
-      {
         float largestDistance = 0;
         foreach (IEntity c in Entities)
         {
@@ -273,7 +273,6 @@ namespace Birds.src.controllers
             largestDistance = distance;
         }
         Radius = largestDistance;
-      }
     }
 
     /*
@@ -299,7 +298,7 @@ namespace Birds.src.controllers
       foreach (IEntity c in Entities)
         c.Draw(sb);
     }
-    public void RotateTo(Vector2 position)
+    public virtual void RotateTo(Vector2 position)
     {
       foreach (IEntity c in Entities)
         c.RotateTo(position);
@@ -323,31 +322,17 @@ namespace Birds.src.controllers
     public bool CollidesWith(ICollidable otherEntity)
     {
       if (otherEntity is Controller c)
-        return CollidesWith(c);
+        return c.BoundingCircle.CollidesWith(BoundingCircle);
       else
         throw new Exception("not supported type");
-    }
-    public bool CollidesWith(Controller controller)
-    {
-      return controller.BoundingCircle.CollidesWith(BoundingCircle);
     }
 
     public void Collide(ICollidable otherEntity)
     {
       if (otherEntity is Controller c)
-        Collide(c);
+        collisionManager.CollideWithTree(c.collisionManager);
       else
         throw new Exception("not supported type");
-    }
-
-    public void Collide(Controller controller)
-    {
-      collisionManager.CollideWithTree(controller.collisionManager);
-    }
-
-    public static String GetName()
-    {
-      return "No controller";
     }
 
     public virtual object Clone()

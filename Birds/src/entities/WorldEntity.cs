@@ -137,6 +137,30 @@ namespace Birds.src.entities
             if (Health <= 0)
                 Die();*/
         }
+
+        public virtual object Clone()
+        {
+            WorldEntity eNew = EntityFactory.GetEntity(position, EntityID);
+            eNew.Color = Color;
+            eNew.Scale = Scale;
+            eNew.Friction = Friction;
+            eNew.IsCollidable = IsCollidable;
+            eNew.IsFiller = IsFiller;
+            eNew.IsVisible = IsVisible;
+            eNew.Manager = Manager;
+            eNew.Mass = Mass;
+            eNew.Origin = Origin;
+            eNew.Rotation = Rotation;
+            eNew.Team = Team;
+            eNew.Thrust = Thrust;
+            eNew.Velocity = Velocity;
+            eNew.internalRotation = rotation;
+            eNew.Velocity = Vector2.Zero;
+            eNew.TotalExteriorForce = Vector2.Zero;
+            eNew.Links = new List<Link>();
+            eNew.AddLinks();
+            return eNew;
+        }
         #endregion
         #region Linking
         protected virtual void AddLinks()
@@ -178,30 +202,6 @@ namespace Birds.src.entities
                 {
                     l.SeverConnection();
                 }
-        }
-
-        public virtual object Clone()
-        {
-            WorldEntity eNew = EntityFactory.GetEntity(position, EntityID);
-            eNew.Color = Color;
-            eNew.Scale = Scale;
-            eNew.Friction = Friction;
-            eNew.IsCollidable = IsCollidable;
-            eNew.IsFiller = IsFiller;
-            eNew.IsVisible = IsVisible;
-            eNew.Manager = Manager;
-            eNew.Mass = Mass;
-            eNew.Origin = Origin;
-            eNew.Rotation = Rotation;
-            eNew.Team = Team;
-            eNew.Thrust = Thrust;
-            eNew.Velocity = Velocity;
-            eNew.internalRotation = rotation;
-            eNew.Velocity = Vector2.Zero;
-            eNew.TotalExteriorForce = Vector2.Zero;
-            eNew.Links = new List<Link>();
-            eNew.AddLinks();
-            return eNew;
         }
 
         public void Deprecate()

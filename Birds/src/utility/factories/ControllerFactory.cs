@@ -27,17 +27,5 @@ namespace Birds.src.factories
                     throw new NotImplementedException();
             }
         }
-
-        public static String GetName(ID_CONTROLLER id)
-        {
-            switch (id)
-            {
-                case ID_CONTROLLER.CONTROLLER_DEFAULT: return Controller.GetName();
-                //case IDs.CHASER_AI: return ChaserAI.GetName();
-                //case IDs.PLAYER: return Player.GetName();
-                default:
-                    throw new NotImplementedException();
-            }
-        }
     }
 }

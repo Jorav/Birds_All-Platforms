@@ -19,8 +19,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\CohesiveController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\CompositeController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\Controller.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\GameController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\IController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\steering\ChaserSteering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\steering\PlayerSteering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\steering\Steering.cs" />
@@ -92,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+    <None Include="$(MSBuildThisFileDirectory)README.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory).config\dotnet-tools.json" />

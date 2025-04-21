@@ -58,16 +58,15 @@ namespace Birds.src
 
         public virtual void RotateTo(Vector2 position)
         {
-            RotateTo(position, Position);
+            Rotation = CalculateRotation(position, Position);
         }
-
-        public void RotateTo(Vector2 p, Vector2 p0)
+        public static float CalculateRotation(Vector2 positionLookedAt, Vector2 currentPosition)
         {
-            Vector2 position = p - p0;
+            Vector2 position = positionLookedAt - currentPosition;
             if (position.X >= 0)
-                Rotation = (float)Math.Atan(position.Y / position.X);
+                return (float)Math.Atan(position.Y / position.X);
             else
-                Rotation = (float)Math.Atan(position.Y / position.X) - MathHelper.ToRadians(180);
+                return (float)Math.Atan(position.Y / position.X) - MathHelper.ToRadians(180);
         }
 
         public virtual void Update(GameTime gameTime)

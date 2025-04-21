@@ -23,11 +23,12 @@ namespace Birds.src
         public void AccelerateTo(Vector2 position, float thrust);
         public void RotateTo(Vector2 position);
         public object Clone();
+        public BoundingCircle BoundingCircle { get; }
         //NEW ONES
 
         public IBoundingArea BoundingArea {get;}
         public bool IsCollidable{get;}
-        public bool CollidesWith(ICollidable otherEntity);
+        public bool CollidesWith(ICollidable otherCollidable);
         public void Collide(ICollidable otherEntity);
     }
 }

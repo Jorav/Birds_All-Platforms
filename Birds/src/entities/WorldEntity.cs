@@ -112,23 +112,22 @@ namespace Birds.src.entities
                 throw new Exception("not implemented for other types");
         }
 
-        public bool CollidesWith(ICollidable e)
+        public bool CollidesWith(ICollidable collidable)
         {
-            if (IsCollidable && e.IsCollidable)
+            if (IsCollidable && collidable.IsCollidable)
             {
-                if (e is WorldEntity we)
+                if (collidable is IEntity entity)
                 {
-                    if (we.BoundingCircle.CollidesWith(BoundingCircle))
-                        return BoundingArea.CollidesWith(e.BoundingArea);
+                    if (entity.BoundingCircle.CollidesWith(BoundingCircle))
+                        return BoundingArea.CollidesWith(collidable.BoundingArea);
                     else
                         return false;
                 }
                 else
-                    return BoundingArea.CollidesWith(e.BoundingArea);
+                    return BoundingArea.CollidesWith(collidable.BoundingArea);
             }
             else
                 return false;
-
         }
 
         public override void Update(GameTime gameTime)

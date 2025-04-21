@@ -17,9 +17,8 @@ namespace Birds.src.controllers
     #region Attributes
     protected List<IEntity> entities;
     public List<IEntity> Entities { get { return entities; } set { SetEntities(value); } }
-    public BoundingCircle BoundingCircle { get; set; }
-    private AABBTree collisionManager;
-    protected float collissionOffset = 100; //TODO make this depend on velocity + other things?
+    public BoundingCircle BoundingCircle { get; private set; }
+    public AABBTree CollisionManager { get; protected set; }
     private ID_OTHER team;
     public ID_OTHER Team { get { return team; } set { team = value; foreach (IEntity c in Entities) c.Team = value; } }
     public float Radius { get { return radius; } protected set { radius = value; BoundingCircle.Radius = value; } }
@@ -65,7 +64,7 @@ namespace Birds.src.controllers
     public Controller(List<IEntity> controllables, ID_OTHER team = ID_OTHER.TEAM_AI)
     {
       BoundingCircle = new BoundingCircle(Position, Radius);
-      collisionManager = new AABBTree();
+      CollisionManager = new AABBTree();
       SetEntities(controllables);
       Team = team;
       //SeperatedEntities = new List<Controller>();
@@ -74,7 +73,7 @@ namespace Birds.src.controllers
     public Controller([OptionalAttribute] Vector2 position, ID_OTHER team = ID_OTHER.TEAM_AI)
     {
       BoundingCircle = new BoundingCircle(Position, Radius);
-      collisionManager = new AABBTree();
+      CollisionManager = new AABBTree();
       Entities = new();
       if (position == null)
         position = Vector2.Zero;
@@ -89,17 +88,13 @@ namespace Birds.src.controllers
     public virtual void Update(GameTime gameTime)
     {
       Steer(gameTime);
-      UpdateControllable(gameTime);
-      //RemoveEmptyControllers();
-      //AddSeperatedEntities();
+      UpdateEntities(gameTime);
       UpdatePosition();
       UpdateRadius();
-      //ApplyInternalGravityN2();
-      collisionManager.Update(gameTime);
-      //InternalCollission();
+      CollisionManager.Update(gameTime);
     }
 
-    private void Steer(GameTime gameTime)
+    protected void Steer(GameTime gameTime)
     {
       if (Steering != null)
       {
@@ -121,7 +116,7 @@ namespace Birds.src.controllers
         }
         else
         {
-          collisionManager.UpdateTree(newEntities.Cast<ICollidable>().ToList());
+          CollisionManager.UpdateTree(newEntities.Cast<ICollidable>().ToList());
         }
       }
     }
@@ -138,9 +133,9 @@ namespace Birds.src.controllers
         entities.Add(c);
         UpdatePosition();
         UpdateRadius();
-        collisionManager.Add(c);
+        CollisionManager.Add(c);
         c.Manager = this;
-        c.Team = team;
+        c.Team = Team;
       }
     }
     private void ApplyInternalGravityN()
@@ -161,61 +156,6 @@ namespace Birds.src.controllers
           if (we1 != we2)
             we1.AccelerateTo(we2.Position, Game1.GRAVITY * we1.Mass * we2.Mass / (float)Math.Pow(((we1.Position - we2.Position).Length()), 1));
     }
-    /**protected void RemoveEmptyControllers()
-      {
-          List<IEntity> toBeRemoved = new List<IEntity>();
-          foreach (IEntity c in Controllables)
-              if (c is WorldEntity we  !we.IsAlive)
-                  toBeRemoved.Add(we);
-              else if (c is EntityController ec  (ec.Controllables.Count == 0 || !ec.IsAlive))
-                  toBeRemoved.Add(ec);
-              else if (c is Controller cc  Controllables.Count == 0)
-                  toBeRemoved.Add(cc);
-          foreach (IEntity c in toBeRemoved)
-              Remove(c);
-      }*/
-    /**protected virtual void AddSeperatedEntities()
-      {
-          List<EntityController> seperatedEntities = new List<EntityController>();
-          foreach (IEntity c in Controllables)
-              if (c is EntityController ec)
-                  foreach (EntityController ecSeperated in ec.SeperatedEntities)
-                  {
-                      if (ecSeperated.Controllables.Count == 1  !(ecSeperated.Controllables[0] is Composite))
-                          ;//((WorldEntity)(ecSeperated.Controllables[0])).Die();
-                      else
-                          seperatedEntities.Add(ecSeperated);
-                  }
-          foreach (EntityController ec in seperatedEntities)
-          {
-              Controller c = (Controller)Clone();
-              c.Controllables.Clear();
-              c.AddControllable(ec);
-              this.SeperatedEntities.Add(c);
-          }
-
-          foreach (IEntity c in Controllables)
-              if (c is EntityController ec)
-                  ec.SeperatedEntities.Clear();
-      }*/
-    /**public List<Controller> ExtractAllSeperatedEntities()
-      {
-          List<Controller> temp = new List<Controller>(SeperatedEntities);
-          SeperatedEntities.Clear();
-          foreach (IEntity c in Controllables)
-          {
-              if (c is Controller cc)
-                  temp.AddRange(cc.ExtractAllSeperatedEntities());
-          }
-          return temp;
-      }*/
-    /**public virtual void Collide(IEntity collidable) // OBS - THIS NEEDS TO BE ADAPTED FOR ICOLLIDABLE
-    {
-      if (CollidesWith(collidable))//TODO(lowprio): Add predicitive collision e.g. by calculating many steps (make extended collisionobject starting from before calculation and ending where it ended)
-        foreach (IEntity c in Controllables)
-          c.Collide(collidable);
-      CollideProjectiles(collidable);
-    }*/
     /**private void CollideProjectiles(IControllable collidable)
     {
       foreach (IControllable c in Controllables)
@@ -223,18 +163,6 @@ namespace Birds.src.controllers
           cc.CollideProjectiles(collidable);
         else if (c is EntityController ec)
           ec.CollideProjectiles(collidable);
-    }*/
-    /**public bool CollidesWith(IIntersectable c)
-    {
-      if (c is Controller)
-        return collisionDetector.CollidesWith(((Controller)c).collisionDetector);
-      else if (c is EntityController)
-        return collisionDetector.CollidesWith(((EntityController)c).collisionDetector);
-      if (c is WorldEntity && collisionDetector.CollidesWith(((WorldEntity)c).collisionDetector))
-        foreach (WorldEntity e in Controllables)
-          if (e.CollidesWith((WorldEntity)c))
-            return true;
-      return false;
     }*/
     public void Accelerate(Vector2 directionalVector, float thrust)
     {
@@ -255,10 +183,10 @@ namespace Birds.src.controllers
     }
     protected void InternalCollission()
     {
-      collisionManager.GetInternalCollissions();
-      collisionManager.ResolveCollissions();
+      CollisionManager.GetInternalCollissions();
+      CollisionManager.ResolveCollissions();
     }
-    private void UpdateControllable(GameTime gameTime)
+    protected void UpdateEntities(GameTime gameTime)
     {
       foreach (IEntity c in Entities)
         c.Update(gameTime);
@@ -321,16 +249,23 @@ namespace Birds.src.controllers
 
     public bool CollidesWith(ICollidable otherEntity)
     {
-      if (otherEntity is Controller c)
-        return c.BoundingCircle.CollidesWith(BoundingCircle);
-      else
-        throw new Exception("not supported type");
+        if(IsCollidable && otherEntity.IsCollidable)
+        {
+            if (otherEntity is Controller c)
+                return c.BoundingCircle.CollidesWith(BoundingCircle);
+            else
+                throw new Exception("not supported type");
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public void Collide(ICollidable otherEntity)
     {
       if (otherEntity is Controller c)
-        collisionManager.CollideWithTree(c.collisionManager);
+        CollisionManager.CollideWithTree(c.CollisionManager);
       else
         throw new Exception("not supported type");
     }
@@ -338,7 +273,7 @@ namespace Birds.src.controllers
     public virtual object Clone()
     {
       Controller cNew = (Controller)this.MemberwiseClone();
-      cNew.collisionManager = new AABBTree();
+      cNew.CollisionManager = new AABBTree();
       List<IEntity> entities = new List<IEntity>();
       foreach (IEntity c in Entities)
         entities.Add((IEntity)c.Clone());

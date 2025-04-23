@@ -125,7 +125,7 @@ namespace Birds.src.BVH
         #endregion
         #region update-logic
 
-        public void GetInternalCollissions(List<(ICollidable, ICollidable)> collissions)
+        public void GetInternalCollissions(Stack<(ICollidable, ICollidable)> collissions)
         {
             if (children.Count(x => x != null) == 2)
                 children[0].Collide(children[1], collissions);
@@ -135,7 +135,7 @@ namespace Birds.src.BVH
                 children[1].GetInternalCollissions(collissions);
         }
 
-        public void Collide(AABBNode node, List<(ICollidable, ICollidable)> collissions)
+        public void Collide(AABBNode node, Stack<(ICollidable, ICollidable)> collissions)
         {
             if (AABB.CollidesWith(node.AABB))
             {
@@ -154,7 +154,7 @@ namespace Birds.src.BVH
                 else
                 {
                     if(Entity.CollidesWith(node.Entity))
-                        collissions.Add((this.Entity, node.Entity));
+                        collissions.Push((this.Entity, node.Entity));
                 }
             }
         }

@@ -56,7 +56,7 @@ namespace Birds.src.controllers
     private Color color;
     public Color Color { set { foreach (IEntity c in Entities) c.Color = value; color = value; } get { return color; } }
     public IBoundingArea BoundingArea { get { return BoundingCircle; } }
-    public bool IsCollidable { get; set; }
+    public bool IsCollidable { get; set; } = true;
     public Steering Steering { get; set; }
 
     #endregion

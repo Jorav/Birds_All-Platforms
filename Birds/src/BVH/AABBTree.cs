@@ -235,17 +235,7 @@ namespace Birds.src.BVH
                 }
                 else
                     pair.Item1.Collide(pair.Item2);
-            }/*
-            foreach ((ICollidable, ICollidable) pair in CollissionPairs)
-            {
-                if(pair.Item1 is IEntity e1 && pair.Item2 is IEntity e2){
-                    e1.Collide(e2);
-                    e2.Collide(e1);
-                }
-                else
-                    pair.Item1.Collide(pair.Item2);
             }
-            CollissionPairs.Clear();*/
         }
 
         private void RebuildTree()

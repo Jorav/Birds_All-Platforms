@@ -12,12 +12,12 @@ namespace Birds.src.factories
     public class ControllerFactory
     {
 
-        public static Controller Create(Vector2 position, ID_CONTROLLER id = ID_CONTROLLER.CONTROLLER_DEFAULT, int numberOfEntities = 1)
+        public static Controller Create(Vector2 position, ID_CONTROLLER id = ID_CONTROLLER.DEFAULT, int numberOfEntities = 1)
         {
             Controller c;
             switch (id)
             {
-                case ID_CONTROLLER.CONTROLLER_DEFAULT: return new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
+                case ID_CONTROLLER.DEFAULT: return new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
                 //case IDs.CHASER_AI: return new ChaserAI(position);
                 case ID_CONTROLLER.PLAYER: c = new CohesiveController(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT)); c.Steering = new PlayerSteering(c); return c;
                 case ID_CONTROLLER.CHASER_AI: c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT)); c.Steering = new ChaserSteering(c); return c;

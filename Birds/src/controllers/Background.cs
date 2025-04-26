@@ -36,7 +36,7 @@ namespace Birds.src.controllers
                 e.Scale += (camera.Zoom-previousZoom)*relativeSpeed; 
                 
                 //e.Scale = 1.5f-camera.Zoom*(relativeSpeed);
-                e.TotalExteriorForce *= (1-relativeSpeed);
+                e.MovementModule.TotalExteriorForce *= (1-relativeSpeed);
                 e.Update(gameTime);
                 UpdatePosition();
                 UpdateRadius();

@@ -6,13 +6,34 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Birds.src.entities
 {
-    public interface IEntity : ICollidable
+  public interface IEntity : ICollidable
+  {
+    public MovementModule MovementModule { get; }
+    public new Vector2 Position //implement in subclasses
     {
-        public new Vector2 Position {get; set;}
-        public new float Rotation {get; set;}
-        public Controller Manager {get; set;}
-        public Vector2 Velocity { get; }
-        public void AccelerateTo(Vector2 position, float thrust);
-        public void Deprecate();
+      get => MovementModule.Position;
+      set => MovementModule.Position = value;
     }
+    public new float Rotation { get; set; } //implement in subclasses
+    float ICollidable.Mass => MovementModule.Mass;
+    public Controller Manager { get; set; }
+    public Vector2 Velocity => MovementModule.Velocity;
+    void ICollidable.AccelerateTo(Vector2 position, float thrust)
+    {
+      MovementModule.AccelerateTo(position, thrust);
+    }
+    void ICollidable.Accelerate(Vector2 directionalVector, float thrust)
+    {
+      MovementModule.Accelerate(directionalVector, thrust);
+    }
+    void ICollidable.Accelerate(Vector2 directionalVector)
+    {
+      MovementModule.Accelerate(directionalVector);
+    }
+    void ICollidable.RotateTo(Vector2 position)
+    {
+      MovementModule.RotateTo(position);
+    }
+    public void Deprecate();
+  }
 }

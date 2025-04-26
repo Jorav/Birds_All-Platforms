@@ -27,6 +27,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\steering\PlayerSteering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\steering\Steering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\entities\IEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\entities\ICompositeEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\entities\IWorldEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\entities\WorldEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Game1.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\ICollidable.cs" />
@@ -42,7 +44,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\PauseState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\State.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\TestState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Movable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\MovementModuleFactory.cs" />
+    <Compile Include="..\Birds\src\MovementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\PerformanceMeasurer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Sprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\Camera.cs" />

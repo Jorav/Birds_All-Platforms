@@ -9,38 +9,40 @@ using System.Collections.Generic;
 
 namespace Birds.src.entities
 {
-  public class WorldEntity : Movable, IEntity
+  public class WorldEntity : IEntity
   {
     #region Properties
+    public MovementModule MovementModule { get; private set; }
     protected Sprite sprite = null;
-    public bool IsVisible { get { return sprite.isVisible; } set { sprite.isVisible = value; } }
     private OrientedBoundingBox OBB;
     public IBoundingArea BoundingArea { get { return OBB; } }
     public BoundingCircle BoundingCircle { get; private set; }
-    public override Vector2 Position
+    public Vector2 Position
     {
-      get { return position; }
+      get { return MovementModule.Position; }
       set
       {
-        position = value;
+        MovementModule.Position = value;
         sprite.Position = value;
         OBB.Position = value;
         BoundingCircle.Position = value;
       }
     }
-    public override float Rotation
+    public float Rotation
     {
-      get { return rotation; }
+      get { return MovementModule.Rotation; }
       set
       {
-        rotation = value;
+        MovementModule.Rotation = value;
         sprite.Rotation = value;
         OBB.Rotation = value;
       }
     }
-    public List<Link> Links { get; private set; }
-    private float internalRotation;
-    public bool IsFiller { get; set; }
+    public bool IsVisible { get { return sprite.isVisible; } set { sprite.isVisible = value; } }
+    public float Width { get { return sprite.Width; } }
+    public float Height { get { return sprite.Height; } }
+    public float Radius { get { return BoundingCircle.Radius; } }
+    public float Scale { get { return sprite.Scale; } set { sprite.Scale = value; /*BoundingArea.Scale = value; oldCollisionDetector.Scale = value;*/ foreach (Link l in Links) l.Scale = value;/*add collisionDetector scale in the future*/ } }
     public Vector2 Origin
     {
       get { return origin; }
@@ -51,17 +53,14 @@ namespace Birds.src.entities
       }
     }
     protected Vector2 origin;
-    public float Width { get { return sprite.Width; } }
-    public float Height { get { return sprite.Height; } }
-    public float Radius { get { return BoundingCircle.Radius; } }
+    public List<Link> Links { get; private set; }
+    private float internalRotation;
+    public bool IsFiller { get; set; }
     public bool IsCollidable { get; set; }
-    public Vector2 MassCenter { get { return position; } }
     public ID_ENTITY EntityID { get; set; }
     public ID_OTHER Team { get; set; }
     public Controller Manager { get; set; }
     public Color Color { get; set; }
-    public float Scale { get { return sprite.Scale; } set { sprite.Scale = value; /*BoundingArea.Scale = value; oldCollisionDetector.Scale = value;*/ foreach (Link l in Links) l.Scale = value;/*add collisionDetector scale in the future*/ } }
-    public static float REPULSIONDISTANCE = 100;
     #endregion
     public WorldEntity()
     {
@@ -69,8 +68,8 @@ namespace Birds.src.entities
     #region Methods
     public void SetAttributes(ID_ENTITY id, Vector2 position, float rotation, float mass, float thrust, float friction, bool isVisible, bool isCollidable, float scale)
     {
-      base.SetAttributes(position, rotation, mass, thrust, friction);
-      this.sprite = SpriteFactory.GetSprite(id, position, scale);
+      MovementModule = MovementModuleFactory.GetMovementModule(position, rotation, mass, thrust, friction);
+      sprite = SpriteFactory.GetSprite(id, position, scale);
       OBB = BoundingAreaFactory.GetOBB(position, rotation, sprite.Width, sprite.Height);
       BoundingCircle = BoundingAreaFactory.GetCircle(position, OBB.Radius);
       Position = position;
@@ -88,20 +87,7 @@ namespace Birds.src.entities
     }
     public void Collide(IEntity e)
     {
-      //collission repulsion
-      Vector2 vectorFromOther = e.Position - position;
-      float distance = vectorFromOther.Length();
-      vectorFromOther.Normalize();
-      Vector2 collissionRepulsion = 0.5f * Vector2.Normalize(-vectorFromOther) * (Vector2.Dot(velocity, vectorFromOther) * Mass + Vector2.Dot(e.Velocity, -vectorFromOther) * e.Mass); //make velocity depend on position
-      TotalExteriorForce += collissionRepulsion;
-
-      //overlap repulsion
-      float distance2 = (position - e.Position).Length();
-      if (distance2 < 5)
-        distance2 = 5;
-      float radius = Radius * (e.Mass + Mass) / 2;
-      Vector2 overlapRepulsion = 30f * Vector2.Normalize(position - e.Position) / distance2;
-      TotalExteriorForce += overlapRepulsion;
+      MovementModule.TotalExteriorForce += MovementModule.CalculateCollissionRepulsion(e.MovementModule) + BoundingCircle.CalculateOverlapRepulsion(e.BoundingCircle);
     }
 
     public void Collide(ICollidable c)
@@ -130,32 +116,35 @@ namespace Birds.src.entities
         return false;
     }
 
-    public override void Update(GameTime gameTime)
+    public void Update(GameTime gameTime)
     {
-      base.Update(gameTime);/*
-            if (Health <= 0)
-                Die();*/
+      MovementModule.Update(gameTime);
+      Position = Position;
+      /*
+        if (Health <= 0)
+          Die();
+      */
     }
 
     public virtual object Clone()
     {
-      WorldEntity eNew = EntityFactory.GetEntity(position, EntityID);
+      WorldEntity eNew = EntityFactory.GetEntity(Position, EntityID);
       eNew.Color = Color;
       eNew.Scale = Scale;
-      eNew.Friction = Friction;
+      eNew.MovementModule.Friction = MovementModule.Friction;
       eNew.IsCollidable = IsCollidable;
       eNew.IsFiller = IsFiller;
       eNew.IsVisible = IsVisible;
       eNew.Manager = Manager;
-      eNew.Mass = Mass;
+      eNew.MovementModule.Mass = MovementModule.Mass;
       eNew.Origin = Origin;
       eNew.Rotation = Rotation;
       eNew.Team = Team;
-      eNew.Thrust = Thrust;
-      eNew.Velocity = Velocity;
-      eNew.internalRotation = rotation;
-      eNew.Velocity = Vector2.Zero;
-      eNew.TotalExteriorForce = Vector2.Zero;
+      eNew.MovementModule.Thrust = MovementModule.Thrust;
+      eNew.MovementModule.Velocity = MovementModule.Velocity;
+      eNew.internalRotation = Rotation;
+      eNew.MovementModule.Velocity = Vector2.Zero;
+      eNew.MovementModule.TotalExteriorForce = Vector2.Zero;
       eNew.Links = new List<Link>();
       eNew.AddLinks();
       return eNew;
@@ -205,6 +194,7 @@ namespace Birds.src.entities
 
     public void Deprecate()
     {
+      MovementModule.Deprecate();
       sprite.Deprecate();
       OBB.Deprecate();
       BoundingCircle.Deprecate();

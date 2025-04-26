@@ -23,7 +23,7 @@ namespace Birds.src.entities
         {
           Vector2 relativePosition = e.Position - Position;
           Vector2 newRelativePosition = Vector2.Transform(relativePosition, Matrix.CreateRotationZ(-dRotation));
-          e.Velocity = newRelativePosition - relativePosition;
+          e.MovementModule.Velocity = newRelativePosition - relativePosition;
           e.Rotation = Rotation;
 
         }
@@ -34,7 +34,7 @@ namespace Birds.src.entities
 
     public Controller Manager { get; set; }
 
-    public Vector2 Velocity => throw new NotImplementedException();
+    public MovementModule MovementModule => throw new NotImplementedException();
 
     public override void Update(GameTime gameTime)
     {
@@ -57,7 +57,7 @@ namespace Birds.src.entities
         if (canBeAdded)
         {
           Entities.Add(e);
-          e.Friction = 0;
+          e.MovementModule.Friction = 0;
           e.Manager = this;
           UpdatePosition();
           UpdateRadius();
@@ -301,7 +301,7 @@ namespace Birds.src.entities
 
     public override void RotateTo(Vector2 position)
     {
-      Rotation = Movable.CalculateRotation(position, Position);
+      Rotation = MovementModule.CalculateRotation(position, Position);
     }
   }
 }

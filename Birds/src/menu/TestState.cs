@@ -16,7 +16,7 @@ namespace Birds.src.menu
         public TestState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, Input input) : base(game, graphicsDevice, content, input)
         {
             Player.SetEntities(EntityFactory.CreateEntities(Vector2.Zero,10,ID_ENTITY.DEFAULT));
-            controller.Add(ControllerFactory.Create(new Vector2(100,100),numberOfEntities: 3, id: ID_CONTROLLER.CONTROLLER_DEFAULT));
+            controller.Add(ControllerFactory.Create(new Vector2(100,100),numberOfEntities: 3, id: ID_CONTROLLER.DEFAULT));
             controller.Add(ControllerFactory.Create(new Vector2(200,200),numberOfEntities: 1));
             controller.Add(ControllerFactory.Create(new Vector2(300,300),numberOfEntities: 7));
             controller.Add(ControllerFactory.Create(new Vector2(353,42)));

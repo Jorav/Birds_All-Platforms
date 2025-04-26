@@ -15,6 +15,6 @@ namespace Birds.src.controllers
         public List<IEntity> Entities { get; set; }
         public Steering Steering { get; set; }
         public void SetEntities(List<IEntity> newEntities);
-        public void AddControllable(IEntity c);
+        public void AddEntity(IEntity c);
     }
 }

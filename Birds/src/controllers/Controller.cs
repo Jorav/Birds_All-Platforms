@@ -109,7 +109,7 @@ namespace Birds.src.controllers
         List<IEntity> oldControllables = Entities;
         entities = new List<IEntity>();
         foreach (IEntity c in newEntities)
-          AddControllable(c);
+          AddEntity(c);
         if (Entities.Count == 0)
         {
           Entities = oldControllables;
@@ -120,7 +120,7 @@ namespace Birds.src.controllers
         }
       }
     }
-    public virtual void AddControllable(IEntity c)
+    public virtual void AddEntity(IEntity c)
     {
       if (entities == null)
       {

@@ -93,7 +93,7 @@ namespace Birds.src.menu
                         if (controllerEdited.BoundingCircle.Contains(Input.PositionGameCoords))
                         {
 
-                            controllerEdited.AddControllable(EntityFactory.GetEntity(controllerEdited.Position, ID_ENTITY.DEFAULT));
+                            controllerEdited.AddEntity(EntityFactory.GetEntity(controllerEdited.Position, ID_ENTITY.DEFAULT));
                             ;//TODO: CheckCollisionWithEntitiesInControllerEdited();
                         }
                         else

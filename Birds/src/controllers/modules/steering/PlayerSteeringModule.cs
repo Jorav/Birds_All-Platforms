@@ -1,15 +1,15 @@
-using Birds.src.controllers.steering;
+using Birds.src.controllers.modules.steering;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 
-namespace Birds.src.controllers.steering
+namespace Birds.src.controllers.modules.steering
 {
-  public class PlayerSteering : Steering
+  public class PlayerSteeringModule : SteeringModule
   {
     private bool hasStartedMoving;
     private bool wasPressed;
 
-    public PlayerSteering(Controller controller) : base(controller)
+    public PlayerSteeringModule(Controller controller) : base(controller)
     {
     }
 

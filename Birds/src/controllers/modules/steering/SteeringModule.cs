@@ -2,9 +2,9 @@
 using Birds.src.entities;
 using Microsoft.Xna.Framework;
 
-namespace Birds.src.controllers.steering
+namespace Birds.src.controllers.modules.steering
 {
-    public abstract class Steering
+    public abstract class SteeringModule
     {
         public bool actionsLocked = false;
         public Controller controller;
@@ -13,7 +13,7 @@ namespace Birds.src.controllers.steering
         public abstract Vector2 PositionLookedAt { get; }
         private bool moveWholeController = false;
 
-        public Steering(Controller controller)
+        public SteeringModule(Controller controller)
         {
             this.controller = controller;
         }
@@ -41,7 +41,7 @@ namespace Birds.src.controllers.steering
         }
         public virtual object Clone()
         {
-            Steering sNew  = (Steering)this.MemberwiseClone();
+            SteeringModule sNew  = (SteeringModule)this.MemberwiseClone();
             sNew.controller = controller;
             return sNew;
         }

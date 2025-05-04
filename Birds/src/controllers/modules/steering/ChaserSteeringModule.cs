@@ -1,12 +1,12 @@
 using System;
-using Birds.src.controllers.steering;
+using Birds.src.controllers.modules.steering;
 using Birds.src.menu;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 
-namespace Birds.src.controllers.steering
+namespace Birds.src.controllers.modules.steering
 {
-  public class ChaserSteering : Steering
+  public class ChaserSteeringModule : SteeringModule
   {
     public ICollidable target;
     public override bool ShouldRotate
@@ -21,7 +21,7 @@ namespace Birds.src.controllers.steering
     }
     public bool FocusPlayer { get; set; } = true;
 
-    public ChaserSteering(Controller controller) : base(controller)
+    public ChaserSteeringModule(Controller controller) : base(controller)
     {
     }
 
@@ -51,7 +51,7 @@ namespace Birds.src.controllers.steering
         float distanceTemp = Vector2.Distance(c.Position, controller.Position);
         if (distanceTemp < shortestDistance)
         {
-          if (FocusPlayer && c.Steering is PlayerSteering)
+          if (FocusPlayer && c.Steering is PlayerSteeringModule)
           {
             shortestDistance = distanceTemp;
             bestController = c;
@@ -72,7 +72,7 @@ namespace Birds.src.controllers.steering
     }
     public override object Clone()
     {
-      ChaserSteering steeringNew = (ChaserSteering)base.Clone();
+      ChaserSteeringModule steeringNew = (ChaserSteeringModule)base.Clone();
       steeringNew.target = target;
       return steeringNew;
     }

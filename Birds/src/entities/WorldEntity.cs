@@ -66,6 +66,18 @@ namespace Birds.src.entities
     {
     }
     #region Methods
+    public bool AddModule(Object o)
+    {
+      switch (o)
+      {
+        case MovementModule m: MovementModule = m; break;
+        case Sprite s: sprite = s; break;
+        case OrientedBoundingBox obb: OBB = obb; break;
+        case BoundingCircle bc: BoundingCircle = bc; break;
+        default: return false;
+      }
+      return true;
+    }
     public void SetAttributes(ID_ENTITY id, Vector2 position, float rotation, float mass, float thrust, float friction, bool isVisible, bool isCollidable, float scale)
     {
       MovementModule = MovementModuleFactory.GetMovementModule(position, rotation, mass, thrust, friction);

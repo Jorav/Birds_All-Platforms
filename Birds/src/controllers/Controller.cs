@@ -4,7 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Birds.src.bounding_areas;
 using Birds.src.BVH;
-using Birds.src.controllers.steering;
+using Birds.src.controllers.modules;
+using Birds.src.controllers.modules.steering;
 using Birds.src.entities;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
@@ -19,6 +20,7 @@ namespace Birds.src.controllers
     public List<IEntity> Entities { get { return entities; } set { SetEntities(value); } }
     public BoundingCircle BoundingCircle { get; private set; }
     public AABBTree CollisionManager { get; protected set; }
+    public CohesionModule CohesionModule { get; set; }
     private ID_OTHER team;
     public ID_OTHER Team { get { return team; } set { team = value; foreach (IEntity c in Entities) c.Team = value; } }
     public float Radius { get { return radius; } protected set { radius = value; BoundingCircle.Radius = value; } }
@@ -57,7 +59,7 @@ namespace Birds.src.controllers
     public Color Color { set { foreach (IEntity c in Entities) c.Color = value; color = value; } get { return color; } }
     public IBoundingArea BoundingArea { get { return BoundingCircle; } }
     public bool IsCollidable { get; set; } = true;
-    public Steering Steering { get; set; }
+    public SteeringModule Steering { get; set; }
 
     #endregion
     #region Constructors
@@ -88,10 +90,19 @@ namespace Birds.src.controllers
     public virtual void Update(GameTime gameTime)
     {
       Steer(gameTime);
+      ApplyCohesion(gameTime);
       UpdateEntities(gameTime);
       UpdatePosition();
       UpdateRadius();
       CollisionManager.Update(gameTime);
+    }
+
+    protected void ApplyCohesion(GameTime gameTime)
+    {
+      if (CohesionModule != null)
+      {
+        CohesionModule.Update(gameTime);
+      }
     }
 
     protected void Steer(GameTime gameTime)
@@ -231,21 +242,6 @@ namespace Birds.src.controllers
       foreach (IEntity c in Entities)
         c.RotateTo(position);
     }
-    protected float AverageDistance()
-    {
-      float nr = 1;
-      float distance = 0;
-      float mass = 0;
-      foreach (IEntity c in entities)
-      {
-        distance += (Vector2.Distance(c.Position, Position) + c.Radius) * c.Mass;
-        //nr += 1;
-        mass += c.Mass;
-      }
-      if (mass != 0)
-        return distance / nr / mass;
-      return 1;
-    }
 
     public bool CollidesWith(ICollidable otherEntity)
     {
@@ -279,8 +275,16 @@ namespace Birds.src.controllers
         entities.Add((IEntity)c.Clone());
       cNew.SetEntities(entities);
       cNew.BoundingCircle = BoundingAreaFactory.GetCircle(cNew.Position, cNew.radius);
-      cNew.Steering = (Steering)Steering.Clone();
-      cNew.Steering.controller = cNew;
+      if (Steering != null)
+      {
+        cNew.Steering = (SteeringModule)Steering.Clone();
+        cNew.Steering.controller = cNew;
+      }
+      if (CohesionModule != null)
+      {
+        cNew.CohesionModule = (CohesionModule)CohesionModule.Clone();
+        cNew.CohesionModule.controller = cNew;
+      }
       return cNew;
     }
     #endregion

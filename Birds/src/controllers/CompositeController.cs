@@ -1,6 +1,5 @@
 ﻿using Birds.src.bounding_areas;
 using Birds.src.controllers;
-using Birds.src.controllers.steering;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,6 +12,7 @@ namespace Birds.src.entities
 {
   public class CompositeController : Controller, IController, IEntity
   {
+    public MovementModule MovementModule { get; private set; }
     public new float Rotation
     {
       get { return rotation; }
@@ -33,8 +33,6 @@ namespace Birds.src.entities
     private float rotation;
 
     public Controller Manager { get; set; }
-
-    public MovementModule MovementModule => throw new NotImplementedException();
 
     public override void Update(GameTime gameTime)
     {

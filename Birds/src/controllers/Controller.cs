@@ -4,9 +4,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Birds.src.bounding_areas;
 using Birds.src.BVH;
-using Birds.src.controllers.modules;
-using Birds.src.controllers.modules.steering;
 using Birds.src.entities;
+using Birds.src.modules.controller;
+using Birds.src.modules.controller.steering;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,10 +22,9 @@ namespace Birds.src.controllers
     public AABBTree CollisionManager { get; protected set; }
     public CohesionModule CohesionModule { get; set; }
     private ID_OTHER team;
-    public ID_OTHER Team { get { return team; } set { team = value; foreach (IEntity c in Entities) c.Team = value; } }
+    public ID_OTHER Team { get { return team; } set { team = value; foreach (IEntity entity in Entities) entity.Team = value; } }
     public float Radius { get { return radius; } protected set { radius = value; BoundingCircle.Radius = value; } }
     protected float radius;
-    //public List<Controller> SeperatedEntities;
     protected Vector2 position;
     public virtual Vector2 Position
     {
@@ -39,10 +38,12 @@ namespace Birds.src.controllers
         BoundingCircle.Position = value;
       }
     }
-    public virtual float Rotation{
-      set{
-        foreach(IEntity e in Entities)
-          e.Rotation = value; 
+    public virtual float Rotation
+    {
+      set
+      {
+        foreach (IEntity e in Entities)
+          e.Rotation = value;
       }
     }
     public float Mass
@@ -55,33 +56,26 @@ namespace Birds.src.controllers
         return sum;
       }
     }
-    private Color color;
     public Color Color { set { foreach (IEntity c in Entities) c.Color = value; color = value; } get { return color; } }
+    private Color color;
+
     public IBoundingArea BoundingArea { get { return BoundingCircle; } }
     public bool IsCollidable { get; set; } = true;
     public SteeringModule Steering { get; set; }
 
     #endregion
     #region Constructors
-    public Controller(List<IEntity> controllables, ID_OTHER team = ID_OTHER.TEAM_AI)
+    public Controller(List<IEntity> controllables, ID_OTHER team = ID_OTHER.TEAM_AI) : this()
     {
-      BoundingCircle = new BoundingCircle(Position, Radius);
-      CollisionManager = new AABBTree();
       SetEntities(controllables);
       Team = team;
-      //SeperatedEntities = new List<Controller>();
-      Color = Color.White;
     }
-    public Controller([OptionalAttribute] Vector2 position, ID_OTHER team = ID_OTHER.TEAM_AI)
+    public Controller()
     {
+      position = Vector2.Zero;
       BoundingCircle = new BoundingCircle(Position, Radius);
       CollisionManager = new AABBTree();
-      Entities = new();
-      if (position == null)
-        position = Vector2.Zero;
-      //SetControllables(new List<IEntity>() { new WorldEntity(position) });
-      Team = team;
-      //SeperatedEntities = new List<Controller>();
+      entities = new List<IEntity>();
       Color = Color.White;
     }
 
@@ -89,11 +83,11 @@ namespace Birds.src.controllers
     #region Methods
     public virtual void Update(GameTime gameTime)
     {
+      UpdatePosition();
+      UpdateRadius();
       Steer(gameTime);
       ApplyCohesion(gameTime);
       UpdateEntities(gameTime);
-      UpdatePosition();
-      UpdateRadius();
       CollisionManager.Update(gameTime);
     }
 
@@ -115,66 +109,37 @@ namespace Birds.src.controllers
 
     public virtual void SetEntities(List<IEntity> newEntities)
     {
-      if (newEntities != null)
+      if (newEntities != null && newEntities.Count != 0)
       {
-        List<IEntity> oldControllables = Entities;
-        entities = new List<IEntity>();
-        foreach (IEntity c in newEntities)
-          AddEntity(c);
-        if (Entities.Count == 0)
+        DeprecateEntities();
+        foreach (IEntity e in newEntities)
         {
-          Entities = oldControllables;
+          AddEntityBasic(e);
         }
-        else
-        {
-          CollisionManager.UpdateTree(newEntities.Cast<ICollidable>().ToList());
-        }
-      }
-    }
-    public virtual void AddEntity(IEntity c)
-    {
-      if (entities == null)
-      {
-        entities = new List<IEntity>();
-        c.Position = Position;
-      }
-
-      if (c != null)
-      {
-        entities.Add(c);
         UpdatePosition();
         UpdateRadius();
-        CollisionManager.Add(c);
-        c.Manager = this;
-        c.Team = Team;
+        CollisionManager.UpdateTree(newEntities.Cast<ICollidable>().ToList());
       }
     }
-    private void ApplyInternalGravityN()
+
+    public virtual void AddEntity(IEntity e)
     {
-      Vector2 distanceFromController;
-      foreach (IEntity entity in entities)
+      AddEntityBasic(e);
+      UpdatePosition();
+      UpdateRadius();
+    }
+
+    protected void AddEntityBasic(IEntity e)
+    {
+      if (e != null)
       {
-        distanceFromController = Position - entity.Position;
-        if (distanceFromController.Length() > entity.Radius)
-          entity.Accelerate(Vector2.Normalize(Position - entity.Position), Game1.GRAVITY * (Mass - entity.Mass) * entity.Mass / (float)Math.Pow((distanceFromController.Length()), 1)); //2d gravity r is raised to 1
-                                                                                                                                                                                        //entity.Accelerate(Vector2.Normalize(Position - entity.Position), (float)Math.Pow(((distanceFromController.Length() - entity.Radius) / AverageDistance()) / 2 * entity.Mass, 2));
+        entities.Add(e);
+        CollisionManager.Add(e);
+        e.Manager = this;
+        e.Team = Team;
       }
     }
-    private void ApplyInternalGravityN2()
-    {
-      foreach (IEntity we1 in entities)
-        foreach (IEntity we2 in entities)
-          if (we1 != we2)
-            we1.AccelerateTo(we2.Position, Game1.GRAVITY * we1.Mass * we2.Mass / (float)Math.Pow(((we1.Position - we2.Position).Length()), 1));
-    }
-    /**private void CollideProjectiles(IControllable collidable)
-    {
-      foreach (IControllable c in Controllables)
-        if (c is Controller cc)
-          cc.CollideProjectiles(collidable);
-        else if (c is EntityController ec)
-          ec.CollideProjectiles(collidable);
-    }*/
+
     public void Accelerate(Vector2 directionalVector, float thrust)
     {
       foreach (IEntity c in Entities)
@@ -185,33 +150,23 @@ namespace Birds.src.controllers
       foreach (IEntity c in Entities)
         c.Accelerate(directionalVector);
     }
-    public void AccelerateTo(Vector2 position, float thrust)
-    {
-        foreach(IEntity c in Entities)
-        {
-            c.AccelerateTo(position, thrust);
-        }
-    }
-    protected void InternalCollission()
-    {
-      CollisionManager.GetInternalCollissions();
-      CollisionManager.ResolveCollissions();
-    }
     protected void UpdateEntities(GameTime gameTime)
     {
       foreach (IEntity c in Entities)
+      {
         c.Update(gameTime);
+      }
     }
     protected void UpdateRadius() //TODO: change this to be more exact for composite entities or, more likely, replace it with an AABBTree wrapping all controllers (long term)
     {
-        float largestDistance = 0;
-        foreach (IEntity c in Entities)
-        {
-          float distance = Vector2.Distance(c.Position, Position) + c.Radius;
-          if (distance > largestDistance)
-            largestDistance = distance;
-        }
-        Radius = largestDistance;
+      float largestDistance = 0;
+      foreach (IEntity c in Entities)
+      {
+        float distance = Vector2.Distance(c.Position, Position) + c.Radius;
+        if (distance > largestDistance)
+          largestDistance = distance;
+      }
+      Radius = largestDistance;
     }
 
     /*
@@ -229,8 +184,12 @@ namespace Birds.src.controllers
       if (weight > 0)
       {
         position = sum / (weight);
-        BoundingCircle.Position = position;
       }
+      else
+      {
+        position = Vector2.Zero;
+      }
+      BoundingCircle.Position = position;
     }
     public void Draw(SpriteBatch sb)
     {
@@ -245,17 +204,17 @@ namespace Birds.src.controllers
 
     public bool CollidesWith(ICollidable otherEntity)
     {
-        if(IsCollidable && otherEntity.IsCollidable)
-        {
-            if (otherEntity is Controller c)
-                return c.BoundingCircle.CollidesWith(BoundingCircle);
-            else
-                throw new Exception("not supported type");
-        }
+      if (IsCollidable && otherEntity.IsCollidable)
+      {
+        if (otherEntity is Controller c)
+          return c.BoundingCircle.CollidesWith(BoundingCircle);
         else
-        {
-            return false;
-        }
+          throw new Exception("not supported type");
+      }
+      else
+      {
+        return false;
+      }
     }
 
     public void Collide(ICollidable otherEntity)
@@ -264,6 +223,15 @@ namespace Birds.src.controllers
         CollisionManager.CollideWithTree(c.CollisionManager);
       else
         throw new Exception("not supported type");
+    }
+
+    private void DeprecateEntities()
+    {
+      foreach (IEntity e in Entities)
+      {
+        e.Deprecate();
+      }
+      Entities.Clear();
     }
 
     public virtual object Clone()

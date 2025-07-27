@@ -1,4 +1,5 @@
-﻿using Birds.src.entities;
+﻿using Birds.src.controllers;
+using Birds.src.entities;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Birds.src.controllers.modules
+namespace Birds.src.modules.controller
 {
   public class CohesionModule
   {

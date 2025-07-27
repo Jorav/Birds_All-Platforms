@@ -1,10 +1,10 @@
 using System;
-using Birds.src.controllers.modules.steering;
+using Birds.src.controllers;
 using Birds.src.menu;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 
-namespace Birds.src.controllers.modules.steering
+namespace Birds.src.modules.controller.steering
 {
   public class ChaserSteeringModule : SteeringModule
   {

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Birds.src
+namespace Birds.src.modules.entity
 {
   public class MovementModule
   {

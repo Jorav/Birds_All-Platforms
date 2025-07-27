@@ -20,7 +20,6 @@ namespace Birds.src
         public void Draw(SpriteBatch sb);
         public void Accelerate(Vector2 directionalVector, float thrust);
         public void Accelerate(Vector2 directionalVector);
-        public void AccelerateTo(Vector2 position, float thrust);
         public void RotateTo(Vector2 position);
         public object Clone();
         public BoundingCircle BoundingCircle { get; }

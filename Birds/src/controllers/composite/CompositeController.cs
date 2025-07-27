@@ -1,5 +1,7 @@
 ﻿using Birds.src.bounding_areas;
 using Birds.src.controllers;
+using Birds.src.entities;
+using Birds.src.modules.entity;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,7 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using static Birds.src.entities.WorldEntity;
 
-namespace Birds.src.entities
+namespace Birds.src.controllers.composite
 {
   public class CompositeController : Controller, IController, IEntity
   {
@@ -36,38 +38,51 @@ namespace Birds.src.entities
 
     public override void Update(GameTime gameTime)
     {
-      if (Manager == null)
-        Steer(gameTime);
-      UpdateEntities(gameTime);
-      //UpdatePosition
-      UpdateRadius();
-      CollisionManager.Update(gameTime); //Look over
+      base.Update(gameTime);
     }
 
     public void AddEntity(IEntity e)
     {
       if (e != null)
       {
-        bool canBeAdded = true;
-        foreach (WorldEntity we in Entities)
-          if (!we.IsFiller && we.CollidesWith(e))
-            canBeAdded = false;
-        if (canBeAdded)
+        bool collidesWithSubentities = CollidesWithSubEntities(e);
+        if (!collidesWithSubentities)
         {
-          Entities.Add(e);
           e.MovementModule.Friction = 0;
-          e.Manager = this;
+          e.Rotation = Rotation;
           UpdatePosition();
           UpdateRadius();
-          e.Rotation = Rotation;
           if (e is WorldEntity ee)
             ConnectToOthers(ee);
           else
             throw new NotImplementedException();
-          e.Team = Team;
         }
       }
     }
+
+    private bool CollidesWithSubEntities(IEntity newEntity)
+    {
+      bool collides = false;
+      foreach (IEntity e in Entities)
+      {
+        if (e.CollidesWith(newEntity))
+        {
+          if (e is WorldEntity we)
+          {
+            if (!we.IsFiller)
+            {
+              collides = true;
+            }
+          }
+          else
+          {
+            collides = true;
+          }
+        }
+      }
+      return collides;
+    }
+
     protected void ConnectToOthers(WorldEntity entity)
     {
       if (Entities.Count > 0 && !entity.IsFiller)

@@ -28,31 +28,18 @@ namespace Birds.src.menu
         private bool playerLastClicked = false;
         Stopwatch timer = new Stopwatch();
         private int doubleClickTreshold = 400;
-        public BuildControllerState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, State previousState, Input input, Controller controllerEdited/*, MenuController menuController = null*/) : base(game, graphicsDevice, content, input)
+        public BuildControllerState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, State previousState, Input input, Controller originalController/*, MenuController menuController = null*/) : base(game, graphicsDevice, content, input)
         {
-            this.controllerEdited = (Controller)controllerEdited.Clone();
-            originalController = controllerEdited;
+            this.controllerEdited = (Controller)originalController.Clone();
+            this.originalController = originalController;
 
             Input.Camera.Controller = this.controllerEdited;
             this.controllerEdited.Steering.actionsLocked = true;
             this.controllerEdited.Rotation = 0;
-            /*
-            if (menuController == null)
-                this.menuController = new MenuController(CopyEntitiesFromController(controllerEdited), input);
-            else
-                this.menuController = menuController;
-                
-            this.menuController.Camera.InBuildScreen = true;
-            this.menuController.Camera.AutoAdjustZoom = true;
-            
-            this.menuController.Color = Color.White;
-                */
             this.previousState = previousState;
             if (previousState is GameState)
                 GameState.Player.Steering.actionsLocked = true;
-            //currentScrollValue = input.ScrollValue;
             overlay = SpriteFactory.GetSprite(ID_SPRITE.BACKGROUND_WHITE, new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2), SpriteFactory.textures[(int)ID_SPRITE.BACKGROUND_WHITE].Height / Game1.ScreenHeight);
-            originalColor = controllerEdited.Color;
             components = new();
         }
 
@@ -132,10 +119,6 @@ namespace Birds.src.menu
         private void ReturnToPreviousState()
         {
             game.ChangeState(previousState);
-            foreach (IEntity e in originalController.Entities)
-            {
-                e.Deprecate();
-            }
             originalController.SetEntities(controllerEdited.Entities);
             originalController.Steering.actionsLocked = false;
             Input.Camera.Controller = originalController;

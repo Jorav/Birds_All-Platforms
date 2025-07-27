@@ -1,5 +1,6 @@
 using Birds.src.bounding_areas;
 using Birds.src.controllers;
+using Birds.src.modules.entity;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,7 +19,7 @@ namespace Birds.src.entities
     float ICollidable.Mass => MovementModule.Mass;
     public Controller Manager { get; set; }
     public Vector2 Velocity => MovementModule.Velocity;
-    void ICollidable.AccelerateTo(Vector2 position, float thrust)
+    public void AccelerateTo(Vector2 position, float thrust)
     {
       MovementModule.AccelerateTo(position, thrust);
     }

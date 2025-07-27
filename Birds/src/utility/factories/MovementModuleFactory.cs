@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Birds.src.controllers;
-using Birds.src.controllers.modules.steering;
 using Birds.src.utility;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using Birds.src.modules.entity;
 
 namespace Birds.src.factories
 {

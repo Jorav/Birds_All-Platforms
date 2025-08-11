@@ -1,50 +1,71 @@
-
-using Birds.src.controllers;
 using Birds.src.entities;
+using Birds.src.modules.entity;
+using Birds.src.modules.events;
 using Microsoft.Xna.Framework;
 
-namespace Birds.src.modules.controller.steering
+namespace Birds.src.modules.controller.steering;
+public abstract class SteeringModule : ControllerModule
 {
-    public abstract class SteeringModule
+  public bool actionsLocked = false;
+  public Vector2 Position { get; set; }
+  public abstract bool ShouldAccelerate { get; }
+  public virtual bool ShouldRotate { get { return !actionsLocked; } }
+  public abstract Vector2 PositionLookedAt { get; }
+  private bool moveWholeController = false;
+
+  protected override void ConfigurePropertySync()
+  {
+    ReadSync(() => Position, container.Position);
+  }
+
+  protected override void Update(GameTime gameTime)
+  {
+    if (ShouldRotate)
     {
-        public bool actionsLocked = false;
-        public Controller controller;
-        public abstract bool ShouldAccelerate { get; }
-        public virtual bool ShouldRotate { get { return !actionsLocked; } }
-        public abstract Vector2 PositionLookedAt { get; }
-        private bool moveWholeController = false;
-
-        public SteeringModule(Controller controller)
-        {
-            this.controller = controller;
-        }
-        public virtual void Update(GameTime gameTime)
-        {
-            if (ShouldRotate)
-                controller.RotateTo(PositionLookedAt);
-            if (ShouldAccelerate)
-            {
-                if (moveWholeController)
-                {
-                    Vector2 accelerationVector = Vector2.Normalize(PositionLookedAt - controller.Position);
-                    controller.Accelerate(accelerationVector);
-                }
-
-                else
-                {
-                    foreach (IEntity e in controller.Entities)
-                    {
-                        Vector2 accelerationVector = Vector2.Normalize(PositionLookedAt - e.Position);
-                        e.Accelerate(accelerationVector);
-                    }
-                }
-            }
-        }
-        public virtual object Clone()
-        {
-            SteeringModule sNew  = (SteeringModule)this.MemberwiseClone();
-            sNew.controller = controller;
-            return sNew;
-        }
+      RotateToTarget();
     }
+    if (ShouldAccelerate)
+    {
+      AccelerateToTarget();
+    }
+  }
+
+  private void RotateToTarget()
+  {
+    var movementModule = GetMovementModule();
+    if (movementModule != null)
+    {
+      movementModule.RotateTo(PositionLookedAt);
+    }
+  }
+
+  private void AccelerateToTarget()
+  {
+    if (moveWholeController)
+    {
+      Vector2 accelerationVector = Vector2.Normalize(PositionLookedAt - Position);
+      var movementModule = GetMovementModule();
+      movementModule?.Accelerate(accelerationVector);
+    }
+    else
+    {
+      foreach (IEntity e in container.Entities)
+      {
+        Vector2 accelerationVector = Vector2.Normalize(PositionLookedAt - e.Position);
+        e.Accelerate(accelerationVector);
+      }
+    }
+  }
+
+  private IMovementModule GetMovementModule()
+{
+    return container.GetModule<ControllerMovementModule>() as IMovementModule ??
+           container.GetModule<EntityMovementModule>();
+}
+
+  public virtual object Clone()
+  {
+    SteeringModule sNew = (SteeringModule)this.MemberwiseClone();
+    return sNew;
+  }
 }

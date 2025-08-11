@@ -9,7 +9,7 @@ namespace Birds.src.entities
 {
   public interface IEntity : ICollidable
   {
-    public MovementModule MovementModule { get; }
+    public EntityMovementModule MovementModule { get; }
     public new Vector2 Position //implement in subclasses
     {
       get => MovementModule.Position;
@@ -23,15 +23,15 @@ namespace Birds.src.entities
     {
       MovementModule.AccelerateTo(position, thrust);
     }
-    void ICollidable.Accelerate(Vector2 directionalVector, float thrust)
+    void Accelerate(Vector2 directionalVector, float thrust)
     {
       MovementModule.Accelerate(directionalVector, thrust);
     }
-    void ICollidable.Accelerate(Vector2 directionalVector)
+    void Accelerate(Vector2 directionalVector)
     {
       MovementModule.Accelerate(directionalVector);
     }
-    void ICollidable.RotateTo(Vector2 position)
+    void RotateTo(Vector2 position)
     {
       MovementModule.RotateTo(position);
     }

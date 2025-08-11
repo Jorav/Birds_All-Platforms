@@ -21,7 +21,7 @@ namespace Birds.src.modules.controller.steering
     }
     public bool FocusPlayer { get; set; } = true;
 
-    public ChaserSteeringModule(Controller controller) : base(controller)
+    public ChaserSteeringModule() : base()
     {
     }
 
@@ -44,32 +44,35 @@ namespace Birds.src.modules.controller.steering
 
     private void UpdateTarget()
     {
-      float shortestDistance = Vector2.Distance(GameState.Player.Position, controller.Position);
+      float shortestDistance = Vector2.Distance(GameState.Player.Position, Position);
       Controller bestController = GameState.Player;
       foreach (Controller c in GameController.controllers)
       {
-        float distanceTemp = Vector2.Distance(c.Position, controller.Position);
-        if (distanceTemp < shortestDistance)
+        float distanceTemp = Vector2.Distance(c.Position, Position);
+        if (distanceTemp >= shortestDistance)
         {
-          if (FocusPlayer && c.Steering is PlayerSteeringModule)
-          {
-            shortestDistance = distanceTemp;
-            bestController = c;
-          }
-          else if (!FocusPlayer)
-          {
-            shortestDistance = distanceTemp;
-            bestController = c;
-          }
+          continue;
+        }
+        if (FocusPlayer && c.Steering is PlayerSteeringModule)
+        {
+          shortestDistance = distanceTemp;
+          bestController = c;
+        }
+        else if (!FocusPlayer)
+        {
+          shortestDistance = distanceTemp;
+          bestController = c;
         }
       }
       target = bestController;
     }
-    public override void Update(GameTime gameTime)
+
+    protected override void Update(GameTime gameTime)
     {
       UpdateTarget();
       base.Update(gameTime);
     }
+
     public override object Clone()
     {
       ChaserSteeringModule steeringNew = (ChaserSteeringModule)base.Clone();

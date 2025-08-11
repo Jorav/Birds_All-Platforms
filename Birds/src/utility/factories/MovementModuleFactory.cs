@@ -12,25 +12,25 @@ namespace Birds.src.factories
   public class MovementModuleFactory
   {
 
-    public static Stack<MovementModule> availableMovementModules = new();
+    public static Stack<EntityMovementModule> availableMovementModules = new();
 
-    public static MovementModule GetMovementModule(ID_MOVEMENT_MODULE id = ID_MOVEMENT_MODULE.DEFAULT)
+    public static EntityMovementModule GetMovementModule(ID_MOVEMENT_MODULE id = ID_MOVEMENT_MODULE.DEFAULT)
     {
-      MovementModule m;
+      EntityMovementModule m;
       if (availableMovementModules.Count > 0)
       {
         m = availableMovementModules.Pop();
       }
       else
       {
-        m = new MovementModule();
+        m = new EntityMovementModule();
       }
       m.SetAttributes(Vector2.Zero, 0, 0, 0,1f);
       return m;
     }
-    public static MovementModule GetMovementModule(Vector2 position, float rotation, float mass, float thrust, float friction)
+    public static EntityMovementModule GetMovementModule(Vector2 position, float rotation, float mass, float thrust, float friction)
     {
-      MovementModule m = GetMovementModule();
+      EntityMovementModule m = GetMovementModule();
       m.SetAttributes(position, rotation, mass, thrust, friction);
       return m;
     }

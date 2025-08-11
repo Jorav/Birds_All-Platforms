@@ -9,7 +9,7 @@ namespace Birds.src.modules.controller.steering
     private bool hasStartedMoving;
     private bool wasPressed;
 
-    public PlayerSteeringModule(Controller controller) : base(controller)
+    public PlayerSteeringModule() : base()
     {
     }
 
@@ -18,22 +18,23 @@ namespace Birds.src.modules.controller.steering
       get
       {
         bool accelerate = false;
-        //Vector2 accelerationVector = Vector2.Zero;
-
         if (!actionsLocked)
         {
-          if (Input.IsPressed && !wasPressed/* && !controller.BoundingCircle.Contains(Input.PositionGameCoords)*/)
-            hasStartedMoving = true;
-          if (Input.IsPressed && hasStartedMoving)
-          {
-            //accelerationVector = Vector2.Normalize(Input.PositionGameCoords - controller.Position);
-            //controller.Accelerate(accelerationVector);
-            accelerate = true;
-          }
-          else
-            hasStartedMoving = false;
-          wasPressed = Input.IsPressed;
+          return accelerate;
         }
+        if (Input.IsPressed && !wasPressed)
+        {
+          hasStartedMoving = true;
+        }
+        if (Input.IsPressed && hasStartedMoving)
+        {
+          accelerate = true;
+        }
+        else
+        {
+          hasStartedMoving = false;
+        }
+        wasPressed = Input.IsPressed;
         return accelerate;
       }
 

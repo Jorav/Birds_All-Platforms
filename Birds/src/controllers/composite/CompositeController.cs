@@ -23,7 +23,7 @@ public class CompositeController : Controller, IController, IEntity
       float dRotation = Rotation - value;
       foreach (WorldEntity e in entities)
       {
-        Vector2 relativePosition = e.Position - Position;
+        Vector2 relativePosition = e.Position - Position.Value;
         Vector2 newRelativePosition = Vector2.Transform(relativePosition, Matrix.CreateRotationZ(-dRotation));
         e.MovementModule.Velocity = newRelativePosition - relativePosition;
         e.Rotation = Rotation;
@@ -35,6 +35,8 @@ public class CompositeController : Controller, IController, IEntity
   private float rotation;
 
   public Controller Manager { get; set; }
+
+  EntityMovementModule IEntity.MovementModule => throw new NotImplementedException();
 
   public CompositeController() : base()
   {
@@ -56,7 +58,7 @@ public class CompositeController : Controller, IController, IEntity
 
     base.AddEntity(e);
     MovementModule.Mass += e.MovementModule.Mass;
-    MovementModule.Thrust = e.MovementModule.Thrust;
+    //MovementModule.Thrust = e.MovementModule.Thrust;
 
     if (e is WorldEntity ee)
       ConnectToOthers(ee);
@@ -78,7 +80,7 @@ public class CompositeController : Controller, IController, IEntity
       entity.MovementModule.Friction = 0;
       entity.Rotation = Rotation;
       MovementModule.Mass += entity.Mass;
-      MovementModule.Thrust += entity.MovementModule.Thrust;
+      //MovementModule.Thrust += entity.MovementModule.Thrust;
     }
   }
 
@@ -333,10 +335,5 @@ public class CompositeController : Controller, IController, IEntity
   public void Deprecate()
   {
     throw new NotImplementedException();
-  }
-
-  public override void RotateTo(Vector2 position)
-  {
-    Rotation = MovementModule.CalculateRotation(position, Position);
   }
 }

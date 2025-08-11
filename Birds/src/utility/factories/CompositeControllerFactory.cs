@@ -33,7 +33,7 @@ namespace Birds.src.factories
       var entities = BlueprintFactory.CreateFromBlueprint(blueprint, position);
 
       var iEntities = entities.Cast<IEntity>().ToList();
-      compositeController.MovementModule = MovementModuleFactory.GetMovementModule();
+      //compositeController.MovementModule = MovementModuleFactory.GetMovementModule();
       compositeController.SetEntities(iEntities);
       compositeController.Position = position;
       return compositeController;

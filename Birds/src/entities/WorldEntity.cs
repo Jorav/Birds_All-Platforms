@@ -13,7 +13,7 @@ namespace Birds.src.entities
   public class WorldEntity : IEntity
   {
     #region Properties
-    public MovementModule MovementModule { get; private set; }
+    public EntityMovementModule MovementModule { get; private set; }
     protected Sprite sprite = null;
     private OrientedBoundingBox OBB;
     public IBoundingArea BoundingArea { get { return OBB; } }
@@ -71,7 +71,7 @@ namespace Birds.src.entities
     {
       switch (o)
       {
-        case MovementModule m: MovementModule = m; break;
+        case EntityMovementModule m: MovementModule = m; break;
         case Sprite s: sprite = s; break;
         case OrientedBoundingBox obb: OBB = obb; break;
         case BoundingCircle bc: BoundingCircle = bc; break;
@@ -131,7 +131,7 @@ namespace Birds.src.entities
 
     public void Update(GameTime gameTime)
     {
-      MovementModule.Update(gameTime);
+      MovementModule.Update2(gameTime);
       Position = Position;
       /*
         if (Health <= 0)

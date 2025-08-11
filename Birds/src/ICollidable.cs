@@ -17,8 +17,6 @@ public interface ICollidable
   public ID_OTHER Team { get; set; }
   public void Update(GameTime gameTime);
   public void Draw(SpriteBatch sb);
-  public void Accelerate(Vector2 directionalVector, float thrust);
-  public void Accelerate(Vector2 directionalVector);
   public void RotateTo(Vector2 position);
   public object Clone();
   public BoundingCircle BoundingCircle { get; }

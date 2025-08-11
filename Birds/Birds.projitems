@@ -18,6 +18,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\Background.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\CollisionHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\ControllerMovementModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\events\ControllerModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\events\IModuleContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\events\ModuleContainerBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\events\ReactiveProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\IMovementModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\collision_detection\BCCollisionDetectionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\collision_detection\OBBCollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\storage\IBlueprintStorage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\parts\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\parts\EntityPlacement.cs" />
@@ -47,7 +56,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\PauseState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\State.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\TestState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\MovementModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\EntityMovementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\storage\JsonBlueprintStorage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\storage\SqliteBlueprintStorage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\BlueprintFactory.cs" />
@@ -102,7 +111,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\RotatingHull\" />
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\solar\" />
     <Folder Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\parts\" />
-    <Folder Include="$(MSBuildThisFileDirectory)src\modules\controller\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />

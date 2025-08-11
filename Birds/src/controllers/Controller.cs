@@ -114,17 +114,18 @@ namespace Birds.src.controllers
 
     public virtual void SetEntities(List<IEntity> newEntities)
     {
-      if (newEntities != null && newEntities.Count != 0)
+      if (newEntities == null || newEntities.Count == 0)
       {
-        DeprecateEntities();
-        foreach (IEntity e in newEntities)
-        {
-          AddEntityBasic(e);
-        }
-        UpdatePosition();
-        UpdateRadius();
-        CollisionManager.UpdateTree(newEntities.Cast<ICollidable>().ToList());
+        return;
       }
+      DeprecateEntities();
+      foreach (IEntity e in newEntities)
+      {
+        AddEntityBasic(e);
+      }
+      UpdatePosition();
+      UpdateRadius();
+      CollisionManager.UpdateTree(newEntities.Cast<ICollidable>().ToList());
     }
 
     public virtual void AddEntity(IEntity e)
@@ -136,13 +137,14 @@ namespace Birds.src.controllers
 
     protected void AddEntityBasic(IEntity e)
     {
-      if (e != null)
+      if (e == null)
       {
-        entities.Add(e);
-        CollisionManager.Add(e);
-        e.Manager = this;
-        e.Team = Team;
+        return;
       }
+      entities.Add(e);
+      CollisionManager.Add(e);
+      e.Manager = this;
+      e.Team = Team;
     }
 
     public void Accelerate(Vector2 directionalVector, float thrust)
@@ -209,17 +211,15 @@ namespace Birds.src.controllers
 
     public bool CollidesWith(ICollidable otherEntity)
     {
-      if (IsCollidable && otherEntity.IsCollidable)
-      {
-        if (otherEntity is Controller c)
-          return c.BoundingCircle.CollidesWith(BoundingCircle);
-        else
-          throw new Exception("not supported type");
-      }
-      else
+      if (!IsCollidable || !otherEntity.IsCollidable)
       {
         return false;
       }
+      if (otherEntity is Controller c)
+        return c.BoundingCircle.CollidesWith(BoundingCircle);
+      else
+        throw new Exception("not supported type");
+
     }
 
     public void Collide(ICollidable otherEntity)

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using static Birds.src.entities.WorldEntity;
 
@@ -46,38 +47,38 @@ public class CompositeController : Controller, IController, IEntity
 
   public override void AddEntity(IEntity e)
   {
-    if (e != null)
+    bool collidesWithSubentities = CollidesWithSubEntities(e);
+    if (collidesWithSubentities)
     {
-      bool collidesWithSubentities = CollidesWithSubEntities(e);
-      if (!collidesWithSubentities)
-      {
-        e.MovementModule.Friction = 0;
-
-        base.AddEntity(e);
-        MovementModule.Mass += e.MovementModule.Mass;
-        MovementModule.Thrust = e.MovementModule.Thrust;
-
-        if (e is WorldEntity ee)
-          ConnectToOthers(ee);
-        else
-          throw new NotImplementedException("Only WorldEntity supported in CompositeController");
-      }
+      throw new InvalidDataException("Collides with subentities");
     }
+    e.MovementModule.Friction = 0;
+
+    base.AddEntity(e);
+    MovementModule.Mass += e.MovementModule.Mass;
+    MovementModule.Thrust = e.MovementModule.Thrust;
+
+    if (e is WorldEntity ee)
+      ConnectToOthers(ee);
+    else
+      throw new NotImplementedException("Only WorldEntity supported in CompositeController");
+
   }
 
   public override void SetEntities(List<IEntity> newEntities)
   {
     if (newEntities != null && newEntities.Count != 0)
     {
-      base.SetEntities(newEntities);
+      return;
+    }
+    base.SetEntities(newEntities);
 
-      foreach (IEntity entity in Entities)
-      {
-        entity.MovementModule.Friction = 0;
-        entity.Rotation = Rotation;
-        MovementModule.Mass += entity.Mass;
-        MovementModule.Thrust += entity.MovementModule.Thrust;
-      }
+    foreach (IEntity entity in Entities)
+    {
+      entity.MovementModule.Friction = 0;
+      entity.Rotation = Rotation;
+      MovementModule.Mass += entity.Mass;
+      MovementModule.Thrust += entity.MovementModule.Thrust;
     }
   }
 
@@ -86,19 +87,17 @@ public class CompositeController : Controller, IController, IEntity
     bool collides = false;
     foreach (IEntity e in Entities)
     {
-      if (e.CollidesWith(newEntity))
+      if (!e.CollidesWith(newEntity))
       {
-        if (e is WorldEntity we)
-        {
-          if (!we.IsFiller)
-          {
-            collides = true;
-          }
-        }
-        else
-        {
-          collides = true;
-        }
+        continue;
+      }
+      if (e is WorldEntity we && !we.IsFiller)
+      {
+        collides = true;
+      }
+      else
+      {
+        collides = true;
       }
     }
     return collides;
@@ -106,21 +105,30 @@ public class CompositeController : Controller, IController, IEntity
 
   protected void ConnectToOthers(WorldEntity entity)
   {
-    if (Entities.Count > 0 && !entity.IsFiller)
+    if (Entities.Count <= 0 || entity.IsFiller)
     {
-      foreach (WorldEntity e in Entities)
+      return;
+    }
+    foreach (WorldEntity e in Entities)
+    {
+      if (entity == e || e.IsFiller)
       {
-        if (entity != e && !e.IsFiller)
+        continue;
+      }
+      foreach (Link lE in e.Links)
+      {
+        if (!lE.ConnectionAvailable)
         {
-          foreach (Link lE in e.Links)
-            if (lE.ConnectionAvailable)
-            {
-              foreach (Link lEntity in entity.Links)
-                if (lEntity.ConnectionAvailable && e.BoundingArea.Contains(lEntity.AbsolutePosition - lE.RelativePositionRotated / 2) && entity.BoundingArea.Contains(lE.AbsolutePosition - lEntity.RelativePositionRotated / 2)) //divided by 2 because of edges of links connecting to others
-                {
-                  lE.ConnectTo(lEntity);
-                }
-            }
+          continue;
+        }
+        foreach (Link lEntity in entity.Links)
+        {
+          if (lEntity.ConnectionAvailable
+            && e.BoundingArea.Contains(lEntity.AbsolutePosition - lE.RelativePositionRotated / 2)
+            && entity.BoundingArea.Contains(lE.AbsolutePosition - lEntity.RelativePositionRotated / 2)) //divided by 2 because of edges of links connecting to others
+          {
+            lE.ConnectTo(lEntity);
+          }
         }
       }
     }
@@ -307,20 +315,19 @@ public class CompositeController : Controller, IController, IEntity
 
   public bool CollidesWith(ICollidable otherCollidable)
   {
-    if (IsCollidable && otherCollidable.IsCollidable)
+    if (!IsCollidable || otherCollidable.IsCollidable)
     {
-      if (otherCollidable is IEntity entity)
-      {
-        if (entity.BoundingCircle.CollidesWith(BoundingCircle))
-          return BoundingArea.CollidesWith(otherCollidable.BoundingArea);
-        else
-          return false;
-      }
-      else
+      return false;
+    }
+    if (otherCollidable is IEntity entity)
+    {
+      if (entity.BoundingCircle.CollidesWith(BoundingCircle))
         return BoundingArea.CollidesWith(otherCollidable.BoundingArea);
+      else
+        return false;
     }
     else
-      return false;
+      return BoundingArea.CollidesWith(otherCollidable.BoundingArea);
   }
 
   public void Deprecate()

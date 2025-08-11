@@ -7,6 +7,7 @@ using Birds.src.BVH;
 using Birds.src.entities;
 using Birds.src.modules.controller;
 using Birds.src.modules.controller.steering;
+using Birds.src.modules.entity;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +22,9 @@ namespace Birds.src.controllers
     public BoundingCircle BoundingCircle { get; private set; }
     public AABBTree CollisionManager { get; protected set; }
     public CohesionModule CohesionModule { get; set; }
+    public MovementModule MovementModule { get; set; }
+    public SteeringModule Steering { get; set; }
+
     private ID_OTHER team;
     public ID_OTHER Team { get { return team; } set { team = value; foreach (IEntity entity in Entities) entity.Team = value; } }
     public float Radius { get { return radius; } protected set { radius = value; BoundingCircle.Radius = value; } }
@@ -61,7 +65,6 @@ namespace Birds.src.controllers
 
     public IBoundingArea BoundingArea { get { return BoundingCircle; } }
     public bool IsCollidable { get; set; } = true;
-    public SteeringModule Steering { get; set; }
 
     #endregion
     #region Constructors
@@ -86,16 +89,18 @@ namespace Birds.src.controllers
       UpdatePosition();
       UpdateRadius();
       Steer(gameTime);
-      ApplyCohesion(gameTime);
+      ApplyMovement(gameTime);
+      CohesionModule?.Update(gameTime);
       UpdateEntities(gameTime);
       CollisionManager.Update(gameTime);
     }
 
-    protected void ApplyCohesion(GameTime gameTime)
+    protected void ApplyMovement(GameTime gameTime)
     {
-      if (CohesionModule != null)
+      if (MovementModule != null)
       {
-        CohesionModule.Update(gameTime);
+        MovementModule.Update(gameTime);
+        Position = MovementModule.Position;
       }
     }
 
@@ -198,8 +203,8 @@ namespace Birds.src.controllers
     }
     public virtual void RotateTo(Vector2 position)
     {
-      foreach (IEntity c in Entities)
-        c.RotateTo(position);
+      foreach (IEntity entity in Entities)
+        entity.RotateTo(position);
     }
 
     public bool CollidesWith(ICollidable otherEntity)

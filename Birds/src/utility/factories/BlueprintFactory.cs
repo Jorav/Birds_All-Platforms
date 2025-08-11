@@ -40,7 +40,10 @@ public static class BlueprintFactory  //ADD REUSE HANDLING FROM OTHER FACTORIES
 
       if (link1.ConnectionAvailable && link2.ConnectionAvailable)
       {
-        entity1.ConnectTo(entity2, link2); //FIX POSITION OF ENTITIES
+        // Instead of entity1.ConnectTo(entity2, link2)
+        // Do entity2.ConnectTo(entity1, link1)
+        // This moves entity2 to the correct position relative to entity1
+        entity2.ConnectTo(entity1, link1);
       }
     }
   }

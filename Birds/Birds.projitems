@@ -18,8 +18,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\Background.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\storage\IBlueprintStorage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\parts\Connection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\BlueprintFilehandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\parts\EntityPlacement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\CompositeBlueprint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\CompositeController.cs" />
@@ -48,6 +48,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\State.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\TestState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\MovementModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\storage\JsonBlueprintStorage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\storage\SqliteBlueprintStorage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\BlueprintFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\MovementModuleFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\CompositeControllerFactory.cs" />

@@ -1,18 +1,15 @@
 using Birds.src.bounding_areas;
 using Birds.src.entities;
-using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Birds.src.BVH
 {
   public class AABBTree
   {
+    public bool ResolveInternalCollisions { get; set; } = true;
     public Vector2 Position { get { return root.Position; } }
     public float Radius { get { return root.Radius; } }
     public AABBNode root;
@@ -272,8 +269,11 @@ namespace Birds.src.BVH
     {
       //root.Update(gameTime); nothing is done in it right now
       UpdateTree(entities.ToList());
-      GetInternalCollissions();
-      ResolveCollissions();
+      if (ResolveInternalCollisions)
+      {
+        GetInternalCollissions();
+        ResolveCollissions();
+      }
     }
     public void GetInternalCollissions()
     {

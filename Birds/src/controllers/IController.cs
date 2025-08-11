@@ -14,8 +14,6 @@ namespace Birds.src.controllers
   {
     public List<IEntity> Entities { get; set; }
     public AABBTree? CollisionManager { get; }
-    public SteeringModule? Steering { get; set; }
-    public CohesionModule? CohesionModule { get; set; }
     public void SetEntities(List<IEntity> newEntities);
     public void AddEntity(IEntity c);
   }

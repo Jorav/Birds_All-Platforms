@@ -132,6 +132,7 @@ namespace Birds.src.entities
     public void Update(GameTime gameTime)
     {
       MovementModule.Update2(gameTime);
+      Rotation = MovementModule.Rotation;
       Position = Position;
       /*
         if (Health <= 0)

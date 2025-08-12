@@ -1,5 +1,6 @@
 using System;
 using Birds.src.controllers;
+using Birds.src.entities;
 using Birds.src.menu;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
@@ -8,7 +9,7 @@ namespace Birds.src.modules.controller.steering
 {
   public class ChaserSteeringModule : SteeringModule
   {
-    public ICollidable target;
+    public IEntity target;
     public override bool ShouldRotate
     {
       get
@@ -53,7 +54,7 @@ namespace Birds.src.modules.controller.steering
         {
           continue;
         }
-        if (FocusPlayer && c.Steering is PlayerSteeringModule)
+        if (FocusPlayer && c.GetModule<SteeringModule>() is PlayerSteeringModule)
         {
           shortestDistance = distanceTemp;
           bestController = c;
@@ -64,7 +65,7 @@ namespace Birds.src.modules.controller.steering
           bestController = c;
         }
       }
-      target = bestController;
+      target = bestController.Entities[0];
     }
 
     protected override void Update(GameTime gameTime)

@@ -11,6 +11,7 @@ using System.Text;
 using System.Diagnostics;
 using Birds.src.factories;
 using Birds.src.entities;
+using Birds.src.modules.shared.bounding_area;
 
 namespace Birds.src.menu
 {
@@ -92,7 +93,7 @@ namespace Birds.src.menu
 
         private void CheckClickOnPlayer()
         {
-            if (!wasPressed && Input.IsPressed && Player.BoundingCircle.Contains(Input.PositionGameCoords))
+            if (!wasPressed && Input.IsPressed && Player.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
             {
             }
         }
@@ -103,13 +104,13 @@ namespace Birds.src.menu
             {
                 if (timer.IsRunning)
                 {
-                    if (timer.ElapsedMilliseconds < doubleClickTreshold && Player.BoundingCircle.Contains(Input.PositionGameCoords))
+                    if (timer.ElapsedMilliseconds < doubleClickTreshold && Player.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
                         HandleDoubleClick();
                     timer.Reset();
                 }
                 else
                 {
-                    if (Player.BoundingCircle.Contains(Input.PositionGameCoords))
+                    if (Player.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
                     {
                         timer.Start();
                     }

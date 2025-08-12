@@ -17,8 +17,10 @@ namespace Birds.src.entities
     }
     public new float Rotation { get; set; } //implement in subclasses
     float ICollidable.Mass => MovementModule.Mass;
+    float Radius { get; }
     public Controller Manager { get; set; }
     public Vector2 Velocity => MovementModule.Velocity;
+    public BoundingCircle BoundingCircle { get; }
     public void AccelerateTo(Vector2 position, float thrust)
     {
       MovementModule.AccelerateTo(position, thrust);
@@ -35,6 +37,8 @@ namespace Birds.src.entities
     {
       MovementModule.RotateTo(position);
     }
+    public void Update(GameTime gameTime);
+    public void Draw(SpriteBatch sb);
     public void Deprecate();
   }
 }

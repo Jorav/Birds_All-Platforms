@@ -96,8 +96,8 @@ namespace Birds.src.factories
         {
           for (int i = 0; i < numberOfEntities; i++)
           {
-            float x = GameState.Player.Position.X + (float)((rnd.NextDouble() * (Game1.ScreenWidth - 32 * scale * 2) - Game1.ScreenWidth / 2) + 32 * scale); //TODO: make this dependent on standardised texture size
-            float y = GameState.Player.Position.X + (float)((rnd.NextDouble() * (Game1.ScreenHeight - 32 * scale * 2) - Game1.ScreenHeight / 2) + 32 * scale); //TODO: make this dependent on standardised texture size
+            float x = GameState.Player.Position.Value.X + (float)((rnd.NextDouble() * (Game1.ScreenWidth - 32 * scale * 2) - Game1.ScreenWidth / 2) + 32 * scale); //TODO: make this dependent on standardised texture size
+            float y = GameState.Player.Position.Value.X + (float)((rnd.NextDouble() * (Game1.ScreenHeight - 32 * scale * 2) - Game1.ScreenHeight / 2) + 32 * scale); //TODO: make this dependent on standardised texture size
             WorldEntity we = EntityFactory.GetEntity(new Vector2(x, y), id);
             we.Scale = scale;
             returnedList.Add(we);

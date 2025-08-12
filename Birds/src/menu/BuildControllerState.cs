@@ -9,6 +9,8 @@ using Birds.src.utility;
 using Birds.src.factories;
 using System.Diagnostics;
 using Birds.src.entities;
+using Birds.src.modules.controller.steering;
+using Birds.src.modules.shared.bounding_area;
 
 namespace Birds.src.menu
 {
@@ -34,11 +36,10 @@ namespace Birds.src.menu
             this.originalController = originalController;
 
             Input.Camera.Controller = this.controllerEdited;
-            this.controllerEdited.Steering.actionsLocked = true;
-            this.controllerEdited.Rotation = 0;
+            this.controllerEdited.GetModule<SteeringModule>().actionsLocked = true;
             this.previousState = previousState;
             if (previousState is GameState)
-                GameState.Player.Steering.actionsLocked = true;
+                GameState.Player.GetModule<SteeringModule>().actionsLocked = true;
             overlay = SpriteFactory.GetSprite(ID_SPRITE.BACKGROUND_WHITE, new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2), SpriteFactory.textures[(int)ID_SPRITE.BACKGROUND_WHITE].Height / Game1.ScreenHeight);
             components = new();
         }
@@ -77,7 +78,7 @@ namespace Birds.src.menu
                 {
                     if (playerLastClicked)
                     {
-                        if (controllerEdited.BoundingCircle.Contains(Input.PositionGameCoords))
+                        if (controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
                         {
 
                             controllerEdited.AddEntity(EntityFactory.GetEntity(controllerEdited.Position, ID_ENTITY.DEFAULT));
@@ -91,7 +92,7 @@ namespace Birds.src.menu
                     }
                     else
                     {
-                        if (controllerEdited.BoundingCircle.Contains(Input.PositionGameCoords))
+                        if (controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
                         {
                             timer.Restart();
                             playerLastClicked = true;
@@ -104,7 +105,7 @@ namespace Birds.src.menu
                 }
                 else
                 {
-                    if (controllerEdited.BoundingCircle.Contains(Input.PositionGameCoords))
+                    if (controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
                     {
                         playerLastClicked = true;
                     }
@@ -120,7 +121,7 @@ namespace Birds.src.menu
         {
             game.ChangeState(previousState);
             originalController.SetEntities(controllerEdited.Entities);
-            originalController.Steering.actionsLocked = false;
+            originalController.GetModule<SteeringModule>().actionsLocked = false;
             Input.Camera.Controller = originalController;
         }
 

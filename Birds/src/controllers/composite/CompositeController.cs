@@ -13,7 +13,7 @@ using static Birds.src.entities.WorldEntity;
 
 namespace Birds.src.controllers.composite;
 
-public class CompositeController : Controller, IController, IEntity
+public class CompositeController : Controller, IController, IEntity //remove Controller
 {
   public new float Rotation
   {
@@ -38,9 +38,23 @@ public class CompositeController : Controller, IController, IEntity
 
   EntityMovementModule IEntity.MovementModule => throw new NotImplementedException();
 
+  float IEntity.Radius => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+
+  Vector2 ICollidable.Position => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+
+  float ICollidable.Radius => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+
+  float ICollidable.Mass => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+
+  public bool IsCollidable => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+
+  public BoundingCircle BoundingCircle => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+
+  public IBoundingArea BoundingArea => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+
   public CompositeController() : base()
   {
-    CollisionManager.ResolveInternalCollisions = false;
+    //CollisionManager.ResolveInternalCollisions = false;
   }
   public override void Update(GameTime gameTime)
   {
@@ -57,7 +71,7 @@ public class CompositeController : Controller, IController, IEntity
     e.MovementModule.Friction = 0;
 
     base.AddEntity(e);
-    MovementModule.Mass += e.MovementModule.Mass;
+    //MovementModule.Mass += e.MovementModule.Mass;
     //MovementModule.Thrust = e.MovementModule.Thrust;
 
     if (e is WorldEntity ee)
@@ -79,7 +93,7 @@ public class CompositeController : Controller, IController, IEntity
     {
       entity.MovementModule.Friction = 0;
       entity.Rotation = Rotation;
-      MovementModule.Mass += entity.Mass;
+      //MovementModule.Mass += entity.Mass;
       //MovementModule.Thrust += entity.MovementModule.Thrust;
     }
   }
@@ -282,7 +296,7 @@ public class CompositeController : Controller, IController, IEntity
   #endregion
 
   public void Collide(ICollidable otherCollidable)
-  {
+  {/*
     if (otherCollidable is CompositeController cc)
     {
       throw new NotImplementedException();//kollas åt båda hållen så denna behöver bara göra sin egna check
@@ -294,7 +308,7 @@ public class CompositeController : Controller, IController, IEntity
     if (otherCollidable is IController controller)
     {
       CollisionManager.CollideWithTree(controller.CollisionManager);
-    }
+    }*/
   }
   public void Collide(IEntity e)
   {
@@ -314,7 +328,7 @@ public class CompositeController : Controller, IController, IEntity
     Vector2 overlapRepulsion = 30f * Vector2.Normalize(position - e.Position) / distance2;
     TotalExteriorForce += overlapRepulsion;*/
   }
-
+  /** commented out to ignore error
   public bool CollidesWith(ICollidable otherCollidable)
   {
     if (!IsCollidable || otherCollidable.IsCollidable)
@@ -330,9 +344,14 @@ public class CompositeController : Controller, IController, IEntity
     }
     else
       return BoundingArea.CollidesWith(otherCollidable.BoundingArea);
-  }
+  }*/
 
   public void Deprecate()
+  {
+    throw new NotImplementedException();
+  }
+
+  public bool CollidesWith(ICollidable otherCollidable)
   {
     throw new NotImplementedException();
   }

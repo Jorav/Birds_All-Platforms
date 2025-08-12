@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Birds.src.modules.events;
+using System;
 
 namespace Birds.src.modules.controller;
 public class CohesionModule : ControllerModule
@@ -18,7 +19,7 @@ public class CohesionModule : ControllerModule
   {
     if (container.Entities.Count > 0)
     {
-      ApplyInternalGravity();
+      //ApplyInternalGravity();
       ApplyInterParticleGravity();
       ApplyInterParticleRepulsion();
     }
@@ -37,7 +38,11 @@ public class CohesionModule : ControllerModule
 
   private void ApplyInterParticleGravity()
   {
-    // Implementation here
+    foreach (IEntity we1 in container.Entities)
+      foreach (IEntity we2 in container.Entities)
+        if (we1 != we2)
+          we1.Accelerate(Vector2.Normalize(we2.Position - we1.Position), 0.1f * (float)(((we2.Position-we1.Position).Length() - we1.Radius) / AverageDistance()) / we1.Mass);
+    //we1.AccelerateTo(we2.Position, Game1.GRAVITY * we1.Mass * we2.Mass / (float)Math.Pow(((we1.Position - we2.Position).Length()), 1));
   }
 
   public void ApplyInterParticleRepulsion()

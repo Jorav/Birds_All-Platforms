@@ -35,7 +35,7 @@ namespace Birds.src.factories
       var iEntities = entities.Cast<IEntity>().ToList();
       //compositeController.MovementModule = MovementModuleFactory.GetMovementModule();
       compositeController.SetEntities(iEntities);
-      compositeController.Position = position;
+      //compositeController.Position = position;
       return compositeController;
     }
 

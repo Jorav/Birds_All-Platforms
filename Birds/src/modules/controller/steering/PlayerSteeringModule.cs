@@ -18,7 +18,7 @@ namespace Birds.src.modules.controller.steering
       get
       {
         bool accelerate = false;
-        if (!actionsLocked)
+        if (actionsLocked)
         {
           return accelerate;
         }

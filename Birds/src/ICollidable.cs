@@ -7,23 +7,14 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Birds.src;
 public interface ICollidable
 {
-  public Vector2 Position { get; }
-  public float Radius { get; }
-  public float Mass { get; }
+  Vector2 Position { get; }
+  float Radius { get; }
+  float Mass { get; }
+  IBoundingArea BoundingArea { get; }
+  bool IsCollidable { get; }
 
-  //NEW ONES
-  public float Rotation { set; }
-  public Color Color { get; set; }
-  public ID_OTHER Team { get; set; }
-  public void Update(GameTime gameTime);
-  public void Draw(SpriteBatch sb);
-  public void RotateTo(Vector2 position);
-  public object Clone();
-  public BoundingCircle BoundingCircle { get; }
-  //NEW ONES
-
-  public IBoundingArea BoundingArea { get; }
-  public bool IsCollidable { get; }
   public bool CollidesWith(ICollidable otherCollidable);
   public void Collide(ICollidable otherEntity);
+
+
 }

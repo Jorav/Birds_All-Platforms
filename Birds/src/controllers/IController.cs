@@ -10,10 +10,9 @@ using System.Text;
 
 namespace Birds.src.controllers
 {
-  public interface IController : ICollidable
+  public interface IController
   {
-    public List<IEntity> Entities { get; set; }
-    public AABBTree? CollisionManager { get; }
+    public List<IEntity> Entities { get; }
     public void SetEntities(List<IEntity> newEntities);
     public void AddEntity(IEntity c);
   }

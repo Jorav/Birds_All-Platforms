@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Birds.src.BVH;
+using Birds.src.modules.collision;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -8,24 +9,34 @@ namespace Birds.src.controllers;
 
 public class GameController
 {
-  public static List<Controller> controllers;
+  public static List<Controller> controllers = new();
   private AABBTree collisionManager = new();
-
-  public GameController()
-  {
-    controllers = new();
-  }
 
   public void Add(Controller c)
   {
     controllers.Add(c);
-    collisionManager.UpdateTree(controllers.Cast<ICollidable>().ToList());
+    UpdateGlobalCollisionTree();
+  }
+
+  private void UpdateGlobalCollisionTree()
+  {
+    var collisionHandlers = controllers
+        .Select(c => c.GetModule<CollisionHandlerModule>())
+        .Where(handler => handler != null)
+        .Cast<ICollidable>()
+        .ToList();
+
+    if (collisionHandlers.Count > 0)
+    {
+      collisionManager.UpdateTree(collisionHandlers);
+    }
   }
 
   public void Update(GameTime gameTime)
   {
     foreach (Controller c in controllers)
       c.Update(gameTime);
+    UpdateGlobalCollisionTree();
     collisionManager.Update(gameTime);
   }
 
@@ -35,3 +46,4 @@ public class GameController
       c.Draw(sb);
   }
 }
+

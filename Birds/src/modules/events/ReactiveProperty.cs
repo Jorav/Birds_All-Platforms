@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System;
 
-namespace Birds.src.modules.events;
 public class ReactiveProperty<T>
 {
   private T _value;
@@ -24,5 +22,10 @@ public class ReactiveProperty<T>
   public ReactiveProperty(T initialValue = default)
   {
     _value = initialValue;
+  }
+
+  public static implicit operator T(ReactiveProperty<T> property)
+  {
+    return property.Value;
   }
 }

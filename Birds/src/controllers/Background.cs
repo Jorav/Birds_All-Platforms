@@ -1,7 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Birds.src;
-using Birds.src.controllers;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Birds.src.utility;

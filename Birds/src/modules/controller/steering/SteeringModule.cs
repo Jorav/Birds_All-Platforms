@@ -1,6 +1,6 @@
 using Birds.src.entities;
+using Birds.src.events;
 using Birds.src.modules.entity;
-using Birds.src.modules.events;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.controller.steering;

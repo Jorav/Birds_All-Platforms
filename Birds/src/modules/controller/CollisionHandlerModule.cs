@@ -1,15 +1,14 @@
-﻿using Birds.src.modules;
-using Birds.src.BVH;
-using Birds.src.entities;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using System.ComponentModel;
-using Birds.src.modules.events;
-using Birds.src.modules.shared.bounding_area;
+﻿
+
 using Birds.src.bounding_areas;
+using Birds.src.BVH;
+using Birds.src.events;
+using Birds.src.modules.shared.bounding_area;
+using Microsoft.Xna.Framework;
+using System.Linq;
 
 namespace Birds.src.modules.collision;
+
 public class CollisionHandlerModule : ControllerModule, ICollidable
 {
   public AABBTree CollisionManager { get; private set; }

@@ -1,6 +1,6 @@
 ﻿using Birds.src.entities;
 using Microsoft.Xna.Framework;
-using Birds.src.modules.events;
+using Birds.src.events;
 
 namespace Birds.src.modules.controller;
 public class ControllerMovementModule : ControllerModule, IMovementModule

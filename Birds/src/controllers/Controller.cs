@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Birds.src.bounding_areas;
 using Birds.src.entities;
-using Birds.src.modules.events;
-using Birds.src.modules.shared.bounding_area;
+using Birds.src.events;
 using Birds.src.utility;
 using Microsoft.Xna.Framework.Graphics;
 

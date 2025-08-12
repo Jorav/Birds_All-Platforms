@@ -20,10 +20,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\CollisionHandlerModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\ControllerMovementModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\events\ControllerModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\events\IModuleContainer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\events\ModuleContainerBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\events\ReactiveProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\events\ControllerModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\events\IModuleContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\events\ReactiveProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\IMovementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\collision_detection\BCCollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\collision_detection\OBBCollisionDetectionModule.cs" />

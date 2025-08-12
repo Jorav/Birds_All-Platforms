@@ -1,5 +1,5 @@
 ﻿using Birds.src.bounding_areas;
-using Birds.src.modules.events;
+using Birds.src.events;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.shared.bounding_area;

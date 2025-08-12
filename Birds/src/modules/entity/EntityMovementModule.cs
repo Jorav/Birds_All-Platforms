@@ -1,5 +1,5 @@
 ﻿using Birds.src.factories;
-using Birds.src.modules.events;
+using Birds.src.events;
 using Microsoft.Xna.Framework;
 using System;
 

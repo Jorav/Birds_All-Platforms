@@ -1,9 +1,6 @@
 ﻿using Birds.src.bounding_areas;
-using Birds.src.modules.events;
+using Birds.src.events;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Birds.src.modules.shared.bounding_area;
 public class OBBCollisionDetectionModule : ControllerModule

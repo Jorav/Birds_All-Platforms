@@ -26,22 +26,32 @@ public abstract class ModuleContainerBase : IModuleContainer
   public ReactiveProperty<Vector2> Velocity => _velocity ??= new ReactiveProperty<Vector2>();
   public ReactiveProperty<float> Scale => _scale ??= new ReactiveProperty<float>(1f);
 
-  public List<IEntity> Entities { get; } = new();
+  public List<IEntity> Entities { get; private set; } = new();
 
   private Dictionary<Type, ControllerModule> modules = new Dictionary<Type, ControllerModule>();
 
-  public T AddModule<T>(T module) where T : ControllerModule
+  public void AddModule<T>(T module) where T : ControllerModule
   {
     module.Initialize(this);
     modules[typeof(T)] = module;
-    return module;
   }
 
   public T GetModule<T>() where T : ControllerModule
   {
-    modules.TryGetValue(typeof(T), out var module);
-    return module as T;
+    if (modules.TryGetValue(typeof(T), out var module))
+    {
+      return module as T;
+    }
+    foreach (var kvp in modules)
+    {
+      if (kvp.Value is T matchingModule)
+      {
+        return matchingModule;
+      }
+    }
+    return null;
   }
+
 
   public bool HasModule<T>() where T : ControllerModule
   {
@@ -55,6 +65,31 @@ public abstract class ModuleContainerBase : IModuleContainer
       module.UpdateModule(gameTime);
     }
   }
+
+  public virtual object Clone()
+  {
+    var cloned = (ModuleContainerBase)this.MemberwiseClone();
+    cloned.modules = new Dictionary<Type, ControllerModule>();
+    cloned.Entities = new List<IEntity>();
+
+    foreach (var kvp in modules)
+    {
+      var clonedModule = (ControllerModule)kvp.Value.Clone();
+      clonedModule.Initialize(cloned);
+      cloned.modules[clonedModule.GetType()] = clonedModule;
+    }
+    if (_position != null) cloned._position = new ReactiveProperty<Vector2>(_position.Value);
+    if (_rotation != null) cloned._rotation = new ReactiveProperty<float>(_rotation.Value);
+    if (_mass != null) cloned._mass = new ReactiveProperty<float>(_mass.Value);
+    if (_radius != null) cloned._radius = new ReactiveProperty<float>(_radius.Value);
+    if (_color != null) cloned._color = new ReactiveProperty<Color>(_color.Value);
+    if (_team != null) cloned._team = new ReactiveProperty<ID_OTHER>(_team.Value);
+    if (_velocity != null) cloned._velocity = new ReactiveProperty<Vector2>(_velocity.Value);
+    if (_scale != null) cloned._scale = new ReactiveProperty<float>(_scale.Value);
+
+    return cloned;
+  }
+
 
   public virtual void Dispose()
   {

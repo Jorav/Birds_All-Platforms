@@ -75,6 +75,13 @@ public abstract class ControllerModule
     void SyncToContainer();
   }
 
+  public virtual object Clone()
+  {
+    var cloned = (ControllerModule)this.MemberwiseClone();
+    cloned.container = null;
+    return cloned;
+  }
+
   private class WriteSyncProperty<T> : IWriteSyncProperty
   {
     private readonly object _module;

@@ -30,4 +30,10 @@ public class BCCollisionDetectionModule : ControllerModule
       BoundingCircle.Radius = Radius;  // Works because BoundingCircle has settable Radius
     }
   }
+  public override object Clone()
+  {
+    BCCollisionDetectionModule cloned = (BCCollisionDetectionModule)base.Clone();
+    cloned.BoundingCircle = null;
+    return cloned;
+  }
 }

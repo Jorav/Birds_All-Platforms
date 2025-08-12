@@ -55,29 +55,17 @@ public class Controller : ModuleContainerBase, IController
     }
     Entities.Clear();
   }
-
-  public virtual object Clone()
+  public override object Clone()
   {
-    /*
-    Controller cNew = (Controller)this.MemberwiseClone();
-    cNew.CollisionManager = new AABBTree();
-    List<IEntity> entities = new List<IEntity>();
-    foreach (IEntity c in Entities)
-      entities.Add((IEntity)c.Clone());
-    cNew.SetEntities(entities);
-    cNew.BoundingCircle = BoundingAreaFactory.GetCircle(cNew.Position, cNew.radius);
-    if (Steering != null)
+    var cloned = (Controller)base.Clone();
+    cloned.Entities.Clear();
+    List<IEntity> clonedEntities = new List<IEntity>();
+    foreach (IEntity entity in Entities)
     {
-      cNew.Steering = (SteeringModule)Steering.Clone();
-      cNew.Steering.controller = cNew;
+      clonedEntities.Add((IEntity)entity.Clone());
     }
-    if (CohesionModule != null)
-    {
-      cNew.CohesionModule = (CohesionModule)CohesionModule.Clone();
-      cNew.CohesionModule.controller = cNew;
-    }
-    return cNew;*/
-    throw new NotImplementedException();
+    cloned.SetEntities(clonedEntities);
+    return cloned;
   }
   #endregion
 }

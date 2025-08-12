@@ -40,5 +40,6 @@ namespace Birds.src.entities
     public void Update(GameTime gameTime);
     public void Draw(SpriteBatch sb);
     public void Deprecate();
+    public object Clone();
   }
 }

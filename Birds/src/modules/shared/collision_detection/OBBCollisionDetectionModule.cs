@@ -36,5 +36,13 @@ public class OBBCollisionDetectionModule : ControllerModule
       OBB.Rotation = Rotation;
     }
   }
+
+  public override object Clone()
+  {
+    OBBCollisionDetectionModule cloned = (OBBCollisionDetectionModule)base.Clone();
+    cloned.OBB = null;
+    return cloned;
+  }
+
 }
 

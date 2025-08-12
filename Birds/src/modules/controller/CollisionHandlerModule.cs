@@ -65,4 +65,11 @@ public class CollisionHandlerModule : ControllerModule, ICollidable
       CollisionManager.CollideWithTree(otherHandler.CollisionManager);
     }
   }
+  public override object Clone()
+  {
+    CollisionHandlerModule cloned = (CollisionHandlerModule)base.Clone();
+    cloned.CollisionManager = new AABBTree();
+    cloned.CollisionManager.ResolveInternalCollisions = this.ResolveInternalCollisions;
+    return cloned;
+  }
 }

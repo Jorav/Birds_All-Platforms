@@ -8,6 +8,7 @@ public class CohesionModule : ControllerModule
 {
   public Vector2 Position { get; set; }
   public static float REPULSIONDISTANCE = 100;
+  private float averageDistance;
 
   protected override void ConfigurePropertySync()
   {
@@ -18,6 +19,7 @@ public class CohesionModule : ControllerModule
   {
     if (container.Entities.Count > 0)
     {
+      averageDistance = AverageDistance();
       ApplyInternalGravity();
       ApplyInterParticleGravity();
       ApplyInterParticleRepulsion();
@@ -27,33 +29,33 @@ public class CohesionModule : ControllerModule
   protected void ApplyInternalGravity()
   {
     Vector2 distanceFromController;
-    foreach (IEntity c1 in container.Entities)
+    foreach (IEntity entity in container.Entities)
     {
-      distanceFromController = Position - c1.Position;
-      if (distanceFromController.Length() > c1.Radius)
-        c1.Accelerate(Vector2.Normalize(Position - c1.Position), 0.3f * (float)((distanceFromController.Length() - c1.Radius) / AverageDistance()) / c1.Mass);
+      distanceFromController = Position - entity.Position;
+      if (distanceFromController.Length() > entity.Radius)
+        entity.Accelerate(Vector2.Normalize(Position - entity.Position), 0.2f * (float)((distanceFromController.Length() - entity.Radius) / averageDistance) / entity.Mass);
     }
   }
 
   private void ApplyInterParticleGravity()
   {
-    foreach (IEntity we1 in container.Entities)
-      foreach (IEntity we2 in container.Entities)
-        if (we1 != we2)
-          we1.AccelerateTo(we2.Position, we1.Mass * we2.Mass / (float)Math.Pow(((we1.Position - we2.Position).Length()), 1));
+    foreach (IEntity entity1 in container.Entities)
+      foreach (IEntity entity2 in container.Entities)
+        if (entity1 != entity2)
+          entity1.AccelerateTo(entity2.Position, 0.005f * averageDistance * entity1.Mass * entity2.Mass / (float)Math.Pow(((entity1.Position.Value - entity2.Position.Value).Length()), 1));
   }
 
   public void ApplyInterParticleRepulsion()
   {
-    foreach (IEntity e1 in container.Entities)
+    foreach (IEntity entity1 in container.Entities)
     {
-      foreach (IEntity e2 in container.Entities)
+      foreach (IEntity entity2 in container.Entities)
       {
-        if (e1 == e2 || e1.Radius + e2.Radius + REPULSIONDISTANCE <= Vector2.Distance(e1.Position, e2.Position))
+        if (entity1 == entity2 || entity1.Radius + entity2.Radius + REPULSIONDISTANCE <= Vector2.Distance(entity1.Position, entity2.Position))
         {
           continue;
         }
-        Vector2 vectorToE = e2.Position - e1.Position;
+        Vector2 vectorToE = entity2.Position.Value - entity1.Position.Value;
         float distance = vectorToE.Length();
         float res = 0;
         if (distance < 32)
@@ -62,7 +64,7 @@ public class CohesionModule : ControllerModule
         }
         res = 9f / distance;
         vectorToE.Normalize();
-        e2.Accelerate(vectorToE, e1.Mass * res);
+        entity2.Accelerate(vectorToE, entity1.Mass.Value * res);
       }
     }
   }
@@ -72,10 +74,10 @@ public class CohesionModule : ControllerModule
     float nr = 1;
     float distance = 0;
     float mass = 0;
-    foreach (IEntity c in container.Entities)
+    foreach (IEntity entity in container.Entities)
     {
-      distance += (Vector2.Distance(c.Position, Position) + c.Radius) * c.Mass;
-      mass += c.Mass;
+      distance += (Vector2.Distance(entity.Position, Position) + entity.Radius) * entity.Mass;
+      mass += entity.Mass;
     }
     if (mass != 0)
     {

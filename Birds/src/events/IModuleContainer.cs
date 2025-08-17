@@ -21,4 +21,6 @@ public interface IModuleContainer
   ReactiveProperty<ID_OTHER> Team { get; }
   ReactiveProperty<Vector2> Velocity { get; }
   ReactiveProperty<float> Scale { get; }
+  ReactiveProperty<float> Width { get; }
+  ReactiveProperty<float> Height { get; }
 }

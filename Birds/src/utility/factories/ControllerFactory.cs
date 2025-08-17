@@ -21,14 +21,14 @@ namespace Birds.src.factories
           c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
           c.AddModule(new ControllerMovementModule());
           c.AddModule(new BCCollisionDetectionModule());
-          c.AddModule(new CollisionHandlerModule());
+          c.AddModule(new ControllerCollisionHandlerModule());
           return c;
 
         case ID_CONTROLLER.PLAYER:
           c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
           c.AddModule(new ControllerMovementModule());
           c.AddModule(new BCCollisionDetectionModule());
-          c.AddModule(new CollisionHandlerModule());
+          c.AddModule(new ControllerCollisionHandlerModule());
           c.AddModule(new PlayerSteeringModule());
           c.AddModule(new CohesionModule());
           return c;
@@ -37,16 +37,16 @@ namespace Birds.src.factories
           c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
           c.AddModule(new ControllerMovementModule());
           c.AddModule(new BCCollisionDetectionModule());
-          c.AddModule(new CollisionHandlerModule());
+          c.AddModule(new ControllerCollisionHandlerModule());
           c.AddModule(new ChaserSteeringModule());
           return c;
 
         case ID_CONTROLLER.BACKGROUND_SUN:
-          c = new Background(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.SUN, isBackground: true, scale: 4), Input.Camera, relativeSpeed: 0.2f);
+          c = new Background(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.SUN, isBackground: true), Input.Camera, relativeSpeed: 0.2f);//scale used to be 4
           return c;
 
         case ID_CONTROLLER.FOREGROUND_CLOUD:
-          c = new Background(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.CLOUD, isBackground: true, scale: 3), Input.Camera, relativeSpeed: 1.5f);
+          c = new Background(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.CLOUD, isBackground: true), Input.Camera, relativeSpeed: 1.5f);//scale used to be 3
           return c;
 
         default:

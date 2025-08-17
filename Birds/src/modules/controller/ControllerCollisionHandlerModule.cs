@@ -3,31 +3,33 @@
 using Birds.src.bounding_areas;
 using Birds.src.BVH;
 using Birds.src.events;
+using Birds.src.modules.entity;
 using Birds.src.modules.shared.bounding_area;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
 namespace Birds.src.modules.collision;
 
-public class CollisionHandlerModule : ControllerModule, ICollidable
+public class ControllerCollisionHandlerModule : ControllerModule, ICollidable
 {
   public AABBTree CollisionManager { get; private set; }
   public bool ResolveInternalCollisions { get; set; } = true;
-
-  public Vector2 Position => container.Position.Value;
-  public float Radius => container.Radius.Value;
-  public float Mass => container.Mass.Value;
+  public Vector2 Position { get; set; }
+  public float Radius { get; set; }
+  public float Mass { get; set; }
   public bool IsCollidable { get; set; } = true;
   public IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
 
-  public CollisionHandlerModule()
+  public ControllerCollisionHandlerModule()
   {
     CollisionManager = new AABBTree();
   }
 
   protected override void ConfigurePropertySync()
   {
-    // No property sync needed - reads directly from container
+    ReadSync(() => Position, container.Position);
+    ReadSync(() => Radius, container.Radius);
+    ReadSync(() => Mass, container.Mass);
   }
 
   protected override void Update(GameTime gameTime)
@@ -39,16 +41,18 @@ public class CollisionHandlerModule : ControllerModule, ICollidable
 
   private void UpdateTreeWithEntities()
   {
-    var collidableEntities = container.Entities
-        .Where(e => e.IsCollidable)
+    var entityCollisionHandlers = container.Entities
+        .Select(e => e.GetModule<EntityCollisionHandlerModule>())
+        .Where(handler => handler != null && handler.IsCollidable)
         .Cast<ICollidable>()
         .ToList();
 
-    if (collidableEntities.Count > 0)
+    if (entityCollisionHandlers.Count > 0)
     {
-      CollisionManager.UpdateTree(collidableEntities);
+      CollisionManager.UpdateTree(entityCollisionHandlers);
     }
   }
+
 
   public bool CollidesWith(ICollidable otherCollidable)
   {
@@ -60,14 +64,14 @@ public class CollisionHandlerModule : ControllerModule, ICollidable
 
   public void Collide(ICollidable otherEntity)
   {
-    if (otherEntity is CollisionHandlerModule otherHandler)
+    if (otherEntity is ControllerCollisionHandlerModule otherHandler)
     {
       CollisionManager.CollideWithTree(otherHandler.CollisionManager);
     }
   }
   public override object Clone()
   {
-    CollisionHandlerModule cloned = (CollisionHandlerModule)base.Clone();
+    ControllerCollisionHandlerModule cloned = (ControllerCollisionHandlerModule)base.Clone();
     cloned.CollisionManager = new AABBTree();
     cloned.CollisionManager.ResolveInternalCollisions = this.ResolveInternalCollisions;
     return cloned;

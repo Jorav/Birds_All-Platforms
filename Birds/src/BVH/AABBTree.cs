@@ -221,21 +221,16 @@ namespace Birds.src.BVH
       root.Collide(tree.root, CollissionPairs);
     }
 
-    //adapted after this program specifically
     public void ResolveCollissions()
     {
       while (CollissionPairs.Count > 0)
       {
         (ICollidable, ICollidable) pair = CollissionPairs.Pop();
-        if (pair.Item1 is IEntity e1 && pair.Item2 is IEntity e2)
-        {
-          e1.Collide(e2);
-          e2.Collide(e1);
-        }
-        else
-          pair.Item1.Collide(pair.Item2);
+        pair.Item1.Collide(pair.Item2);
+        pair.Item2.Collide(pair.Item1);
       }
     }
+
 
     private void RebuildTree()
     {

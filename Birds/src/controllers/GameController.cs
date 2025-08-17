@@ -21,7 +21,7 @@ public class GameController
   private void UpdateGlobalCollisionTree()
   {
     var collisionHandlers = controllers
-        .Select(c => c.GetModule<CollisionHandlerModule>())
+        .Select(c => c.GetModule<ControllerCollisionHandlerModule>())
         .Where(handler => handler != null)
         .Cast<ICollidable>()
         .ToList();

@@ -25,8 +25,8 @@ public class CompositeController : Controller, IController, IEntity //remove Con
       {
         Vector2 relativePosition = e.Position - Position.Value;
         Vector2 newRelativePosition = Vector2.Transform(relativePosition, Matrix.CreateRotationZ(-dRotation));
-        e.MovementModule.Velocity = newRelativePosition - relativePosition;
-        e.Rotation = Rotation;
+        //e.MovementModule.Velocity = newRelativePosition - relativePosition;
+        //e.Rotation = Rotation;
 
       }
       rotation = value;
@@ -36,15 +36,15 @@ public class CompositeController : Controller, IController, IEntity //remove Con
 
   public Controller Manager { get; set; }
 
-  EntityMovementModule IEntity.MovementModule => throw new NotImplementedException();
+  //EntityMovementModule IEntity.MovementModule => throw new NotImplementedException();
 
-  float IEntity.Radius => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+  //float IEntity.Radius => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
 
-  Vector2 ICollidable.Position => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+  //Vector2 ICollidable.Position => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
 
-  float ICollidable.Radius => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+  //float ICollidable.Radius => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
 
-  float ICollidable.Mass => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
+  //float ICollidable.Mass => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
 
   public bool IsCollidable => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
 
@@ -68,7 +68,7 @@ public class CompositeController : Controller, IController, IEntity //remove Con
     {
       throw new InvalidDataException("Collides with subentities");
     }
-    e.MovementModule.Friction = 0;
+    //e.MovementModule.Friction = 0;
 
     base.AddEntity(e);
     //MovementModule.Mass += e.MovementModule.Mass;
@@ -91,8 +91,8 @@ public class CompositeController : Controller, IController, IEntity //remove Con
 
     foreach (IEntity entity in Entities)
     {
-      entity.MovementModule.Friction = 0;
-      entity.Rotation = Rotation;
+      //entity.MovementModule.Friction = 0;
+      entity.Rotation.Value = Rotation;
       //MovementModule.Mass += entity.Mass;
       //MovementModule.Thrust += entity.MovementModule.Thrust;
     }
@@ -100,23 +100,25 @@ public class CompositeController : Controller, IController, IEntity //remove Con
 
   private bool CollidesWithSubEntities(IEntity newEntity)
   {
-    bool collides = false;
+    var newEntityCollisionHandler = newEntity.GetModule<EntityCollisionHandlerModule>();
+    if (newEntityCollisionHandler == null || !newEntityCollisionHandler.IsCollidable)
+      return false;
+
     foreach (IEntity e in Entities)
     {
-      if (!e.CollidesWith(newEntity))
-      {
+      var existingEntityCollisionHandler = e.GetModule<EntityCollisionHandlerModule>();
+      if (existingEntityCollisionHandler == null || !existingEntityCollisionHandler.IsCollidable)
         continue;
-      }
-      if (e is WorldEntity we && !we.IsFiller)
+
+      if (existingEntityCollisionHandler.CollidesWith(newEntityCollisionHandler))
       {
-        collides = true;
-      }
-      else
-      {
-        collides = true;
+        if (e is WorldEntity we && !we.IsFiller)
+        {
+          return true;
+        }
       }
     }
-    return collides;
+    return false;
   }
 
   protected void ConnectToOthers(WorldEntity entity)
@@ -139,9 +141,9 @@ public class CompositeController : Controller, IController, IEntity //remove Con
         }
         foreach (Link lEntity in entity.Links)
         {
-          if (lEntity.ConnectionAvailable
-            && e.BoundingArea.Contains(lEntity.AbsolutePosition - lE.RelativePositionRotated / 2)
-            && entity.BoundingArea.Contains(lE.AbsolutePosition - lEntity.RelativePositionRotated / 2)) //divided by 2 because of edges of links connecting to others
+          if (lEntity.ConnectionAvailable)
+            //&& e.BoundingArea.Contains(lEntity.AbsolutePosition - lE.RelativePositionRotated / 2)
+            //&& entity.BoundingArea.Contains(lE.AbsolutePosition - lEntity.RelativePositionRotated / 2)) //divided by 2 because of edges of links connecting to others
           {
             lE.ConnectTo(lEntity);
           }

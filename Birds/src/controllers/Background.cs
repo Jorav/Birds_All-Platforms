@@ -29,11 +29,11 @@ namespace Birds.src.controllers
         Vector2 cameraChange = camera.Position - camera.PreviousPosition;
         Vector2 positionChange = cameraChange * (1 - relativeSpeed) + movement * relativeSpeed;
         //e.Accelerate(movement * relativeSpeed);
-        e.Position += positionChange;
-        e.Scale += (camera.Zoom - previousZoom) * relativeSpeed;
+        e.Position.Value += positionChange;
+        e.Scale.Value += (camera.Zoom - previousZoom) * relativeSpeed;
 
         //e.Scale = 1.5f-camera.Zoom*(relativeSpeed);
-        e.MovementModule.TotalExteriorForce *= (1 - relativeSpeed);
+        //e.MovementModule.TotalExteriorForce *= (1 - relativeSpeed);
         e.Update(gameTime);
         //UpdatePosition();
         //UpdateRadius();

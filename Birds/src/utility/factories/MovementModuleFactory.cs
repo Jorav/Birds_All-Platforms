@@ -25,7 +25,6 @@ namespace Birds.src.factories
       {
         m = new EntityMovementModule();
       }
-      m.SetAttributes(Vector2.Zero, 0, 0, 0,1f);
       return m;
     }
     public static EntityMovementModule GetMovementModule(Vector2 position, float rotation, float mass, float thrust, float friction)

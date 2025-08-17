@@ -14,11 +14,13 @@ public class EntityMovementModule : ControllerModule, IMovementModule
   protected float rotation;
   protected Vector2 velocity;
   public virtual Vector2 Velocity { get { return velocity; } set { velocity = value; } }
-  public virtual float Friction { get; set; } // percent, where 0.1f = 10% friction
+  public virtual float Friction { get; set; } = 0.1f;// percent, where 0.1f = 10% friction
   public Vector2 TotalExteriorForce;
 
   public EntityMovementModule()
   {
+    Mass = 1;
+    Thrust = 1;
   }
   public void SetAttributes(Vector2 position, float rotation, float mass, float thrust, float friction)
   {

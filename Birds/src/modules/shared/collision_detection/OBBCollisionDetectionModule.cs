@@ -8,24 +8,21 @@ public class OBBCollisionDetectionModule : ControllerModule
   public Vector2 Position { get; set; }
   public float Rotation { get; set; }
   public OrientedBoundingBox OBB { get; private set; }
-  private readonly int _width, _height;
-
-  public OBBCollisionDetectionModule(int width, int height)
-  {
-    _width = width;
-    _height = height;
-  }
+  public float Width { get; set; }
+  public float Height { get; set; }
 
   protected override void ConfigurePropertySync()
   {
     ReadSync(() => Position, container.Position);
     ReadSync(() => Rotation, container.Rotation);
+    ReadSync(() => Width, container.Width);
+    ReadSync(() => Height, container.Height);
   }
 
   public override void Initialize(IModuleContainer container)
   {
     base.Initialize(container);
-    OBB = BoundingAreaFactory.GetOBB(Position, Rotation, _width, _height);
+    OBB = BoundingAreaFactory.GetOBB(Position, Rotation, (int)Width, (int)Height);
   }
 
   protected override void Update(GameTime gameTime)

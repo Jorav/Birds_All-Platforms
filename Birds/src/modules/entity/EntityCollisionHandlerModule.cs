@@ -1,0 +1,92 @@
+﻿using Birds.src.bounding_areas;
+using Birds.src.entities;
+using Birds.src.events;
+using Birds.src.modules.shared.bounding_area;
+using Microsoft.Xna.Framework;
+using System;
+
+namespace Birds.src.modules.entity
+{
+  public class EntityCollisionHandlerModule : ControllerModule, ICollidable
+  {
+    public Vector2 Position { get; set; }
+    public float Radius { get; set; }
+    public float Mass { get; set; }
+    public bool IsCollidable { get; set; } = true;
+
+    public BoundingCircle BoundingCircle => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
+    public IBoundingArea BoundingArea => GetSpecificBoundingArea();
+
+    private IBoundingArea GetSpecificBoundingArea()
+    {
+      var obb = container.GetModule<OBBCollisionDetectionModule>()?.OBB;
+      if (obb != null) return obb;
+
+      var circle = container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
+      return circle;
+    }
+
+    protected override void ConfigurePropertySync()
+    {
+      ReadSync(() => Position, container.Position);
+      ReadSync(() => Radius, container.Radius);
+      ReadSync(() => Mass, container.Mass);
+    }
+
+    protected override void Update(GameTime gameTime)
+    {
+    }
+
+    public bool CollidesWith(ICollidable otherCollidable)
+    {
+      if (!IsCollidable || !otherCollidable.IsCollidable)
+        return false;
+
+      // Check if it's another EntityCollisionHandlerModule
+      if (otherCollidable is EntityCollisionHandlerModule otherHandler)
+      {
+        return BoundingCircle != null
+            && otherHandler.BoundingCircle != null
+            && BoundingCircle.CollidesWith(otherHandler.BoundingCircle)
+            && BoundingArea != null
+            && otherHandler.BoundingArea != null
+            && BoundingArea.CollidesWith(otherHandler.BoundingArea);
+      }
+      else
+      {
+        // For non-EntityCollisionHandlerModule (like ControllerCollisionHandlerModule)
+        return BoundingArea?.CollidesWith(otherCollidable.BoundingArea) ?? false;
+      }
+    }
+
+    public void Collide(ICollidable otherCollidable)
+    {
+      if (otherCollidable is EntityCollisionHandlerModule otherHandler)
+      {
+        var movementModule = container.GetModule<EntityMovementModule>();
+        var otherMovementModule = otherHandler.container.GetModule<EntityMovementModule>();
+
+        if (movementModule != null && otherMovementModule != null)
+        {
+          movementModule.TotalExteriorForce += movementModule.CalculateCollissionRepulsion(otherMovementModule);
+
+          if (BoundingCircle != null && otherHandler.BoundingCircle != null)
+          {
+            movementModule.TotalExteriorForce += BoundingCircle.CalculateOverlapRepulsion(otherHandler.BoundingCircle);
+          }
+        }
+      }
+      else
+      {
+        throw new NotImplementedException("EntityCollisionHandlerModule: Collision with non-EntityCollisionHandlerModule not implemented");
+      }
+    }
+
+    public override object Clone()
+    {
+      EntityCollisionHandlerModule cloned = (EntityCollisionHandlerModule)base.Clone();
+      cloned.IsCollidable = this.IsCollidable;
+      return cloned;
+    }
+  }
+}

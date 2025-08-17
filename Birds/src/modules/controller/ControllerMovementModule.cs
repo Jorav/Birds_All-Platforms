@@ -17,19 +17,11 @@ public class ControllerMovementModule : ControllerModule, IMovementModule
     //WriteSync(() => Thrust, container.Thrust);
   }
 
-  public void SetAttributes(Vector2 position, float rotation, float mass, float thrust, float friction)
-  {
-    foreach (IEntity entity in container.Entities)
-    {
-      entity.MovementModule.SetAttributes(position, rotation, mass, thrust, friction);
-    }
-  }
-
   public void AccelerateTo(Vector2 position, float thrust)
   {
     foreach (IEntity entity in container.Entities)
     {
-      entity.MovementModule.AccelerateTo(position, thrust);
+      entity.AccelerateTo(position, thrust);
     }
   }
 
@@ -37,7 +29,7 @@ public class ControllerMovementModule : ControllerModule, IMovementModule
   {
     foreach (IEntity entity in container.Entities)
     {
-      entity.MovementModule.Accelerate(directionalVector, thrust);
+      entity.Accelerate(directionalVector, thrust);
     }
   }
 
@@ -45,7 +37,7 @@ public class ControllerMovementModule : ControllerModule, IMovementModule
   {
     foreach (IEntity entity in container.Entities)
     {
-      entity.MovementModule.Accelerate(directionalVector);
+      entity.Accelerate(directionalVector);
     }
   }
 
@@ -53,7 +45,7 @@ public class ControllerMovementModule : ControllerModule, IMovementModule
   {
     foreach (IEntity entity in container.Entities)
     {
-      entity.MovementModule.RotateTo(position);
+      entity.RotateTo(position);
     }
   }
 
@@ -77,7 +69,7 @@ public class ControllerMovementModule : ControllerModule, IMovementModule
     foreach (IEntity entity in container.Entities)
     {
       weight += entity.Mass;
-      sum += entity.Position * entity.Mass;
+      sum += entity.Position.Value * entity.Mass.Value;
     }
 
     if (weight > 0)

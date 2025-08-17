@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\controllers\Background.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\Link.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionHandlerModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupMovementModule.cs" />

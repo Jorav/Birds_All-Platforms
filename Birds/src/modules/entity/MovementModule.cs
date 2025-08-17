@@ -31,9 +31,6 @@ public class MovementModule : ModuleBase, IMovementModule
     Rotation = 0;
   }
 
-  public void SetAttributes(Vector2 position, float rotation, float mass, float thrust, float friction)
-  {}
-
   public void AccelerateTo(Vector2 position, float thrust)
   {
     Accelerate(position - Position, thrust);
@@ -80,8 +77,6 @@ public class MovementModule : ModuleBase, IMovementModule
     TotalExteriorForce = Vector2.Zero;
   }
 
-  public void Update2(GameTime gameTime) { Update(gameTime); }
-
   public Vector2 CalculateCollissionRepulsion(MovementModule m)
   {
     Vector2 vectorFromOther = m.Position - Position;
@@ -89,5 +84,17 @@ public class MovementModule : ModuleBase, IMovementModule
     vectorFromOther.Normalize();
     Vector2 collissionRepulsion = 0.5f * Vector2.Normalize(-vectorFromOther) * (Vector2.Dot(Velocity, vectorFromOther) * Mass + Vector2.Dot(m.Velocity, -vectorFromOther) * m.Mass); //make velocity depend on position
     return collissionRepulsion;
+  }
+  public override object Clone()
+  {
+    var cloned = new MovementModule();
+    cloned.Mass = this.Mass;
+    cloned.Thrust = this.Thrust;
+    cloned.Rotation = this.Rotation;
+    cloned.Friction = this.Friction;
+    cloned.Velocity = Vector2.Zero;
+    cloned.Position = this.Position;
+    cloned.TotalExteriorForce = Vector2.Zero;
+    return cloned;
   }
 }

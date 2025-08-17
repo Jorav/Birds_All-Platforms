@@ -76,12 +76,6 @@ public abstract class ModuleContainer : IModuleContainer
     cloned.modules = new Dictionary<Type, ModuleBase>();
     cloned.Entities = new List<IEntity>();
 
-    foreach (var kvp in modules)
-    {
-      var clonedModule = (ModuleBase)kvp.Value.Clone();
-      clonedModule.Initialize(cloned);
-      cloned.modules[clonedModule.GetType()] = clonedModule;
-    }
     if (_position != null) cloned._position = new ReactiveProperty<Vector2>(_position.Value);
     if (_rotation != null) cloned._rotation = new ReactiveProperty<float>(_rotation.Value);
     if (_mass != null) cloned._mass = new ReactiveProperty<float>(_mass.Value);
@@ -90,10 +84,18 @@ public abstract class ModuleContainer : IModuleContainer
     if (_team != null) cloned._team = new ReactiveProperty<ID_OTHER>(_team.Value);
     if (_velocity != null) cloned._velocity = new ReactiveProperty<Vector2>(_velocity.Value);
     if (_scale != null) cloned._scale = new ReactiveProperty<float>(_scale.Value);
+    if (_width != null) cloned._width = new ReactiveProperty<float>(_width.Value);
+    if (_height != null) cloned._height = new ReactiveProperty<float>(_height.Value);
+
+    foreach (var kvp in modules)
+    {
+      var clonedModule = (ModuleBase)kvp.Value.Clone();
+      clonedModule.Initialize(cloned);
+      cloned.modules[clonedModule.GetType()] = clonedModule;
+    }
 
     return cloned;
   }
-
 
   public virtual void Dispose()
   {

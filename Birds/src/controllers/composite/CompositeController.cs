@@ -127,23 +127,29 @@ public class CompositeController : Controller, IController, IEntity //remove Con
     {
       return;
     }
+
+    var entityLinkModule = entity.GetModule<LinkModule>();
+    if (entityLinkModule == null) return;
+
     foreach (WorldEntity e in Entities)
     {
       if (entity == e || e.IsFiller)
       {
         continue;
       }
-      foreach (Link lE in e.Links)
+
+      var eLinkModule = e.GetModule<LinkModule>();
+      if (eLinkModule == null) continue;
+
+      foreach (Link lE in eLinkModule.Links)
       {
         if (!lE.ConnectionAvailable)
         {
           continue;
         }
-        foreach (Link lEntity in entity.Links)
+        foreach (Link lEntity in entityLinkModule.Links)
         {
           if (lEntity.ConnectionAvailable)
-            //&& e.BoundingArea.Contains(lEntity.AbsolutePosition - lE.RelativePositionRotated / 2)
-            //&& entity.BoundingArea.Contains(lE.AbsolutePosition - lEntity.RelativePositionRotated / 2)) //divided by 2 because of edges of links connecting to others
           {
             lE.ConnectTo(lEntity);
           }
@@ -151,6 +157,7 @@ public class CompositeController : Controller, IController, IEntity //remove Con
       }
     }
   }
+
   #region ConnectSeperatedEntities
   /*private List<HashSet<WorldEntity>> GetSetsOfEntities()
   {

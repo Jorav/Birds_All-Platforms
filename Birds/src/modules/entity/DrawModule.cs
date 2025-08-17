@@ -65,5 +65,13 @@ public class DrawModule : ModuleBase, IDrawModule
   {
     Sprite?.Draw(sb);
   }
+
+  public override object Clone()
+  {
+    var cloned = (DrawModule)this.MemberwiseClone();
+    cloned.Sprite = new Sprite(this.Sprite.Texture, this.Scale);
+    return cloned;
+  }
+
 }
 

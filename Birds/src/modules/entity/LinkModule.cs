@@ -1,4 +1,5 @@
-﻿using Birds.src.entities;
+﻿using Birds.src.controllers.composite;
+using Birds.src.entities;
 using Birds.src.events;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -6,8 +7,9 @@ using System.Collections.Generic;
 namespace Birds.src.modules.entity;
 public class LinkModule : ModuleBase
 {
-  public List<WorldEntity.Link> Links { get; private set; } = new List<WorldEntity.Link>();
-  public float Width { get; set; } = 32f;
+  public List<Link> Links { get; private set; } = new List<Link>();
+  public float InternalRotation { get; set; } = 0f;
+
 
   protected override void ConfigurePropertySync()
   {
@@ -30,28 +32,34 @@ public class LinkModule : ModuleBase
     if (Links.Count > 0)
       Links.Clear();
 
-    // Assuming this is for a WorldEntity
-    if (container is WorldEntity entity)
+    if (container is IEntity entity)
     {
-      Links.Add(new WorldEntity.Link(new Vector2(0, -Width / 2), entity));
-      Links.Add(new WorldEntity.Link(new Vector2(Width / 2, 0), entity));
-      Links.Add(new WorldEntity.Link(new Vector2(0, Width / 2), entity));
-      Links.Add(new WorldEntity.Link(new Vector2(-Width / 2, 0), entity));
+      // Get width from sprite module
+      var spriteModule = entity.GetModule<DrawModule>();
+      if (spriteModule != null)
+      {
+        float width = spriteModule.Sprite.Width;
+
+        Links.Add(new Link(new Vector2(0, -width / 2), entity));
+        Links.Add(new Link(new Vector2(width / 2, 0), entity));
+        Links.Add(new Link(new Vector2(0, width / 2), entity));
+        Links.Add(new Link(new Vector2(-width / 2, 0), entity));
+      }
     }
   }
 
-  public void ConnectTo(WorldEntity eConnectedTo, WorldEntity.Link lConnectedTo)
+  public void ConnectTo(IEntity eConnectedTo, Link lConnectedTo)
   {
-    if (Links.Count > 0 && Links[0] != null && container is WorldEntity entity)
+    if (Links.Count > 0 && Links[0] != null && container is IEntity entity)
     {
       lConnectedTo.SeverConnection();
       var internalRotation = Links[0].ConnectTo(lConnectedTo);
-      //entity.EntityRotation = eConnectedTo.EntityRotation - internalRotation;
-      //entity.EntityPosition = lConnectedTo.ConnectionPosition;
+      entity.Rotation.Value = eConnectedTo.Rotation.Value - internalRotation;
+      entity.Position.Value = lConnectedTo.ConnectionPosition;
     }
   }
 
-  public void SeverConnection(WorldEntity e)
+  public void SeverConnection(IEntity e)
   {
     foreach (var link in Links)
     {
@@ -69,4 +77,11 @@ public class LinkModule : ModuleBase
       link.Scale = scale;
     }
   }
+  public override object Clone()
+  {
+    var cloned = new LinkModule();
+    cloned.InternalRotation = this.InternalRotation;
+    return cloned;
+  }
 }
+

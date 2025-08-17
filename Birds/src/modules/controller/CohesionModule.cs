@@ -33,7 +33,9 @@ public class CohesionModule : ModuleBase
     {
       distanceFromController = Position - entity.Position;
       if (distanceFromController.Length() > entity.Radius)
+      {
         entity.Accelerate(Vector2.Normalize(Position - entity.Position), 0.2f * (float)((distanceFromController.Length() - entity.Radius) / averageDistance) / entity.Mass);
+      }
     }
   }
 

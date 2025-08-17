@@ -9,10 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Birds.src.controllers;
 public class Controller : ModuleContainer, IController
 {
-  #region Attributes
   protected List<IEntity> entities;
-  #endregion
-  #region Constructors
   public Controller(List<IEntity> controllables, ID_OTHER team = ID_OTHER.TEAM_AI) : this()
   {
     SetEntities(controllables);
@@ -21,9 +18,6 @@ public class Controller : ModuleContainer, IController
   {
     entities = new List<IEntity>();
   }
-
-  #endregion
-  #region Methods
 
   public virtual void SetEntities(List<IEntity> newEntities)
   {
@@ -60,6 +54,5 @@ public class Controller : ModuleContainer, IController
     cloned.SetEntities(clonedEntities);
     return cloned;
   }
-  #endregion
 }
 

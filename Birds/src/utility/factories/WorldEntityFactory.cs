@@ -24,21 +24,9 @@ public static class EntityFactory
       we = new WorldEntity();
     }
     we.EntityID = id;
-    SetModules(we, id);
     we.Position.Value = position;
-    we.AddLinks();
+    SetModules(we, id);
     return we;
-  }
-
-  private static void SetDefaultAttributes(WorldEntity we, ID_ENTITY id, Vector2 position)
-  {
-    float rotation = 0;
-    float mass = 1;
-    float thrust = 1;
-    float friction = 0.1f;
-    bool isVisible = true;
-    bool isCollidable = true;
-    float scale = 1;
   }
 
   public static void SetModules(WorldEntity we, ID_ENTITY id)

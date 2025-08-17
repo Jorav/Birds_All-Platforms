@@ -15,7 +15,6 @@ namespace Birds.src.entities
   {
     #region Properties
     //public float Scale { get { return sprite.Scale; } set { sprite.Scale = value; /*BoundingArea.Scale = value; oldCollisionDetector.Scale = value;*/ foreach (Link l in Links) l.Scale = value;/*add collisionDetector scale in the future*/ } }
-    protected Vector2 origin;
     public List<Link> Links { get; private set; } = new();
     private float internalRotation;
     public bool IsFiller { get; set; }

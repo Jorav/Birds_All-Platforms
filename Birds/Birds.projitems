@@ -46,7 +46,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\steering\PlayerSteeringModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\steering\SteeringModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\entities\IEntity.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\entities\IWorldEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\entities\WorldEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Game1.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\ICollidable.cs" />

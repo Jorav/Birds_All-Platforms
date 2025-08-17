@@ -42,7 +42,6 @@ namespace Birds.src.modules.entity
       if (!IsCollidable || !otherCollidable.IsCollidable)
         return false;
 
-      // Check if it's another EntityCollisionHandlerModule
       if (otherCollidable is CollisionHandlerModule otherHandler)
       {
         return BoundingCircle != null
@@ -54,7 +53,6 @@ namespace Birds.src.modules.entity
       }
       else
       {
-        // For non-EntityCollisionHandlerModule (like ControllerCollisionHandlerModule)
         return BoundingArea?.CollidesWith(otherCollidable.BoundingArea) ?? false;
       }
     }

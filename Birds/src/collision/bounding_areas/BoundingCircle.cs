@@ -1,10 +1,8 @@
-
-
 using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 
-namespace Birds.src.bounding_areas;
+namespace Birds.src.collision.bounding_areas;
 public class BoundingCircle : IBoundingArea
 {
   public Vector2 Position { get; set; }

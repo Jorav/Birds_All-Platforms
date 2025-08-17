@@ -1,7 +1,8 @@
 ﻿
 
-using Birds.src.bounding_areas;
-using Birds.src.BVH;
+using Birds.src.collision;
+using Birds.src.collision.bounding_areas;
+using Birds.src.collision.BVH;
 using Birds.src.events;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.bounding_area;

@@ -1,4 +1,5 @@
-﻿using Birds.src.bounding_areas;
+﻿using Birds.src.collision;
+using Birds.src.collision.bounding_areas;
 using Birds.src.containers.controller;
 using Birds.src.containers.entity;
 using Birds.src.modules.entity;

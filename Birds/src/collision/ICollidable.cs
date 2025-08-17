@@ -1,7 +1,7 @@
-using Birds.src.bounding_areas;
+using Birds.src.collision.bounding_areas;
 using Microsoft.Xna.Framework;
 
-namespace Birds.src;
+namespace Birds.src.collision;
 public interface ICollidable
 {
   Vector2 Position { get; }
@@ -12,6 +12,4 @@ public interface ICollidable
 
   public bool CollidesWith(ICollidable otherCollidable);
   public void Collide(ICollidable otherEntity);
-
-
 }

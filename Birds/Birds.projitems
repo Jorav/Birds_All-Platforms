@@ -10,13 +10,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Program.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\AxisAlignedBoundingBox.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\BoundingAreaFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\BoundingCircle.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\IBoundingArea.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\OrientedBoundingBox.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBNode.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\AxisAlignedBoundingBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\BoundingAreaFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\BoundingCircle.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\IBoundingArea.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\OrientedBoundingBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\AABBNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\AABBTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\controller\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\Link.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerExtensions.cs" />
@@ -49,7 +49,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\entity\IEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\entity\WorldEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Game1.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\ICollidable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\ICollidable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\BuildControllerState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\ButtonContainer.cs" />
@@ -68,7 +68,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\BlueprintFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\CompositeControllerFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\PerformanceMeasurer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\Sprite.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\visual\Sprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\ControllerFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\WorldEntityFactory.cs" />
@@ -117,6 +117,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\solar\" />
     <Folder Include="$(MSBuildThisFileDirectory)src\containers\composite\" />
     <Folder Include="$(MSBuildThisFileDirectory)src\containers\controller\" />
+    <Folder Include="$(MSBuildThisFileDirectory)src\collision\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />

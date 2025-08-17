@@ -4,6 +4,7 @@ using Birds.src.events;
 using Birds.src.factories;
 using Birds.src.utility;
 using System;
+using Birds.src.visual;
 
 namespace Birds.src.modules.entity;
 

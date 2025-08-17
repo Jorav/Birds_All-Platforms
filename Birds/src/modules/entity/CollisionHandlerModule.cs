@@ -1,4 +1,5 @@
-﻿using Birds.src.bounding_areas;
+﻿using Birds.src.collision;
+using Birds.src.collision.bounding_areas;
 using Birds.src.events;
 using Birds.src.modules.shared.bounding_area;
 using Microsoft.Xna.Framework;

@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace Birds.src.bounding_areas;
+namespace Birds.src.collision.bounding_areas;
 public interface IBoundingArea
 {
   public Vector2 Position { get; set; }

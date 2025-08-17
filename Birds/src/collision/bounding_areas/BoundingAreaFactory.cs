@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Birds.src.bounding_areas;
+namespace Birds.src.collision.bounding_areas;
 public class BoundingAreaFactory
 {
   public static Stack<BoundingCircle> circles = new();

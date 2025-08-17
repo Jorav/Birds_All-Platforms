@@ -3,10 +3,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Birds.src.events;
 using Birds.src.factories;
 using Birds.src.utility;
+using System;
 
 namespace Birds.src.modules.entity;
 
-public class SpriteModule : ControllerModule
+public class DrawModule : ModuleBase, IDrawModule
 {
   public Sprite Sprite { get; private set; }
   public Vector2 Position { get; set; }
@@ -15,8 +16,9 @@ public class SpriteModule : ControllerModule
   public float Scale { get; set; }
   public float Width { get; set; }
   public float Height { get; set; }
+  public float Radius { get; set; }
 
-  public SpriteModule(ID_ENTITY entityId, float scale = 1f)
+  public DrawModule(ID_ENTITY entityId, float scale = 1f)
   {
     Sprite = SpriteFactory.GetSprite(entityId, Vector2.Zero, scale);
   }
@@ -25,11 +27,9 @@ public class SpriteModule : ControllerModule
   {
     ReadSync(() => Position, container.Position);
     ReadSync(() => Rotation, container.Rotation);
-    ReadSync(() => Color, container.Color);
-    ReadSync(() => Scale, container.Scale);
-
-    WriteSync(() => Color, container.Color);
-    WriteSync(() => Scale, container.Scale);
+    ReadWriteSync(() => Color, container.Color);
+    ReadWriteSync(() => Scale, container.Scale);
+    WriteSync(() => Radius, container.Radius);
     WriteSync(() => Width, container.Width);
     WriteSync(() => Height, container.Height);
   }
@@ -37,10 +37,11 @@ public class SpriteModule : ControllerModule
   public override void Initialize(IModuleContainer container)
   {
     base.Initialize(container);
-    container.Scale.Value = Scale;
-    container.Color.Value = Color;
-    container.Width.Value = Width;
-    container.Height.Value = Height;
+    Scale = Sprite.Scale;
+    Color = Sprite.Color;
+    Width = Sprite.Width;
+    Height = Sprite.Height;
+    Radius = (float)Math.Sqrt(Math.Pow(Sprite.Width / 2, 2) + Math.Pow(Sprite.Height / 2, 2));
     UpdateSpriteFromContainer();
   }
 

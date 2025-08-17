@@ -3,7 +3,7 @@ using Birds.src.events;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.shared.bounding_area;
-public class OBBCollisionDetectionModule : ControllerModule
+public class OBBCollisionDetectionModule : ModuleBase
 {
   public Vector2 Position { get; set; }
   public float Rotation { get; set; }
@@ -31,6 +31,10 @@ public class OBBCollisionDetectionModule : ControllerModule
     {
       OBB.Position = Position;
       OBB.Rotation = Rotation;
+      if (OBB.Width != 0 || OBB.Height != 0)
+        return;
+      OBB.Width = Width;
+      OBB.Height = Height;
     }
   }
 

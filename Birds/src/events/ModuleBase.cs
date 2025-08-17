@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Birds.src.events;
-public abstract class ControllerModule
+public abstract class ModuleBase
 {
   protected IModuleContainer container;
   private List<IWriteSyncProperty> _writeSyncProperties = new List<IWriteSyncProperty>();
@@ -77,7 +77,7 @@ public abstract class ControllerModule
 
   public virtual object Clone()
   {
-    var cloned = (ControllerModule)this.MemberwiseClone();
+    var cloned = (ModuleBase)this.MemberwiseClone();
     cloned.container = null;
     return cloned;
   }

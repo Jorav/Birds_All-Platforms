@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using System;
 
 namespace Birds.src.modules.entity;
-public class EntityMovementModule : ControllerModule, IMovementModule
+public class MovementModule : ModuleBase, IMovementModule
 {
   public virtual float Mass { get; set; }
   public virtual float Thrust { get; set; }
@@ -12,25 +12,27 @@ public class EntityMovementModule : ControllerModule, IMovementModule
   protected Vector2 position;
   public virtual float Rotation { get; set; }
   protected float rotation;
-  protected Vector2 velocity;
+  protected Vector2 velocity = new();
   public virtual Vector2 Velocity { get { return velocity; } set { velocity = value; } }
   public virtual float Friction { get; set; } = 0.1f;// percent, where 0.1f = 10% friction
   public Vector2 TotalExteriorForce;
 
-  public EntityMovementModule()
+  protected override void ConfigurePropertySync()
   {
+    ReadWriteSync(() => Position, container.Position);
+    ReadWriteSync(() => Rotation, container.Rotation);
+    ReadWriteSync(() => Mass, container.Mass);
+  }
+  public override void Initialize(IModuleContainer container)
+  {
+    base.Initialize(container);
     Mass = 1;
     Thrust = 1;
+    Rotation = 0;
   }
+
   public void SetAttributes(Vector2 position, float rotation, float mass, float thrust, float friction)
-  {
-    this.position = position;
-    this.rotation = rotation;
-    Mass = mass;
-    Thrust = thrust;
-    Friction = friction;
-    Velocity = Vector2.Zero;
-  }
+  {}
 
   public void AccelerateTo(Vector2 position, float thrust)
   {
@@ -70,13 +72,6 @@ public class EntityMovementModule : ControllerModule, IMovementModule
       return (float)Math.Atan(position.Y / position.X) - MathHelper.ToRadians(180);
   }
 
-  protected override void ConfigurePropertySync()
-  {
-    ReadWriteSync(() => Position, container.Position);
-    ReadWriteSync(() => Rotation, container.Rotation);
-    ReadSync(() => Mass, container.Mass);
-  }
-
   protected override void Update(GameTime gameTime)
   {
     Vector2 FrictionForce = (Velocity * Mass + TotalExteriorForce) * Friction * (float)Game1.timeStep * 60;
@@ -87,7 +82,7 @@ public class EntityMovementModule : ControllerModule, IMovementModule
 
   public void Update2(GameTime gameTime) { Update(gameTime); }
 
-  public Vector2 CalculateCollissionRepulsion(EntityMovementModule m)
+  public Vector2 CalculateCollissionRepulsion(MovementModule m)
   {
     Vector2 vectorFromOther = m.Position - Position;
     float distance = vectorFromOther.Length();
@@ -95,10 +90,4 @@ public class EntityMovementModule : ControllerModule, IMovementModule
     Vector2 collissionRepulsion = 0.5f * Vector2.Normalize(-vectorFromOther) * (Vector2.Dot(Velocity, vectorFromOther) * Mass + Vector2.Dot(m.Velocity, -vectorFromOther) * m.Mass); //make velocity depend on position
     return collissionRepulsion;
   }
-
-  public void Deprecate()
-  {
-    MovementModuleFactory.availableMovementModules.Push(this);
-  }
-
 }

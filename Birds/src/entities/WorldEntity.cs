@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Birds.src.entities
 {
-  public class WorldEntity : ModuleContainerBase, IEntity
+  public class WorldEntity : ModuleContainer, IEntity
   {
     #region Properties
     //public float Scale { get { return sprite.Scale; } set { sprite.Scale = value; /*BoundingArea.Scale = value; oldCollisionDetector.Scale = value;*/ foreach (Link l in Links) l.Scale = value;/*add collisionDetector scale in the future*/ } }
@@ -26,10 +26,6 @@ namespace Birds.src.entities
     {
     }
     #region Methods
-    public void Draw(SpriteBatch sb)
-    {
-      GetModule<SpriteModule>()?.Draw(sb);
-    }
 
     public virtual object Clone()
     {/**
@@ -63,7 +59,7 @@ namespace Birds.src.entities
         Links.Clear();
 
       // Get dimensions from sprite module
-      var spriteModule = GetModule<SpriteModule>();
+      var spriteModule = GetModule<DrawModule>();
       if (spriteModule != null)
       {
         float width = spriteModule.Sprite.Width;

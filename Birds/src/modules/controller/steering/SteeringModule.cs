@@ -4,7 +4,7 @@ using Birds.src.modules.entity;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.controller.steering;
-public abstract class SteeringModule : ControllerModule
+public abstract class SteeringModule : ModuleBase
 {
   public bool actionsLocked = false;
   public Vector2 Position { get; set; }
@@ -59,8 +59,8 @@ public abstract class SteeringModule : ControllerModule
 
   private IMovementModule GetMovementModule()
 {
-    return container.GetModule<ControllerMovementModule>() as IMovementModule ??
-           container.GetModule<EntityMovementModule>();
+    return container.GetModule<GroupMovementModule>() as IMovementModule ??
+           container.GetModule<MovementModule>();
 }
 
   public virtual object Clone()

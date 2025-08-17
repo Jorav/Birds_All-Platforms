@@ -13,7 +13,6 @@ public interface IEntity : IModuleContainer
   public Controller Manager { get; set; }
 
   public void Update(GameTime gameTime);
-  public void Draw(SpriteBatch sb);
   public void Deprecate();
   public object Clone();
 }

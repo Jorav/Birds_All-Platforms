@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.shared.bounding_area;
 
-public class BCCollisionDetectionModule : ControllerModule
+public class BCCollisionDetectionModule : ModuleBase
 {
   public Vector2 Position { get; set; }
   public float Radius { get; set; }
@@ -30,6 +30,7 @@ public class BCCollisionDetectionModule : ControllerModule
       BoundingCircle.Radius = Radius;  // Works because BoundingCircle has settable Radius
     }
   }
+
   public override object Clone()
   {
     BCCollisionDetectionModule cloned = (BCCollisionDetectionModule)base.Clone();

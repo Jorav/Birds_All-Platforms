@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using Birds.src.entities;
 using Birds.src.events;
+using Birds.src.modules.controller;
 using Birds.src.utility;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Birds.src.controllers;
-public class Controller : ModuleContainerBase, IController
+public class Controller : ModuleContainer, IController
 {
   #region Attributes
   protected List<IEntity> entities;
@@ -37,14 +38,6 @@ public class Controller : ModuleContainerBase, IController
   {
     e.Manager = this;
     base.Entities.Add(e);
-  }
-
-  public void Draw(SpriteBatch sb)
-  {
-    foreach (IEntity entity in Entities)
-    {
-      entity.Draw(sb);
-    }
   }
 
   private void DeprecateEntities()

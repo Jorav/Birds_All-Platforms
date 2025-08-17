@@ -7,7 +7,7 @@ using System;
 
 namespace Birds.src.modules.entity
 {
-  public class EntityCollisionHandlerModule : ControllerModule, ICollidable
+  public class CollisionHandlerModule : ModuleBase, ICollidable
   {
     public Vector2 Position { get; set; }
     public float Radius { get; set; }
@@ -43,7 +43,7 @@ namespace Birds.src.modules.entity
         return false;
 
       // Check if it's another EntityCollisionHandlerModule
-      if (otherCollidable is EntityCollisionHandlerModule otherHandler)
+      if (otherCollidable is CollisionHandlerModule otherHandler)
       {
         return BoundingCircle != null
             && otherHandler.BoundingCircle != null
@@ -61,10 +61,10 @@ namespace Birds.src.modules.entity
 
     public void Collide(ICollidable otherCollidable)
     {
-      if (otherCollidable is EntityCollisionHandlerModule otherHandler)
+      if (otherCollidable is CollisionHandlerModule otherHandler)
       {
-        var movementModule = container.GetModule<EntityMovementModule>();
-        var otherMovementModule = otherHandler.container.GetModule<EntityMovementModule>();
+        var movementModule = container.GetModule<MovementModule>();
+        var otherMovementModule = otherHandler.container.GetModule<MovementModule>();
 
         if (movementModule != null && otherMovementModule != null)
         {
@@ -84,7 +84,7 @@ namespace Birds.src.modules.entity
 
     public override object Clone()
     {
-      EntityCollisionHandlerModule cloned = (EntityCollisionHandlerModule)base.Clone();
+      CollisionHandlerModule cloned = (CollisionHandlerModule)base.Clone();
       cloned.IsCollidable = this.IsCollidable;
       return cloned;
     }

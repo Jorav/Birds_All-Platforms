@@ -12,6 +12,7 @@ using System.Diagnostics;
 using Birds.src.factories;
 using Birds.src.entities;
 using Birds.src.modules.shared.bounding_area;
+using Birds.src.events;
 
 namespace Birds.src.menu
 {

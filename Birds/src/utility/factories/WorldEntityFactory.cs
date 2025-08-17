@@ -46,11 +46,11 @@ public static class EntityFactory
     switch (id)
     {
       case ID_ENTITY.DEFAULT:
-        we.AddModule(new SpriteModule(id));
-        we.AddModule(new EntityMovementModule());
+        we.AddModule(new DrawModule(id));
+        we.AddModule(new MovementModule());
         we.AddModule(new BCCollisionDetectionModule());
         we.AddModule(new OBBCollisionDetectionModule());
-        we.AddModule(new EntityCollisionHandlerModule());
+        we.AddModule(new CollisionHandlerModule());
         break;
 
       /*
@@ -69,11 +69,11 @@ public static class EntityFactory
       //case (int)IDs.COMPOSITE: return new Composite(new Sprite(hull), position);*/
       #region background
       case ID_ENTITY.CLOUD:
-        we.AddModule(new EntityMovementModule());
+        we.AddModule(new MovementModule());
         break;
 
       case ID_ENTITY.SUN:
-        we.AddModule(new EntityMovementModule());
+        we.AddModule(new MovementModule());
         break;
       #endregion
 

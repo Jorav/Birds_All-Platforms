@@ -24,7 +24,8 @@ namespace Birds.src.menu
       /*Player.SetEntities(CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, ID_COMPOSITE.DEFAULT_COMBINED)
         .Cast<IEntity>()
         .ToList());*/
-      Player.SetEntities(EntityFactory.CreateEntities(Vector2.Zero, 10, ID_ENTITY.DEFAULT));
+      Player.SetEntities(EntityFactory.CreateEntities(Vector2.Zero, 1, ID_ENTITY.DEFAULT));
+      controller.Add(ControllerFactory.Create(new Vector2(100, 100), numberOfEntities: 1, id: ID_CONTROLLER.DEFAULT));
       foregrounds.Add((Background)ControllerFactory.Create(Vector2.Zero, numberOfEntities: 7, id: ID_CONTROLLER.FOREGROUND_CLOUD));
       backgrounds.Add((Background)ControllerFactory.Create(Vector2.Zero, numberOfEntities: 1, id: ID_CONTROLLER.BACKGROUND_SUN));
     }

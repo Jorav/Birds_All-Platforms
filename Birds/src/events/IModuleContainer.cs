@@ -6,9 +6,9 @@ using System.Collections.Generic;
 namespace Birds.src.events;
 public interface IModuleContainer
 {
-  void AddModule<T>(T module) where T : ControllerModule;
-  T GetModule<T>() where T : ControllerModule;
-  bool HasModule<T>() where T : ControllerModule;
+  void AddModule<T>(T module) where T : ModuleBase;
+  T GetModule<T>() where T : ModuleBase;
+  bool HasModule<T>() where T : ModuleBase;
 
   List<IEntity> Entities { get; }
 

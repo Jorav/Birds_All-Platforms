@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Birds.src.modules.collision;
 
-public class ControllerCollisionHandlerModule : ControllerModule, ICollidable
+public class GroupCollisionHandlerModule : ModuleBase, ICollidable
 {
   public AABBTree CollisionManager { get; private set; }
   public bool ResolveInternalCollisions { get; set; } = true;
@@ -20,7 +20,7 @@ public class ControllerCollisionHandlerModule : ControllerModule, ICollidable
   public bool IsCollidable { get; set; } = true;
   public IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
 
-  public ControllerCollisionHandlerModule()
+  public GroupCollisionHandlerModule()
   {
     CollisionManager = new AABBTree();
   }
@@ -42,7 +42,7 @@ public class ControllerCollisionHandlerModule : ControllerModule, ICollidable
   private void UpdateTreeWithEntities()
   {
     var entityCollisionHandlers = container.Entities
-        .Select(e => e.GetModule<EntityCollisionHandlerModule>())
+        .Select(e => e.GetModule<CollisionHandlerModule>())
         .Where(handler => handler != null && handler.IsCollidable)
         .Cast<ICollidable>()
         .ToList();
@@ -64,14 +64,14 @@ public class ControllerCollisionHandlerModule : ControllerModule, ICollidable
 
   public void Collide(ICollidable otherEntity)
   {
-    if (otherEntity is ControllerCollisionHandlerModule otherHandler)
+    if (otherEntity is GroupCollisionHandlerModule otherHandler)
     {
       CollisionManager.CollideWithTree(otherHandler.CollisionManager);
     }
   }
   public override object Clone()
   {
-    ControllerCollisionHandlerModule cloned = (ControllerCollisionHandlerModule)base.Clone();
+    GroupCollisionHandlerModule cloned = (GroupCollisionHandlerModule)base.Clone();
     cloned.CollisionManager = new AABBTree();
     cloned.CollisionManager.ResolveInternalCollisions = this.ResolveInternalCollisions;
     return cloned;

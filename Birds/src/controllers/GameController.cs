@@ -4,6 +4,7 @@ using Birds.src.BVH;
 using Birds.src.modules.collision;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Birds.src.events;
 
 namespace Birds.src.controllers;
 
@@ -21,7 +22,7 @@ public class GameController
   private void UpdateGlobalCollisionTree()
   {
     var collisionHandlers = controllers
-        .Select(c => c.GetModule<ControllerCollisionHandlerModule>())
+        .Select(c => c.GetModule<GroupCollisionHandlerModule>())
         .Where(handler => handler != null)
         .Cast<ICollidable>()
         .ToList();
@@ -43,7 +44,9 @@ public class GameController
   public void Draw(SpriteBatch sb)
   {
     foreach (Controller c in controllers)
+    {
       c.Draw(sb);
+    }
   }
 }
 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Birds.src.events;
-public abstract class ModuleContainerBase : IModuleContainer
+public abstract class ModuleContainer : IModuleContainer
 {
   private ReactiveProperty<Vector2> _position;
   private ReactiveProperty<float> _rotation;
@@ -32,15 +32,15 @@ public abstract class ModuleContainerBase : IModuleContainer
 
   public List<IEntity> Entities { get; private set; } = new();
 
-  private Dictionary<Type, ControllerModule> modules = new Dictionary<Type, ControllerModule>();
+  private Dictionary<Type, ModuleBase> modules = new Dictionary<Type, ModuleBase>();
 
-  public void AddModule<T>(T module) where T : ControllerModule
+  public void AddModule<T>(T module) where T : ModuleBase
   {
     module.Initialize(this);
     modules[typeof(T)] = module;
   }
 
-  public T GetModule<T>() where T : ControllerModule
+  public T GetModule<T>() where T : ModuleBase
   {
     if (modules.TryGetValue(typeof(T), out var module))
     {
@@ -57,7 +57,7 @@ public abstract class ModuleContainerBase : IModuleContainer
   }
 
 
-  public bool HasModule<T>() where T : ControllerModule
+  public bool HasModule<T>() where T : ModuleBase
   {
     return modules.ContainsKey(typeof(T));
   }
@@ -72,13 +72,13 @@ public abstract class ModuleContainerBase : IModuleContainer
 
   public virtual object Clone()
   {
-    var cloned = (ModuleContainerBase)this.MemberwiseClone();
-    cloned.modules = new Dictionary<Type, ControllerModule>();
+    var cloned = (ModuleContainer)this.MemberwiseClone();
+    cloned.modules = new Dictionary<Type, ModuleBase>();
     cloned.Entities = new List<IEntity>();
 
     foreach (var kvp in modules)
     {
-      var clonedModule = (ControllerModule)kvp.Value.Clone();
+      var clonedModule = (ModuleBase)kvp.Value.Clone();
       clonedModule.Initialize(cloned);
       cloned.modules[clonedModule.GetType()] = clonedModule;
     }

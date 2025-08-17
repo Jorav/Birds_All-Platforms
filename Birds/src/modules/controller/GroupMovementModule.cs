@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Birds.src.events;
 
 namespace Birds.src.modules.controller;
-public class ControllerMovementModule : ControllerModule, IMovementModule
+public class GroupMovementModule : ModuleBase, IMovementModule
 {
 
   public Vector2 Position { get; set; }
@@ -57,7 +57,6 @@ public class ControllerMovementModule : ControllerModule, IMovementModule
     }
 
     UpdatePosition();
-    UpdateRadius();
     UpdateMass();
   }
 
@@ -80,20 +79,6 @@ public class ControllerMovementModule : ControllerModule, IMovementModule
     {
       Position = Vector2.Zero;
     }
-  }
-
-  private void UpdateRadius()
-  {
-    float largestDistance = 0;
-
-    foreach (IEntity entity in container.Entities)
-    {
-      float distance = Vector2.Distance(entity.Position, Position) + entity.Radius;
-      if (distance > largestDistance)
-        largestDistance = distance;
-    }
-
-    Radius = largestDistance;
   }
 
   private void UpdateMass()

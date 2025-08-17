@@ -4,7 +4,7 @@ using Birds.src.events;
 using System;
 
 namespace Birds.src.modules.controller;
-public class CohesionModule : ControllerModule
+public class CohesionModule : ModuleBase
 {
   public Vector2 Position { get; set; }
   public static float REPULSIONDISTANCE = 100;

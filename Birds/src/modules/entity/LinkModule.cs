@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 namespace Birds.src.modules.entity;
-public class LinkModule : ControllerModule
+public class LinkModule : ModuleBase
 {
   public List<WorldEntity.Link> Links { get; private set; } = new List<WorldEntity.Link>();
   public float Width { get; set; } = 32f;

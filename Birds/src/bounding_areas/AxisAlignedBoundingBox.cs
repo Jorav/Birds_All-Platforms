@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Birds.src.bounding_areas;
-using Birds.src.controllers;
 
 namespace Birds.src.bounding_areas
 {

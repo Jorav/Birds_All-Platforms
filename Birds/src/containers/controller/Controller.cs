@@ -1,12 +1,9 @@
-using System;
 using System.Collections.Generic;
-using Birds.src.entities;
+using Birds.src.containers.entity;
 using Birds.src.events;
-using Birds.src.modules.controller;
 using Birds.src.utility;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace Birds.src.controllers;
+namespace Birds.src.containers.controller;
 public class Controller : ModuleContainer, IController
 {
   protected List<IEntity> entities;

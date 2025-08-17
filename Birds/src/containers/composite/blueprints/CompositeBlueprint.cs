@@ -1,7 +1,7 @@
-﻿using Birds.src.controllers.composite.blueprints.parts;
+﻿using Birds.src.containers.composite.blueprints.parts;
 using System.Collections.Generic;
 
-namespace Birds.src.controllers.composite.blueprints;
+namespace Birds.src.containers.composite.blueprints;
 
 public class CompositeBlueprint
 {

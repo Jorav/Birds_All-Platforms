@@ -1,5 +1,5 @@
-﻿using Birds.src.controllers.composite;
-using Birds.src.entities;
+﻿using Birds.src.containers.composite;
+using Birds.src.containers.entity;
 using Birds.src.events;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;

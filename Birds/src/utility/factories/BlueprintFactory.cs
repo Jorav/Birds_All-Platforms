@@ -1,6 +1,6 @@
-﻿using Birds.src.controllers.composite.blueprints;
-using Birds.src.controllers.composite.blueprints.parts;
-using Birds.src.entities;
+﻿using Birds.src.containers.composite.blueprints;
+using Birds.src.containers.composite.blueprints.parts;
+using Birds.src.containers.entity;
 using Birds.src.modules.entity;
 using Microsoft.Xna.Framework;
 using System;

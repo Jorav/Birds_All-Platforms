@@ -7,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Birds.src.entities
+namespace Birds.src.entities;
+
+public class Composite : IController, IEntity
 {
-    public class Composite : IController, IEntity
-    {
-    }
 }
+

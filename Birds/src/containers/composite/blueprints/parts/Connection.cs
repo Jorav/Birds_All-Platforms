@@ -1,4 +1,4 @@
-﻿namespace Birds.src.controllers.composite.blueprints.parts;
+﻿namespace Birds.src.containers.composite.blueprints.parts;
 
 public class Connection
 {

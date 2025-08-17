@@ -1,9 +1,9 @@
-﻿using Birds.src.entities;
+﻿using Birds.src.containers.entity;
 using Birds.src.modules.entity;
 using Microsoft.Xna.Framework;
 using System;
 
-namespace Birds.src.controllers.composite;
+namespace Birds.src.containers.composite;
 
 public class Link
 {

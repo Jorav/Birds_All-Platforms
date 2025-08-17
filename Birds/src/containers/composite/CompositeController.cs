@@ -1,17 +1,13 @@
 ﻿using Birds.src.bounding_areas;
-using Birds.src.controllers;
-using Birds.src.entities;
+using Birds.src.containers.controller;
+using Birds.src.containers.entity;
 using Birds.src.modules.entity;
-using Birds.src.utility;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using static Birds.src.entities.WorldEntity;
 
-namespace Birds.src.controllers.composite;
+namespace Birds.src.containers.composite;
 
 public class CompositeController : Controller, IController, IEntity //remove Controller
 {

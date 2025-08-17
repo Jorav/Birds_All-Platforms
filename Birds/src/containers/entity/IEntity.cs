@@ -1,12 +1,8 @@
-using Birds.src.bounding_areas;
-using Birds.src.controllers;
+using Birds.src.containers.controller;
 using Birds.src.events;
-using Birds.src.modules.entity;
-using Birds.src.utility;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace Birds.src.entities;
+namespace Birds.src.containers.entity;
 
 public interface IEntity : IModuleContainer
 {

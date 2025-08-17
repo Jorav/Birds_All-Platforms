@@ -1,15 +1,9 @@
-﻿using Birds.src.bounding_areas;
-using Birds.src.controllers;
+﻿using Birds.src.containers.controller;
 using Birds.src.events;
 using Birds.src.factories;
-using Birds.src.modules.entity;
 using Birds.src.utility;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
 
-namespace Birds.src.entities;
+namespace Birds.src.containers.entity;
 public class WorldEntity : ModuleContainer, IEntity
 {
   public bool IsFiller { get; set; }

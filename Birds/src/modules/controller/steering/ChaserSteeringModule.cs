@@ -1,8 +1,6 @@
-using System;
-using Birds.src.controllers;
-using Birds.src.entities;
+using Birds.src.containers.controller;
+using Birds.src.containers.entity;
 using Birds.src.menu;
-using Birds.src.utility;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.controller.steering

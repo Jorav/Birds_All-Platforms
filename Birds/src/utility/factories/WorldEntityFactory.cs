@@ -2,10 +2,10 @@
 using Birds.src.utility;
 using System;
 using System.Collections.Generic;
-using Birds.src.entities;
 using Birds.src.menu;
 using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.entity;
+using Birds.src.containers.entity;
 
 namespace Birds.src.factories;
 public static class EntityFactory

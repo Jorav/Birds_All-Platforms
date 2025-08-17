@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Birds.src.events;
 
-namespace Birds.src.controllers;
+namespace Birds.src.containers.controller;
 
 public class GameController
 {

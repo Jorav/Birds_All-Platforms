@@ -17,8 +17,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\bounding_areas\OrientedBoundingBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\BVH\AABBTree.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\Background.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\Link.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\controller\Background.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\Link.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionHandlerModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupMovementModule.cs" />
@@ -35,19 +35,19 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\collision_detection\BCCollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\collision_detection\OBBCollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\storage\IBlueprintStorage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\parts\Connection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\parts\EntityPlacement.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\CompositeBlueprint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\composite\CompositeController.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\Controller.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\GameController.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\controllers\IController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\blueprints\parts\Connection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\blueprints\parts\EntityPlacement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\blueprints\CompositeBlueprint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\CompositeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\controller\Controller.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\controller\GameController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\controller\IController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\CohesionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\steering\ChaserSteeringModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\steering\PlayerSteeringModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\steering\SteeringModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\entities\IEntity.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\entities\WorldEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\entity\IEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\entity\WorldEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Game1.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\ICollidable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\BuildControllerState.cs" />
@@ -115,7 +115,8 @@
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\font\" />
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\RotatingHull\" />
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\solar\" />
-    <Folder Include="$(MSBuildThisFileDirectory)src\controllers\composite\blueprints\parts\" />
+    <Folder Include="$(MSBuildThisFileDirectory)src\containers\composite\" />
+    <Folder Include="$(MSBuildThisFileDirectory)src\containers\controller\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />

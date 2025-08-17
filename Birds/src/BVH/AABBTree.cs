@@ -1,5 +1,4 @@
 using Birds.src.bounding_areas;
-using Birds.src.entities;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

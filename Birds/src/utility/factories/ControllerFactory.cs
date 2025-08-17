@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
-using Birds.src.controllers;
 using Birds.src.utility;
 using System;
 using Birds.src.modules.controller.steering;
 using Birds.src.modules.controller;
-using Birds.src.modules.entity;
 using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.collision;
+using Birds.src.containers.controller;
 
 namespace Birds.src.factories
 {

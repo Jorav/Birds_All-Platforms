@@ -2,14 +2,13 @@
 using Birds.src.utility;
 using System;
 using System.Collections.Generic;
-using Birds.src.entities;
-using Birds.src.controllers.composite;
-using Birds.src.controllers.composite.blueprints;
-using Birds.src.controllers.composite.blueprints.parts;
-using Birds.src.factories;
 using Birds.src.storage;
 using Birds.src.storage.implementations;
 using System.Linq;
+using Birds.src.containers.composite;
+using Birds.src.containers.composite.blueprints;
+using Birds.src.containers.composite.blueprints.parts;
+using Birds.src.containers.entity;
 
 namespace Birds.src.factories
 {

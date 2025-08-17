@@ -1,7 +1,7 @@
-﻿using Birds.src.entities;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Birds.src.events;
 using System;
+using Birds.src.containers.entity;
 
 namespace Birds.src.modules.controller;
 public class CohesionModule : ModuleBase

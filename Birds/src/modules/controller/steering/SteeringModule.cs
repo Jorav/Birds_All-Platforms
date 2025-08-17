@@ -1,4 +1,4 @@
-using Birds.src.entities;
+using Birds.src.containers.entity;
 using Birds.src.events;
 using Birds.src.modules.entity;
 using Microsoft.Xna.Framework;

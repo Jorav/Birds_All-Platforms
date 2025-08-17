@@ -1,4 +1,4 @@
-﻿using Birds.src.entities;
+﻿using Birds.src.containers.entity;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;

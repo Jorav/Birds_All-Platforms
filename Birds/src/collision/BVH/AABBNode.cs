@@ -124,14 +124,14 @@ public class AABBNode
   public void GetInternalCollissions(Stack<(ICollidable, ICollidable)> collissions)
   {
     if (children.Count(x => x != null) == 2)
-      children[0].Collide(children[1], collissions);
+      children[0].GetCollisions(children[1], collissions);
     if (children[0] != null)
       children[0].GetInternalCollissions(collissions);
     if (children[1] != null)
       children[1].GetInternalCollissions(collissions);
   }
 
-  public void Collide(AABBNode node, Stack<(ICollidable, ICollidable)> collissions)
+  public void GetCollisions(AABBNode node, Stack<(ICollidable, ICollidable)> collissions)
   {
     if (AABB.CollidesWith(node.AABB))
     {
@@ -139,13 +139,13 @@ public class AABBNode
       {
         foreach (AABBNode child in children)
           if (child != null)
-            child.Collide(node, collissions);
+            child.GetCollisions(node, collissions);
       }
       else if (node.Entity == null)
       {
         foreach (AABBNode childOther in node.children)
           if (childOther != null)
-            Collide(childOther, collissions);
+            GetCollisions(childOther, collissions);
       }
       else
       {

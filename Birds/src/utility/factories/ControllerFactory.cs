@@ -23,6 +23,7 @@ namespace Birds.src.factories
           c.AddModule(new GroupDrawModule());
           c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionHandlerModule());
           return c;
 
         case ID_CONTROLLER.PLAYER:
@@ -34,6 +35,7 @@ namespace Birds.src.factories
           c.AddModule(new GroupDrawModule());
           c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionHandlerModule());
           return c;
 
         case ID_CONTROLLER.CHASER_AI:
@@ -44,6 +46,7 @@ namespace Birds.src.factories
           c.AddModule(new GroupDrawModule());
           c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionHandlerModule());
           return c;
 
         case ID_CONTROLLER.BACKGROUND_SUN:

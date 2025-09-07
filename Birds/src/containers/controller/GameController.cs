@@ -30,17 +30,19 @@ public class GameController
 
     if (collisionHandlers.Count > 0)
     {
-      collisionManager.RebuildTree(collisionHandlers);
+      collisionManager.BuildTree(collisionHandlers);
     }
   }
 
   public void Update(GameTime gameTime)
   {
     foreach (Controller c in controllers)
+    {
       c.Update(gameTime);
+    }
     UpdateGlobalCollisionTree();
-    collisionManager.GetInternalCollissions();
-    collisionManager.ResolveCollissions();
+    var collisionPairs = collisionManager.GetInternalCollissions();
+    ICollidable.ResolveCollisions(collisionPairs);
   }
 
   public void Draw(SpriteBatch sb)

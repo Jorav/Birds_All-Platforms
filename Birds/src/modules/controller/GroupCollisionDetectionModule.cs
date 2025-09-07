@@ -5,6 +5,8 @@ using Birds.src.events;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.bounding_area;
 using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Birds.src.modules.collision;
@@ -12,17 +14,17 @@ namespace Birds.src.modules.collision;
 public class GroupCollisionDetectionModule : ModuleBase, ICollidable
 {
   public AABBTree CollisionManager { get; private set; }
-  public bool ResolveInternalCollisions { get; set; }
   public Vector2 Position { get; set; }
   public float Radius { get; set; }
   public float Mass { get; set; }
   public bool IsCollidable { get; set; } = true;
+  public Stack<(ICollidable, ICollidable)> CollisionPairs {get; set;}
   public IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
 
-  public GroupCollisionDetectionModule(bool resolveInternalCollisions = true)
+  public GroupCollisionDetectionModule()
   {
     CollisionManager = new AABBTree();
-    ResolveInternalCollisions = resolveInternalCollisions;
+    CollisionPairs = CollisionManager.CollissionPairs;
   }
 
   protected override void ConfigurePropertySync()
@@ -34,13 +36,8 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
 
   protected override void Update(GameTime gameTime)
   {
-    CollisionManager.ResolveInternalCollisions = ResolveInternalCollisions;
     UpdateTreeWithEntities();
-    if (ResolveInternalCollisions)
-    {
-      CollisionManager.GetInternalCollissions();
-      CollisionManager.ResolveCollissions();
-    }
+    CollisionManager.GetInternalCollissions();
   }
 
   private void UpdateTreeWithEntities()
@@ -53,7 +50,7 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
 
     if (entityCollisionHandlers.Count > 0)
     {
-      CollisionManager.RebuildTree(entityCollisionHandlers);
+      CollisionManager.BuildTree(entityCollisionHandlers);
     }
   }
 
@@ -69,7 +66,7 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
   {
     if (otherEntity is GroupCollisionDetectionModule otherHandler)
     {
-      CollisionManager.CollideWithTree(otherHandler.CollisionManager);
+      CollisionManager.GetCollisions(otherHandler.CollisionManager);
     }
   }
 
@@ -77,7 +74,7 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
   {
     GroupCollisionDetectionModule cloned = (GroupCollisionDetectionModule)base.Clone();
     cloned.CollisionManager = new AABBTree();
-    cloned.CollisionManager.ResolveInternalCollisions = this.ResolveInternalCollisions;
+    cloned.CollisionPairs = cloned.CollisionManager.CollissionPairs;
     return cloned;
   }
 }

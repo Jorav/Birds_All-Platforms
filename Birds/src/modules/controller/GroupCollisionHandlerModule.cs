@@ -1,26 +1,33 @@
 ﻿using Birds.src.collision;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Birds.src.events;
+using Birds.src.modules.collision;
+using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.controller;
-public class GroupCollisionHandlerModule
+public class GroupCollisionHandlerModule : ModuleBase
 {
-  public bool ResolveInternalCollisions { get; set; } = true;
-  public Stack<(ICollidable, ICollidable)> CollissionPairs { get; set; }
+  public bool ResolveInternalCollisions { get; set; }
 
-  public void ResolveCollissions()
+  protected override void ConfigurePropertySync()
+  {
+    ReadSync(() => ResolveInternalCollisions, container.ResolveInternalCollisions);
+  }
+
+  protected override void Update(GameTime gameTime)
   {
     if (!ResolveInternalCollisions)
     {
       return;
     }
-    while (CollissionPairs.Count > 0)
-    {
-      (ICollidable, ICollidable) pair = CollissionPairs.Pop();
-      pair.Item1.Collide(pair.Item2);
-      pair.Item2.Collide(pair.Item1);
-    }
+    var collisionPairs = container.GetModule<GroupCollisionDetectionModule>().CollisionPairs;
+    ICollidable.ResolveCollisions(collisionPairs);
+  }
+
+  public override object Clone()
+  {
+    GroupCollisionHandlerModule cloned = (GroupCollisionHandlerModule)base.Clone();
+    cloned.ResolveInternalCollisions = ResolveInternalCollisions;
+    return cloned;
   }
 }
 

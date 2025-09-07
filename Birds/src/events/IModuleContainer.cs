@@ -24,4 +24,5 @@ public interface IModuleContainer
   ReactiveProperty<float> Width { get; }
   ReactiveProperty<float> Height { get; }
   ReactiveProperty<float> Thrust { get; }
+  ReactiveProperty<bool> ResolveInternalCollisions { get; }
 }

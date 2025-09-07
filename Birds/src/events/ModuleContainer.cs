@@ -1,4 +1,5 @@
-﻿using Birds.src.containers.entity;
+﻿using Birds.src.collision;
+using Birds.src.containers.entity;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System;
@@ -18,6 +19,7 @@ public abstract class ModuleContainer : IModuleContainer
   private ReactiveProperty<float> _width;
   private ReactiveProperty<float> _height;
   private ReactiveProperty<float> _thrust;
+  private ReactiveProperty<bool> _resolveInternalCollisions;
 
   public ReactiveProperty<Vector2> Position => _position ??= new ReactiveProperty<Vector2>();
   public ReactiveProperty<float> Rotation => _rotation ??= new ReactiveProperty<float>();
@@ -30,6 +32,7 @@ public abstract class ModuleContainer : IModuleContainer
   public ReactiveProperty<float> Width => _width ??= new ReactiveProperty<float>();
   public ReactiveProperty<float> Height => _height ??= new ReactiveProperty<float>();
   public ReactiveProperty<float> Thrust => _thrust ??= new ReactiveProperty<float>();
+  public ReactiveProperty<bool> ResolveInternalCollisions => _resolveInternalCollisions ??= new ReactiveProperty<bool>(true);
 
 
   public List<IEntity> Entities { get; private set; } = new();
@@ -92,6 +95,7 @@ public abstract class ModuleContainer : IModuleContainer
     if (_width != null) cloned._width = new ReactiveProperty<float>(_width.Value);
     if (_height != null) cloned._height = new ReactiveProperty<float>(_height.Value);
     if (_thrust != null) cloned._thrust = new ReactiveProperty<float>(_thrust.Value);
+    if (_resolveInternalCollisions != null) cloned._resolveInternalCollisions = new ReactiveProperty<bool>(_resolveInternalCollisions.Value);
 
     foreach (var kvp in modules)
     {

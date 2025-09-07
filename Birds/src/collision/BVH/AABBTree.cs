@@ -8,7 +8,6 @@ namespace Birds.src.collision.BVH;
 
 public class AABBTree
 {
-  public bool ResolveInternalCollisions { get; set; } = true;
   public Vector2 Position { get { return root.Position; } }
   public float Radius { get { return root.Radius; } }
   public AABBNode root;
@@ -58,7 +57,7 @@ public class AABBTree
     } while (parent != null);
   }
 
-  public void RebuildTree(List<ICollidable> newEntities)
+  public void BuildTree(List<ICollidable> newEntities)
   {
     root = CreateTreeTopDown_Median(null, newEntities);
     //RebuildTree();
@@ -212,9 +211,10 @@ public class AABBTree
     return bestSibling;
   }
 
-  public void CollideWithTree(AABBTree tree)
+  public Stack<(ICollidable, ICollidable)> GetCollisions(AABBTree tree)
   {
-    root.Collide(tree.root, CollissionPairs);
+    root.GetCollisions(tree.root, CollissionPairs);
+    return CollissionPairs;
   }
 
   private void UnravelTree()
@@ -239,19 +239,11 @@ public class AABBTree
     }
   }
 
-  public void GetInternalCollissions()
+  public Stack<(ICollidable, ICollidable)> GetInternalCollissions()
   {
     //if(root != null)
+    //CollissionPairs.Clear();
     root.GetInternalCollissions(CollissionPairs);
-  }
-  public void ResolveCollissions()
-  {
-    while (CollissionPairs.Count > 0)
-    {
-      (ICollidable, ICollidable) pair = CollissionPairs.Pop();
-      pair.Item1.Collide(pair.Item2);
-      pair.Item2.Collide(pair.Item1);
-    }
+    return CollissionPairs;
   }
 }
-

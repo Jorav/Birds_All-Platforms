@@ -19,7 +19,6 @@ public abstract class ModuleContainer : IModuleContainer
   private ReactiveProperty<float> _height;
   private ReactiveProperty<float> _thrust;
 
-
   public ReactiveProperty<Vector2> Position => _position ??= new ReactiveProperty<Vector2>();
   public ReactiveProperty<float> Rotation => _rotation ??= new ReactiveProperty<float>();
   public ReactiveProperty<float> Mass => _mass ??= new ReactiveProperty<float>();

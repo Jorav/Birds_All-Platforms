@@ -13,7 +13,6 @@ public class AABBTree
   public float Radius { get { return root.Radius; } }
   public AABBNode root;
   private Stack<AABBNode> freeNodes = new();
-  private HashSet<ICollidable> entities = new();
   public Stack<(ICollidable, ICollidable)> CollissionPairs = new();
 
   public AABBTree()
@@ -59,9 +58,8 @@ public class AABBTree
     } while (parent != null);
   }
 
-  public void UpdateTree(List<ICollidable> newEntities)
+  public void RebuildTree(List<ICollidable> newEntities)
   {
-    entities.Clear();
     root = CreateTreeTopDown_Median(null, newEntities);
     //RebuildTree();
   }
@@ -81,7 +79,6 @@ public class AABBTree
     }
     //TODO: if node==root, remove current tree if it exists and add worldEntities to newEntities
 
-
     //step 1: DECIDE WHAT AXIS TO SPLIT
     AxisAlignedBoundingBox AABB = AxisAlignedBoundingBox.SurroundingAABB(newEntities);
     int axis = AxisAlignedBoundingBox.MajorAxis(AABB);
@@ -98,6 +95,7 @@ public class AABBTree
     node.RefitBoundingBox();
     return node;
   }
+
   // newEntities order will be affected 
   public AABBNode CreateTreeTopDown_SAH(AABBNode parent, List<ICollidable> newEntities)
   {
@@ -159,7 +157,6 @@ public class AABBTree
   {
     AABBNode leafNode = AllocateNode();
     leafNode.Entity = we;
-    entities.Add(we);
     return leafNode;
   }
 
@@ -220,23 +217,6 @@ public class AABBTree
     root.Collide(tree.root, CollissionPairs);
   }
 
-  public void ResolveCollissions()
-  {
-    while (CollissionPairs.Count > 0)
-    {
-      (ICollidable, ICollidable) pair = CollissionPairs.Pop();
-      pair.Item1.Collide(pair.Item2);
-      pair.Item2.Collide(pair.Item1);
-    }
-  }
-
-
-  private void RebuildTree()
-  {
-    UnravelTree();
-    foreach (ICollidable we in entities)
-      Add(we);
-  }
   private void UnravelTree()
   {
     if (root != null)
@@ -259,20 +239,19 @@ public class AABBTree
     }
   }
 
-  public void Update(GameTime gameTime)
-  {
-    //root.Update(gameTime); nothing is done in it right now
-    UpdateTree(entities.ToList());
-    if (ResolveInternalCollisions)
-    {
-      GetInternalCollissions();
-      ResolveCollissions();
-    }
-  }
   public void GetInternalCollissions()
   {
     //if(root != null)
     root.GetInternalCollissions(CollissionPairs);
+  }
+  public void ResolveCollissions()
+  {
+    while (CollissionPairs.Count > 0)
+    {
+      (ICollidable, ICollidable) pair = CollissionPairs.Pop();
+      pair.Item1.Collide(pair.Item2);
+      pair.Item2.Collide(pair.Item1);
+    }
   }
 }
 

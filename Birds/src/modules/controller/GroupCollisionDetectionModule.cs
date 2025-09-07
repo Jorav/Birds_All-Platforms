@@ -1,0 +1,83 @@
+﻿using Birds.src.collision;
+using Birds.src.collision.bounding_areas;
+using Birds.src.collision.BVH;
+using Birds.src.events;
+using Birds.src.modules.entity;
+using Birds.src.modules.shared.bounding_area;
+using Microsoft.Xna.Framework;
+using System.Linq;
+
+namespace Birds.src.modules.collision;
+
+public class GroupCollisionDetectionModule : ModuleBase, ICollidable
+{
+  public AABBTree CollisionManager { get; private set; }
+  public bool ResolveInternalCollisions { get; set; }
+  public Vector2 Position { get; set; }
+  public float Radius { get; set; }
+  public float Mass { get; set; }
+  public bool IsCollidable { get; set; } = true;
+  public IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
+
+  public GroupCollisionDetectionModule(bool resolveInternalCollisions = true)
+  {
+    CollisionManager = new AABBTree();
+    ResolveInternalCollisions = resolveInternalCollisions;
+  }
+
+  protected override void ConfigurePropertySync()
+  {
+    ReadSync(() => Position, container.Position);
+    ReadSync(() => Radius, container.Radius);
+    ReadSync(() => Mass, container.Mass);
+  }
+
+  protected override void Update(GameTime gameTime)
+  {
+    CollisionManager.ResolveInternalCollisions = ResolveInternalCollisions;
+    UpdateTreeWithEntities();
+    if (ResolveInternalCollisions)
+    {
+      CollisionManager.GetInternalCollissions();
+      CollisionManager.ResolveCollissions();
+    }
+  }
+
+  private void UpdateTreeWithEntities()
+  {
+    var entityCollisionHandlers = container.Entities
+        .Select(e => e.GetModule<CollisionHandlerModule>())
+        .Where(handler => handler != null && handler.IsCollidable)
+        .Cast<ICollidable>()
+        .ToList();
+
+    if (entityCollisionHandlers.Count > 0)
+    {
+      CollisionManager.RebuildTree(entityCollisionHandlers);
+    }
+  }
+
+  public bool CollidesWith(ICollidable otherCollidable)
+  {
+    if (!IsCollidable || !otherCollidable.IsCollidable)
+      return false;
+
+    return BoundingArea?.CollidesWith(otherCollidable.BoundingArea) ?? false;
+  }
+
+  public void Collide(ICollidable otherEntity)
+  {
+    if (otherEntity is GroupCollisionDetectionModule otherHandler)
+    {
+      CollisionManager.CollideWithTree(otherHandler.CollisionManager);
+    }
+  }
+
+  public override object Clone()
+  {
+    GroupCollisionDetectionModule cloned = (GroupCollisionDetectionModule)base.Clone();
+    cloned.CollisionManager = new AABBTree();
+    cloned.CollisionManager.ResolveInternalCollisions = this.ResolveInternalCollisions;
+    return cloned;
+  }
+}

@@ -1,81 +1,26 @@
-﻿
+﻿using Birds.src.collision;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-using Birds.src.collision;
-using Birds.src.collision.bounding_areas;
-using Birds.src.collision.BVH;
-using Birds.src.events;
-using Birds.src.modules.entity;
-using Birds.src.modules.shared.bounding_area;
-using Microsoft.Xna.Framework;
-using System.Linq;
-
-namespace Birds.src.modules.collision;
-
-public class GroupCollisionHandlerModule : ModuleBase, ICollidable
+namespace Birds.src.modules.controller;
+public class GroupCollisionHandlerModule
 {
-  public AABBTree CollisionManager { get; private set; }
-  public bool ResolveInternalCollisions { get; set; }
-  public Vector2 Position { get; set; }
-  public float Radius { get; set; }
-  public float Mass { get; set; }
-  public bool IsCollidable { get; set; } = true;
-  public IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
+  public bool ResolveInternalCollisions { get; set; } = true;
+  public Stack<(ICollidable, ICollidable)> CollissionPairs { get; set; }
 
-  public GroupCollisionHandlerModule(bool resolveInternalCollisions = true)
+  public void ResolveCollissions()
   {
-    CollisionManager = new AABBTree();
-    ResolveInternalCollisions = resolveInternalCollisions;
-  }
-
-  protected override void ConfigurePropertySync()
-  {
-    ReadSync(() => Position, container.Position);
-    ReadSync(() => Radius, container.Radius);
-    ReadSync(() => Mass, container.Mass);
-  }
-
-  protected override void Update(GameTime gameTime)
-  {
-    CollisionManager.ResolveInternalCollisions = ResolveInternalCollisions;
-    UpdateTreeWithEntities();
-    CollisionManager.Update(gameTime);
-  }
-
-  private void UpdateTreeWithEntities()
-  {
-    var entityCollisionHandlers = container.Entities
-        .Select(e => e.GetModule<CollisionHandlerModule>())
-        .Where(handler => handler != null && handler.IsCollidable)
-        .Cast<ICollidable>()
-        .ToList();
-
-    if (entityCollisionHandlers.Count > 0)
+    if (!ResolveInternalCollisions)
     {
-      CollisionManager.UpdateTree(entityCollisionHandlers);
+      return;
     }
-  }
-
-
-  public bool CollidesWith(ICollidable otherCollidable)
-  {
-    if (!IsCollidable || !otherCollidable.IsCollidable)
-      return false;
-
-    return BoundingArea?.CollidesWith(otherCollidable.BoundingArea) ?? false;
-  }
-
-  public void Collide(ICollidable otherEntity)
-  {
-    if (otherEntity is GroupCollisionHandlerModule otherHandler)
+    while (CollissionPairs.Count > 0)
     {
-      CollisionManager.CollideWithTree(otherHandler.CollisionManager);
+      (ICollidable, ICollidable) pair = CollissionPairs.Pop();
+      pair.Item1.Collide(pair.Item2);
+      pair.Item2.Collide(pair.Item1);
     }
-  }
-  public override object Clone()
-  {
-    GroupCollisionHandlerModule cloned = (GroupCollisionHandlerModule)base.Clone();
-    cloned.CollisionManager = new AABBTree();
-    cloned.CollisionManager.ResolveInternalCollisions = this.ResolveInternalCollisions;
-    return cloned;
   }
 }
+

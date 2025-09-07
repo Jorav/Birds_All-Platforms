@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\controller\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\Link.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionHandlerModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupMovementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupDrawModule.cs" />

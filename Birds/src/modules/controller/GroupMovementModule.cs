@@ -5,7 +5,6 @@ using Birds.src.containers.entity;
 namespace Birds.src.modules.controller;
 public class GroupMovementModule : ModuleBase, IMovementModule
 {
-
   public Vector2 Position { get; set; }
   public float Radius { get; set; }
   public float Mass { get; set; }

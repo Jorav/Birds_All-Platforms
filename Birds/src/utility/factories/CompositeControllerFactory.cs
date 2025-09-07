@@ -69,10 +69,10 @@ namespace Birds.src.factories
         case ID_COMPOSITE.DEFAULT_SINGLE:
         case ID_COMPOSITE.DEFAULT_COMBINED:
           composite.AddModule(new MovementModule());
-          composite.AddModule(new GroupMovementModule());
+          composite.AddModule(new RotationModule());
           composite.AddModule(new GroupDrawModule());
           composite.AddModule(new BCCollisionDetectionModule());
-          composite.AddModule(new GroupCollisionHandlerModule());
+          composite.AddModule(new GroupCollisionDetectionModule());
           break;
 
         default:

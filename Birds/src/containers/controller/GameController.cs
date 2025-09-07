@@ -23,14 +23,14 @@ public class GameController
   private void UpdateGlobalCollisionTree()
   {
     var collisionHandlers = controllers
-        .Select(c => c.GetModule<GroupCollisionHandlerModule>())
+        .Select(c => c.GetModule<GroupCollisionDetectionModule>())
         .Where(handler => handler != null)
         .Cast<ICollidable>()
         .ToList();
 
     if (collisionHandlers.Count > 0)
     {
-      collisionManager.UpdateTree(collisionHandlers);
+      collisionManager.RebuildTree(collisionHandlers);
     }
   }
 
@@ -39,7 +39,8 @@ public class GameController
     foreach (Controller c in controllers)
       c.Update(gameTime);
     UpdateGlobalCollisionTree();
-    collisionManager.Update(gameTime);
+    collisionManager.GetInternalCollissions();
+    collisionManager.ResolveCollissions();
   }
 
   public void Draw(SpriteBatch sb)

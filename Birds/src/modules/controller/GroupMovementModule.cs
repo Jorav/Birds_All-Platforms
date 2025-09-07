@@ -41,14 +41,6 @@ public class GroupMovementModule : ModuleBase, IMovementModule
     }
   }
 
-  public void RotateTo(Vector2 position)
-  {
-    foreach (IEntity entity in container.Entities)
-    {
-      entity.RotateTo(position);
-    }
-  }
-
   protected override void Update(GameTime gameTime)
   {
     UpdatePosition();

@@ -32,11 +32,7 @@ public abstract class SteeringModule : ModuleBase
 
   private void RotateToTarget()
   {
-    var movementModule = GetMovementModule();
-    if (movementModule != null)
-    {
-      movementModule.RotateTo(PositionLookedAt);
-    }
+    container.RotateTo(PositionLookedAt);
   }
 
   private void AccelerateToTarget()
@@ -44,8 +40,7 @@ public abstract class SteeringModule : ModuleBase
     if (moveWholeController)
     {
       Vector2 accelerationVector = Vector2.Normalize(PositionLookedAt - Position);
-      var movementModule = GetMovementModule();
-      movementModule?.Accelerate(accelerationVector);
+      container.Accelerate(accelerationVector);
     }
     else
     {
@@ -56,12 +51,6 @@ public abstract class SteeringModule : ModuleBase
       }
     }
   }
-
-  private IMovementModule GetMovementModule()
-{
-    return container.GetModule<GroupMovementModule>() as IMovementModule ??
-           container.GetModule<MovementModule>();
-}
 
   public virtual object Clone()
   {

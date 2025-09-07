@@ -19,6 +19,7 @@ namespace Birds.src.factories
         case ID_CONTROLLER.DEFAULT:
           c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
           c.AddModule(new GroupMovementModule());
+          c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupDrawModule());
           c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionHandlerModule());
@@ -27,6 +28,7 @@ namespace Birds.src.factories
         case ID_CONTROLLER.PLAYER:
           c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
           c.AddModule(new GroupMovementModule());
+          c.AddModule(new GroupRotationModule());
           c.AddModule(new PlayerSteeringModule());
           c.AddModule(new CohesionModule());
           c.AddModule(new GroupDrawModule());
@@ -37,6 +39,7 @@ namespace Birds.src.factories
         case ID_CONTROLLER.CHASER_AI:
           c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
           c.AddModule(new GroupMovementModule());
+          c.AddModule(new GroupRotationModule());
           c.AddModule(new ChaserSteeringModule());
           c.AddModule(new GroupDrawModule());
           c.AddModule(new BCCollisionDetectionModule());

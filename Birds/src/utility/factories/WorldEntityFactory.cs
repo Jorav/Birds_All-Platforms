@@ -36,6 +36,7 @@ public static class EntityFactory
       case ID_ENTITY.DEFAULT:
         we.AddModule(new DrawModule(id));
         we.AddModule(new MovementModule());
+        we.AddModule(new RotationModule());
         we.AddModule(new BCCollisionDetectionModule());
         we.AddModule(new OBBCollisionDetectionModule());
         we.AddModule(new CollisionHandlerModule());

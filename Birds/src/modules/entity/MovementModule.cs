@@ -10,8 +10,7 @@ public class MovementModule : ModuleBase, IMovementModule
   public virtual float Thrust { get; set; }
   public virtual Vector2 Position { get; set; }
   protected Vector2 position;
-  public virtual float Rotation { get; set; }
-  protected float rotation;
+
   protected Vector2 velocity = new();
   public virtual Vector2 Velocity { get { return velocity; } set { velocity = value; } }
   public virtual float Friction { get; set; } = 0.1f;// percent, where 0.1f = 10% friction
@@ -20,7 +19,6 @@ public class MovementModule : ModuleBase, IMovementModule
   protected override void ConfigurePropertySync()
   {
     ReadWriteSync(() => Position, container.Position);
-    ReadWriteSync(() => Rotation, container.Rotation);
     ReadWriteSync(() => Mass, container.Mass);
     ReadWriteSync(() => Thrust, container.Thrust);
   }
@@ -29,7 +27,6 @@ public class MovementModule : ModuleBase, IMovementModule
     base.Initialize(container);
     Mass = 1;
     Thrust = 1;
-    Rotation = 0;
   }
 
   public void AccelerateTo(Vector2 position, float thrust)
@@ -37,9 +34,6 @@ public class MovementModule : ModuleBase, IMovementModule
     Accelerate(position - Position, thrust);
   }
 
-  /**
-   * Recieved a directional vector and accelerates with a certain thrust
-   */
   public void Accelerate(Vector2 directionalVector, float thrust)
   {
     Vector2 direction = new Vector2(directionalVector.X, directionalVector.Y);
@@ -55,19 +49,6 @@ public class MovementModule : ModuleBase, IMovementModule
     directionalVector = new Vector2(directionalVector.X, directionalVector.Y);//unnecessary?
     directionalVector.Normalize();
     return Vector2.Dot(Velocity, directionalVector) / Vector2.Dot(directionalVector, directionalVector) * directionalVector;
-  }
-
-  public virtual void RotateTo(Vector2 position)
-  {
-    Rotation = CalculateRotation(position, Position);
-  }
-  public static float CalculateRotation(Vector2 positionLookedAt, Vector2 currentPosition)
-  {
-    Vector2 position = positionLookedAt - currentPosition;
-    if (position.X >= 0)
-      return (float)Math.Atan(position.Y / position.X);
-    else
-      return (float)Math.Atan(position.Y / position.X) - MathHelper.ToRadians(180);
   }
 
   protected override void Update(GameTime gameTime)
@@ -91,7 +72,6 @@ public class MovementModule : ModuleBase, IMovementModule
     var cloned = new MovementModule();
     cloned.Mass = this.Mass;
     cloned.Thrust = this.Thrust;
-    cloned.Rotation = this.Rotation;
     cloned.Friction = this.Friction;
     cloned.Velocity = Vector2.Zero;
     cloned.Position = this.Position;

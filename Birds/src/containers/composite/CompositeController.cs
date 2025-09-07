@@ -2,6 +2,7 @@
 using Birds.src.collision.bounding_areas;
 using Birds.src.containers.controller;
 using Birds.src.containers.entity;
+using Birds.src.events;
 using Birds.src.modules.entity;
 using Microsoft.Xna.Framework;
 using System;
@@ -10,7 +11,7 @@ using System.IO;
 
 namespace Birds.src.containers.composite;
 
-public class CompositeController : Controller, IController, IEntity //remove Controller
+public class CompositeController : ModuleContainer, IController, IEntity //remove Controller
 {
   public new float Rotation
   {
@@ -30,6 +31,7 @@ public class CompositeController : Controller, IController, IEntity //remove Con
     }
   }
   private float rotation;
+  private IEnumerable<WorldEntity> entities;
 
   public Controller Manager { get; set; }
 
@@ -58,7 +60,7 @@ public class CompositeController : Controller, IController, IEntity //remove Con
     base.Update(gameTime);
   }
 
-  public override void AddEntity(IEntity e)
+  public void AddEntity(IEntity e)
   {
     bool collidesWithSubentities = CollidesWithSubEntities(e);
     if (collidesWithSubentities)
@@ -67,7 +69,7 @@ public class CompositeController : Controller, IController, IEntity //remove Con
     }
     //e.MovementModule.Friction = 0;
 
-    base.AddEntity(e);
+    //base.AddEntity(e);
     //MovementModule.Mass += e.MovementModule.Mass;
     //MovementModule.Thrust = e.MovementModule.Thrust;
 
@@ -78,13 +80,13 @@ public class CompositeController : Controller, IController, IEntity //remove Con
 
   }
 
-  public override void SetEntities(List<IEntity> newEntities)
+  public void SetEntities(List<IEntity> newEntities)
   {
     if (newEntities != null && newEntities.Count != 0)
     {
       return;
     }
-    base.SetEntities(newEntities);
+    //base.SetEntities(newEntities);
 
     foreach (IEntity entity in Entities)
     {

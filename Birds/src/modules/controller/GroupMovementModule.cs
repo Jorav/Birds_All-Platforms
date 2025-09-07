@@ -51,11 +51,6 @@ public class GroupMovementModule : ModuleBase, IMovementModule
 
   protected override void Update(GameTime gameTime)
   {
-    foreach (IEntity entity in container.Entities)
-    {
-      entity.Update(gameTime);
-    }
-
     UpdatePosition();
     UpdateMass();
   }

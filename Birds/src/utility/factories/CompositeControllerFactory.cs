@@ -5,10 +5,14 @@ using System.Collections.Generic;
 using Birds.src.storage;
 using Birds.src.storage.implementations;
 using System.Linq;
-using Birds.src.containers.composite;
+using Birds.src.modules.collision;
 using Birds.src.containers.composite.blueprints;
 using Birds.src.containers.composite.blueprints.parts;
 using Birds.src.containers.entity;
+using Birds.src.containers.composite;
+using Birds.src.modules.entity;
+using Birds.src.modules.controller;
+using Birds.src.modules.shared.bounding_area;
 
 namespace Birds.src.factories
 {
@@ -28,13 +32,17 @@ namespace Birds.src.factories
       {
         compositeController = new CompositeController();
       }
+
       var blueprint = GetBlueprintByName(blueprintName);
       var entities = BlueprintFactory.CreateFromBlueprint(blueprint, position);
-
       var iEntities = entities.Cast<IEntity>().ToList();
-      //compositeController.MovementModule = MovementModuleFactory.GetMovementModule();
+
       compositeController.SetEntities(iEntities);
-      //compositeController.Position = position;
+      compositeController.Position.Value = position;
+
+      // Set modules based on blueprint
+      SetCompositeModules(compositeController, GetCompositeIdFromBlueprint(blueprintName));
+
       return compositeController;
     }
 
@@ -53,6 +61,38 @@ namespace Birds.src.factories
       }
       return composites;
     }
+
+    private static void SetCompositeModules(CompositeController composite, ID_COMPOSITE id)
+    {
+      switch (id)
+      {
+        case ID_COMPOSITE.DEFAULT_SINGLE:
+        case ID_COMPOSITE.DEFAULT_COMBINED:
+          composite.AddModule(new MovementModule());
+          composite.AddModule(new GroupMovementModule());
+          composite.AddModule(new GroupDrawModule());
+          composite.AddModule(new BCCollisionDetectionModule());
+          composite.AddModule(new GroupCollisionHandlerModule());
+          break;
+
+        default:
+          throw new System.NotImplementedException();
+      }
+    }
+
+    private static ID_COMPOSITE GetCompositeIdFromBlueprint(string blueprintName)
+    {
+      switch (blueprintName)
+      {
+        case "Single Entity":
+          return ID_COMPOSITE.DEFAULT_SINGLE;
+        case "Cross Shape":
+          return ID_COMPOSITE.DEFAULT_COMBINED;
+        default:
+          return ID_COMPOSITE.DEFAULT_SINGLE;
+      }
+    }
+
     private static CompositeBlueprint GetBlueprintByName(string blueprintName)
     {
       var premadeBlueprint = TryGetPremadeBlueprint(blueprintName);

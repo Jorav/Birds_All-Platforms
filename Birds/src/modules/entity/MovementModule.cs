@@ -22,6 +22,7 @@ public class MovementModule : ModuleBase, IMovementModule
     ReadWriteSync(() => Position, container.Position);
     ReadWriteSync(() => Rotation, container.Rotation);
     ReadWriteSync(() => Mass, container.Mass);
+    ReadWriteSync(() => Thrust, container.Thrust);
   }
   public override void Initialize(IModuleContainer container)
   {

@@ -14,16 +14,17 @@ namespace Birds.src.modules.collision;
 public class GroupCollisionHandlerModule : ModuleBase, ICollidable
 {
   public AABBTree CollisionManager { get; private set; }
-  public bool ResolveInternalCollisions { get; set; } = true;
+  public bool ResolveInternalCollisions { get; set; }
   public Vector2 Position { get; set; }
   public float Radius { get; set; }
   public float Mass { get; set; }
   public bool IsCollidable { get; set; } = true;
   public IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
 
-  public GroupCollisionHandlerModule()
+  public GroupCollisionHandlerModule(bool resolveInternalCollisions = true)
   {
     CollisionManager = new AABBTree();
+    ResolveInternalCollisions = resolveInternalCollisions;
   }
 
   protected override void ConfigurePropertySync()

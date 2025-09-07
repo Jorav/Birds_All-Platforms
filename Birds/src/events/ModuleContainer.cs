@@ -17,6 +17,8 @@ public abstract class ModuleContainer : IModuleContainer
   private ReactiveProperty<float> _scale;
   private ReactiveProperty<float> _width;
   private ReactiveProperty<float> _height;
+  private ReactiveProperty<float> _thrust;
+
 
   public ReactiveProperty<Vector2> Position => _position ??= new ReactiveProperty<Vector2>();
   public ReactiveProperty<float> Rotation => _rotation ??= new ReactiveProperty<float>();
@@ -28,6 +30,8 @@ public abstract class ModuleContainer : IModuleContainer
   public ReactiveProperty<float> Scale => _scale ??= new ReactiveProperty<float>();
   public ReactiveProperty<float> Width => _width ??= new ReactiveProperty<float>();
   public ReactiveProperty<float> Height => _height ??= new ReactiveProperty<float>();
+  public ReactiveProperty<float> Thrust => _thrust ??= new ReactiveProperty<float>();
+
 
   public List<IEntity> Entities { get; private set; } = new();
 
@@ -55,7 +59,6 @@ public abstract class ModuleContainer : IModuleContainer
     return null;
   }
 
-
   public bool HasModule<T>() where T : ModuleBase
   {
     return modules.ContainsKey(typeof(T));
@@ -63,6 +66,10 @@ public abstract class ModuleContainer : IModuleContainer
 
   public virtual void Update(GameTime gameTime)
   {
+    foreach(var entity in Entities)
+    {
+      entity.Update(gameTime);
+    }
     foreach (var module in modules.Values)
     {
       module.UpdateModule(gameTime);
@@ -85,6 +92,7 @@ public abstract class ModuleContainer : IModuleContainer
     if (_scale != null) cloned._scale = new ReactiveProperty<float>(_scale.Value);
     if (_width != null) cloned._width = new ReactiveProperty<float>(_width.Value);
     if (_height != null) cloned._height = new ReactiveProperty<float>(_height.Value);
+    if (_thrust != null) cloned._thrust = new ReactiveProperty<float>(_thrust.Value);
 
     foreach (var kvp in modules)
     {
@@ -105,4 +113,3 @@ public abstract class ModuleContainer : IModuleContainer
     modules.Clear();
   }
 }
-

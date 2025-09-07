@@ -37,7 +37,7 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
   protected override void Update(GameTime gameTime)
   {
     UpdateTreeWithEntities();
-    CollisionManager.GetInternalCollissions();
+    var x = CollisionManager.GetInternalCollissions();
   }
 
   private void UpdateTreeWithEntities()
@@ -66,7 +66,8 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
   {
     if (otherEntity is GroupCollisionDetectionModule otherHandler)
     {
-      CollisionManager.GetCollisions(otherHandler.CollisionManager);
+      var collisions = CollisionManager.GetCollisions(otherHandler.CollisionManager);
+      ICollidable.ResolveCollisions(collisions);
     }
   }
 

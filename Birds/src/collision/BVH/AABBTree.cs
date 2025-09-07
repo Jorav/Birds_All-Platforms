@@ -242,7 +242,7 @@ public class AABBTree
   public Stack<(ICollidable, ICollidable)> GetInternalCollissions()
   {
     //if(root != null)
-    //CollissionPairs.Clear();
+    CollissionPairs.Clear();
     root.GetInternalCollissions(CollissionPairs);
     return CollissionPairs;
   }

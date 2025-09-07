@@ -40,15 +40,15 @@ namespace Birds.src.modules.entity
     public bool CollidesWith(ICollidable otherCollidable)
     {
       if (!IsCollidable || !otherCollidable.IsCollidable)
-        return false;
-
-      if (otherCollidable is CollisionHandlerModule otherHandler)
       {
-        return BoundingCircle != null
-            && otherHandler.BoundingCircle != null
-            && BoundingCircle.CollidesWith(otherHandler.BoundingCircle)
-            && BoundingArea != null
-            && otherHandler.BoundingArea != null
+        return false;
+      }
+
+      if (otherCollidable is CollisionHandlerModule otherHandler
+        && otherHandler.BoundingCircle != null
+        && BoundingCircle != null)
+      {
+        return BoundingCircle.CollidesWith(otherHandler.BoundingCircle)
             && BoundingArea.CollidesWith(otherHandler.BoundingArea);
       }
       else
@@ -59,25 +59,23 @@ namespace Birds.src.modules.entity
 
     public void Collide(ICollidable otherCollidable)
     {
-      if (otherCollidable is CollisionHandlerModule otherHandler)
-      {
-        var movementModule = container.GetModule<MovementModule>();
-        var otherMovementModule = otherHandler.container.GetModule<MovementModule>();
-
-        if (movementModule != null && otherMovementModule != null)
-        {
-          movementModule.TotalExteriorForce += movementModule.CalculateCollissionRepulsion(otherMovementModule);
-
-          if (BoundingCircle != null && otherHandler.BoundingCircle != null)
-          {
-            movementModule.TotalExteriorForce += BoundingCircle.CalculateOverlapRepulsion(otherHandler.BoundingCircle);
-          }
-        }
-      }
-      else
+      if (otherCollidable is not CollisionHandlerModule otherHandler)
       {
         throw new NotImplementedException("EntityCollisionHandlerModule: Collision with non-EntityCollisionHandlerModule not implemented");
       }
+      var movementModule = container.GetModule<MovementModule>();
+      var otherMovementModule = otherHandler.container.GetModule<MovementModule>();
+
+      if (movementModule != null && otherMovementModule != null)
+      {
+        movementModule.TotalExteriorForce += movementModule.CalculateCollissionRepulsion(otherMovementModule);
+
+        if (BoundingCircle != null && otherHandler.BoundingCircle != null)
+        {
+          movementModule.TotalExteriorForce += BoundingCircle.CalculateOverlapRepulsion(otherHandler.BoundingCircle);
+        }
+      }
+
     }
 
     public override object Clone()

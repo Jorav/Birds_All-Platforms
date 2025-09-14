@@ -23,6 +23,7 @@ namespace Birds.src.factories
           c.AddModule(new GroupDrawModule());
           c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
+          c.Position.Value = position;
           return c;
 
         case ID_CONTROLLER.PLAYER:
@@ -34,6 +35,7 @@ namespace Birds.src.factories
           c.AddModule(new GroupDrawModule());
           c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
+          c.Position.Value = position;
           return c;
 
         case ID_CONTROLLER.CHASER_AI:
@@ -44,16 +46,19 @@ namespace Birds.src.factories
           c.AddModule(new GroupDrawModule());
           c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
+          c.Position.Value = position;
           return c;
 
         case ID_CONTROLLER.BACKGROUND_SUN:
           c = new Background(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.SUN, isBackground: true), Input.Camera, relativeSpeed: 0.2f);//scale used to be 4
           c.AddModule(new GroupDrawModule());
+          c.Position.Value = position;
           return c;
 
         case ID_CONTROLLER.FOREGROUND_CLOUD:
           c = new Background(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.CLOUD, isBackground: true), Input.Camera, relativeSpeed: 1.5f);//scale used to be 3
           c.AddModule(new GroupDrawModule());
+          c.Position.Value = position;
           return c;
 
         default:

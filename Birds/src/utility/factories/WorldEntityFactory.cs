@@ -13,7 +13,7 @@ public static class EntityFactory
 {
   public static Stack<WorldEntity> availableEntities = new();
 
-  public static WorldEntity GetEntity(Vector2 position, ID_ENTITY id)
+  public static WorldEntity GetEntity(Vector2 position, ID_ENTITY id, bool isComposite = false)
   {
     WorldEntity we;
     if (availableEntities.Count > 0)
@@ -26,22 +26,25 @@ public static class EntityFactory
     }
     we.EntityID = id;
     we.Position.Value = position;
-    SetModules(we, id);
+    SetModules(we, id, isComposite);
     return we;
   }
 
-  public static void SetModules(WorldEntity we, ID_ENTITY id)
+  public static void SetModules(WorldEntity we, ID_ENTITY id, bool isComposite = false)
   {
     switch (id)
     {
       case ID_ENTITY.DEFAULT:
         we.AddModule(new DrawModule(id));
-        we.AddModule(new MovementModule());
-        we.AddModule(new RotationModule());
         we.AddModule(new BCCollisionDetectionModule());
         we.AddModule(new OBBCollisionDetectionModule());
         we.AddModule(new CollisionDetectionModule());
         we.AddModule(GetCollisionHandler());
+        if (!isComposite)
+        {
+          we.AddModule(new MovementModule());
+          we.AddModule(new RotationModule());
+        }
         break;
 
       /*
@@ -60,10 +63,12 @@ public static class EntityFactory
       //case (int)IDs.COMPOSITE: return new Composite(new Sprite(hull), position);*/
       #region background
       case ID_ENTITY.CLOUD:
+        we.AddModule(new DrawModule(id));
         we.AddModule(new MovementModule());
         break;
 
       case ID_ENTITY.SUN:
+        we.AddModule(new DrawModule(id));
         we.AddModule(new MovementModule());
         break;
       #endregion
@@ -81,12 +86,12 @@ public static class EntityFactory
     return collisionHandler;
   }
 
-  public static List<IEntity> CreateEntities(Vector2 position, int numberOfEntities, ID_ENTITY id, bool isBackground = false)
+  public static List<IEntity> CreateEntities(Vector2 position, int numberOfEntities, ID_ENTITY id, bool isBackground = false, bool isComposite = false)
   {
     List<IEntity> returnedList = new List<IEntity>();
     if (numberOfEntities == 1)
     {
-      WorldEntity we = EntityFactory.GetEntity(position, id);
+      WorldEntity we = EntityFactory.GetEntity(position, id, isComposite);
       returnedList.Add(we);
     }
     else if (numberOfEntities > 1)
@@ -98,7 +103,7 @@ public static class EntityFactory
         {
           float rRadius = (float)(rnd.NextDouble() * 5 * numberOfEntities);
           float rAngle = (float)(rnd.NextDouble() * 2 * Math.PI);
-          WorldEntity we = EntityFactory.GetEntity(new Vector2((float)Math.Sin(rAngle), (float)Math.Cos(rAngle)) * rRadius + position, id);
+          WorldEntity we = EntityFactory.GetEntity(new Vector2((float)Math.Sin(rAngle), (float)Math.Cos(rAngle)) * rRadius + position, id, isComposite);
           returnedList.Add(we);
         }
       }
@@ -108,7 +113,7 @@ public static class EntityFactory
         {
           float x = GameState.Player.Position.Value.X + (float)((rnd.NextDouble() * (Game1.ScreenWidth - 32 * 2) - Game1.ScreenWidth / 2) + 32);
           float y = GameState.Player.Position.Value.Y + (float)((rnd.NextDouble() * (Game1.ScreenHeight - 32 * 2) - Game1.ScreenHeight / 2) + 32);
-          WorldEntity we = EntityFactory.GetEntity(new Vector2(x, y), id);
+          WorldEntity we = EntityFactory.GetEntity(new Vector2(x, y), id, isComposite);
           returnedList.Add(we);
         }
       }

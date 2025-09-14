@@ -1,5 +1,4 @@
-﻿using Birds.src.collision;
-using Birds.src.containers.entity;
+﻿using Birds.src.containers.entity;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System;
@@ -22,13 +21,13 @@ public abstract class ModuleContainer : IModuleContainer
   private ReactiveProperty<bool> _resolveInternalCollisions;
 
   public ReactiveProperty<Vector2> Position => _position ??= new ReactiveProperty<Vector2>();
-  public ReactiveProperty<float> Rotation => _rotation ??= new ReactiveProperty<float>();
-  public ReactiveProperty<float> Mass => _mass ??= new ReactiveProperty<float>();
-  public ReactiveProperty<float> Radius => _radius ??= new ReactiveProperty<float>();
-  public ReactiveProperty<Color> Color => _color ??= new ReactiveProperty<Color>();
+  public ReactiveProperty<float> Rotation => _rotation ??= new ReactiveProperty<float>(0);
+  public ReactiveProperty<float> Mass => _mass ??= new ReactiveProperty<float>(1);
+  public ReactiveProperty<float> Radius => _radius ??= new ReactiveProperty<float>(0);
+  public ReactiveProperty<Color> Color => _color ??= new ReactiveProperty<Color>(Microsoft.Xna.Framework.Color.Red);
   public ReactiveProperty<ID_OTHER> Team => _team ??= new ReactiveProperty<ID_OTHER>();
   public ReactiveProperty<Vector2> Velocity => _velocity ??= new ReactiveProperty<Vector2>();
-  public ReactiveProperty<float> Scale => _scale ??= new ReactiveProperty<float>();
+  public ReactiveProperty<float> Scale => _scale ??= new ReactiveProperty<float>(1);
   public ReactiveProperty<float> Width => _width ??= new ReactiveProperty<float>();
   public ReactiveProperty<float> Height => _height ??= new ReactiveProperty<float>();
   public ReactiveProperty<float> Thrust => _thrust ??= new ReactiveProperty<float>();

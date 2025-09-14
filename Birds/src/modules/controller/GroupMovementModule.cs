@@ -42,8 +42,8 @@ public class GroupMovementModule : ModuleBase, IMovementModule
 
   protected override void Update(GameTime gameTime)
   {
-    UpdatePosition();
     UpdateMass();
+    UpdatePosition();
   }
 
   private void UpdatePosition()

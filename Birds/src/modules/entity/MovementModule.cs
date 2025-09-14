@@ -8,7 +8,7 @@ public class MovementModule : ModuleBase, IMovementModule
 {
   public virtual float Mass { get; set; }
   public virtual float Thrust { get; set; }
-  public virtual Vector2 Position { get; set; }
+  public virtual Vector2 Position { get; set; } = new();
   protected Vector2 position;
 
   protected Vector2 velocity = new();

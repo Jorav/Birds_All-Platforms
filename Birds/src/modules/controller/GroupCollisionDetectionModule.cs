@@ -18,7 +18,6 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
   public float Radius { get; set; }
   public float Mass { get; set; }
   public bool IsCollidable { get; set; } = true;
-  public Stack<(ICollidable, ICollidable)> CollisionPairs {get; set;}
   public IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
 
   public GroupCollisionDetectionModule()

@@ -15,8 +15,6 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
 {
   public AABBTree CollisionManager { get; private set; }
   public Vector2 Position { get; set; }
-  public float Radius { get; set; }
-  public float Mass { get; set; }
   public bool IsCollidable { get; set; } = true;
   public IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
 

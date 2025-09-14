@@ -9,8 +9,6 @@ public class AABBNode
 {
   public AABBNode Parent { get; set; }
   public AABBNode[] children = new AABBNode[2];
-  public float Radius { get { return radius; } protected set { radius = value; } }
-  protected float radius;
   public Vector2 Position
   {
     get { return position; }
@@ -24,9 +22,7 @@ public class AABBNode
     }
   }
   protected Vector2 position;
-  public float Mass { get; set; }
   public int Count { get; set; }
-  public Vector2 MassCenter { get; private set; }
   public AxisAlignedBoundingBox AABB { get; private set; }
   public ICollidable Entity
   {//=!null implies leaf
@@ -36,10 +32,7 @@ public class AABBNode
       entity = value;
       AABB = AxisAlignedBoundingBox.SurroundingAABB(entity.BoundingArea);
       position = entity.Position;
-      radius = Entity.Radius;
       Count = 1;
-      Mass = entity.Mass;
-      MassCenter = entity.Position;
     }
   }
   private ICollidable entity;
@@ -56,7 +49,6 @@ public class AABBNode
       else if (children[1] == null)
         children[1] = node;
       node.Parent = this;
-      Mass += node.Mass;
       Count += node.Count;
     }
   }
@@ -84,23 +76,6 @@ public class AABBNode
       Count = children[0].Count + children[1].Count;
     }
     position = AABB.Position;
-    radius = AABB.Radius;
-
-    UpdateMassCenter();
-  }
-  public void UpdateMassCenter()
-  {
-    MassCenter = Vector2.Zero;
-    Mass = 0;
-    foreach (AABBNode child in children)
-    {
-      if (child != null)
-      {
-        Mass += child.Mass;
-        MassCenter += child.MassCenter * child.Mass;
-      }
-    }
-    MassCenter /= Mass;
   }
 
   public void Reset()
@@ -113,10 +88,7 @@ public class AABBNode
     children[1] = null;
     Parent = null;
     Count = 0;
-    Radius = 0;
-    Mass = 0;
     position = Vector2.Zero;
-    MassCenter = Vector2.Zero;
   }
   #endregion
   #region update-logic

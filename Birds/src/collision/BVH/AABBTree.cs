@@ -9,7 +9,6 @@ namespace Birds.src.collision.BVH;
 public class AABBTree
 {
   public Vector2 Position { get { return root.Position; } }
-  public float Radius { get { return root.Radius; } }
   public AABBNode root;
   private Stack<AABBNode> freeNodes = new();
 

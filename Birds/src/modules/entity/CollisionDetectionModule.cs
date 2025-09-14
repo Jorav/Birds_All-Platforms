@@ -15,8 +15,6 @@ namespace Birds.src.modules.entity;
   public class CollisionDetectionModule : ModuleBase, ICollidable
 {
   public Vector2 Position { get; set; }
-  public float Radius { get; set; }
-  public float Mass { get; set; }
   public bool IsCollidable { get; set; } = true;
 
   public BoundingCircle BoundingCircle => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
@@ -29,13 +27,6 @@ namespace Birds.src.modules.entity;
 
     var circle = container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
     return circle;
-  }
-
-  protected override void ConfigurePropertySync()
-  {
-    ReadSync(() => Position, container.Position);
-    ReadSync(() => Radius, container.Radius);
-    ReadSync(() => Mass, container.Mass);
   }
 
   protected override void Update(GameTime gameTime)

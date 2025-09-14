@@ -6,8 +6,6 @@ namespace Birds.src.collision;
 public interface ICollidable
 {
   Vector2 Position { get; }
-  float Radius { get; }
-  float Mass { get; }
   IBoundingArea BoundingArea { get; }
   bool IsCollidable { get; }
 

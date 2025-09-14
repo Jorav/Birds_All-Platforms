@@ -56,7 +56,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\entity\IEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\entity\WorldEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Game1.cs" />
-    <Compile Include="..\Birds\src\collision\ICollisionDetector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\ICollidable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\BuildControllerState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\ButtonContainer.cs" />

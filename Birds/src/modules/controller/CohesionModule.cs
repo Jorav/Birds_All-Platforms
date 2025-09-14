@@ -34,7 +34,7 @@ public class CohesionModule : ModuleBase
       distanceFromController = Position - entity.Position;
       if (distanceFromController.Length() > entity.Radius)
       {
-        entity.Accelerate(Vector2.Normalize(Position - entity.Position), 0.2f * (float)((distanceFromController.Length() - entity.Radius) / averageDistance) / entity.Mass);
+        entity.Accelerate(Vector2.Normalize(Position - entity.Position), 0.04f * (float)((distanceFromController.Length() - entity.Radius) / averageDistance) / entity.Mass);
       }
     }
   }
@@ -44,7 +44,7 @@ public class CohesionModule : ModuleBase
     foreach (IEntity entity1 in container.Entities)
       foreach (IEntity entity2 in container.Entities)
         if (entity1 != entity2)
-          entity1.AccelerateTo(entity2.Position, 0.005f * averageDistance * entity1.Mass * entity2.Mass / (float)Math.Pow(((entity1.Position.Value - entity2.Position.Value).Length()), 1));
+          entity1.AccelerateTo(entity2.Position, 0.01f * averageDistance * entity1.Mass * entity2.Mass / (float)Math.Pow(((entity1.Position.Value - entity2.Position.Value).Length()), 1));
   }
 
   public void ApplyInterParticleRepulsion()

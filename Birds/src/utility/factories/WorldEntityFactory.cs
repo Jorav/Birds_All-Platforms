@@ -65,11 +65,13 @@ public static class EntityFactory
       case ID_ENTITY.CLOUD:
         we.AddModule(new DrawModule(id));
         we.AddModule(new MovementModule());
+        we.Scale.Value = 3;
         break;
 
       case ID_ENTITY.SUN:
         we.AddModule(new DrawModule(id));
         we.AddModule(new MovementModule());
+        we.Scale.Value = 5;
         break;
       #endregion
 

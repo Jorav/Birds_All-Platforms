@@ -12,7 +12,6 @@ public class AABBTree
   public float Radius { get { return root.Radius; } }
   public AABBNode root;
   private Stack<AABBNode> freeNodes = new();
-  public Stack<(ICollidable, ICollidable)> CollissionPairs = new();
 
   public AABBTree()
   {
@@ -211,10 +210,9 @@ public class AABBTree
     return bestSibling;
   }
 
-  public Stack<(ICollidable, ICollidable)> GetCollisions(AABBTree tree)
+  public void AddCollisionsToEntities(AABBTree tree)
   {
-    root.GetCollisions(tree.root, CollissionPairs);
-    return CollissionPairs;
+    root.AddCollisionsToEntities(tree.root);
   }
 
   private void UnravelTree()
@@ -239,11 +237,8 @@ public class AABBTree
     }
   }
 
-  public Stack<(ICollidable, ICollidable)> GetInternalCollissions()
+  public void AddInternalCollisionsToEntities()
   {
-    //if(root != null)
-    CollissionPairs.Clear();
-    root.GetInternalCollissions(CollissionPairs);
-    return CollissionPairs;
+    root.AddInternalCollissionsToEntities();
   }
 }

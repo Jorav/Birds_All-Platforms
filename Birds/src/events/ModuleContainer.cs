@@ -34,8 +34,8 @@ public abstract class ModuleContainer : IModuleContainer
   public ReactiveProperty<float> Thrust => _thrust ??= new ReactiveProperty<float>();
   public ReactiveProperty<bool> ResolveInternalCollisions => _resolveInternalCollisions ??= new ReactiveProperty<bool>(true);
 
-
   public List<IEntity> Entities { get; private set; } = new();
+  public List<IModuleContainer> Collisions { get; } = new();
 
   private Dictionary<Type, ModuleBase> modules = new Dictionary<Type, ModuleBase>();
 
@@ -60,6 +60,18 @@ public abstract class ModuleContainer : IModuleContainer
     }
     return null;
   }
+
+  public IEnumerable<TBase> GetAllModulesOfType<TBase>() where TBase : ModuleBase
+  {
+    foreach (var module in modules.Values)
+    {
+      if (module is TBase match)
+      {
+        yield return match;
+      }
+    }
+  }
+
 
   public bool HasModule<T>() where T : ModuleBase
   {

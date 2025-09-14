@@ -41,8 +41,7 @@ public class GameController
       c.Update(gameTime);
     }
     UpdateGlobalCollisionTree();
-    var collisionPairs = collisionManager.GetInternalCollissions();
-    ICollidable.ResolveCollisions(collisionPairs);
+    collisionManager.AddInternalCollisionsToEntities();
   }
 
   public void Draw(SpriteBatch sb)

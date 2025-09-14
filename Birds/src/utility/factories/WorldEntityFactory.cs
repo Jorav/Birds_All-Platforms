@@ -6,6 +6,7 @@ using Birds.src.menu;
 using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.entity;
 using Birds.src.containers.entity;
+using Birds.src.modules.entity.collision_handling;
 
 namespace Birds.src.factories;
 public static class EntityFactory
@@ -39,7 +40,8 @@ public static class EntityFactory
         we.AddModule(new RotationModule());
         we.AddModule(new BCCollisionDetectionModule());
         we.AddModule(new OBBCollisionDetectionModule());
-        we.AddModule(new CollisionHandlerModule());
+        we.AddModule(new CollisionDetectionModule());
+        we.AddModule(GetCollisionHandler());
         break;
 
       /*
@@ -69,6 +71,14 @@ public static class EntityFactory
       default:
         throw new NotImplementedException();
     }
+  }
+
+  public static CollisionHandlerModule GetCollisionHandler()
+  {
+    var collisionHandler = new CollisionHandlerModule();
+    collisionHandler.AddResponse(new MomentumTransfer());
+    collisionHandler.AddResponse(new OverlapRepulsion());
+    return collisionHandler;
   }
 
   public static List<IEntity> CreateEntities(Vector2 position, int numberOfEntities, ID_ENTITY id, bool isBackground = false)

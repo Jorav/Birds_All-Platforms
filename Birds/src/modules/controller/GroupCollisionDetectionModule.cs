@@ -24,26 +24,17 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
   public GroupCollisionDetectionModule()
   {
     CollisionManager = new AABBTree();
-    CollisionPairs = CollisionManager.CollissionPairs;
-  }
-
-  protected override void ConfigurePropertySync()
-  {
-    ReadSync(() => Position, container.Position);
-    ReadSync(() => Radius, container.Radius);
-    ReadSync(() => Mass, container.Mass);
   }
 
   protected override void Update(GameTime gameTime)
   {
     UpdateTreeWithEntities();
-    var x = CollisionManager.GetInternalCollissions();
   }
 
   private void UpdateTreeWithEntities()
   {
     var entityCollisionHandlers = container.Entities
-        .Select(e => e.GetModule<CollisionHandlerModule>())
+        .Select(e => e.GetModule<CollisionDetectionModule>())
         .Where(handler => handler != null && handler.IsCollidable)
         .Cast<ICollidable>()
         .ToList();
@@ -62,20 +53,24 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
     return BoundingArea?.CollidesWith(otherCollidable.BoundingArea) ?? false;
   }
 
-  public void Collide(ICollidable otherEntity)
+  public void AddCollisionsToEntities(ICollidable otherCollidable)
   {
-    if (otherEntity is GroupCollisionDetectionModule otherHandler)
+    if (otherCollidable is not GroupCollisionDetectionModule otherHandler)
     {
-      var collisions = CollisionManager.GetCollisions(otherHandler.CollisionManager);
-      ICollidable.ResolveCollisions(collisions);
+      throw new NotImplementedException("EntityCollisionHandlerModule: Collision with non-EntityCollisionHandlerModule not implemented");
     }
+    CollisionManager.AddCollisionsToEntities(otherHandler.CollisionManager);
   }
 
   public override object Clone()
   {
     GroupCollisionDetectionModule cloned = (GroupCollisionDetectionModule)base.Clone();
     cloned.CollisionManager = new AABBTree();
-    cloned.CollisionPairs = cloned.CollisionManager.CollissionPairs;
     return cloned;
+  }
+
+  public void AddInternalCollisions()
+  {
+    CollisionManager.AddInternalCollisionsToEntities();
   }
 }

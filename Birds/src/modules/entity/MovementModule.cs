@@ -40,10 +40,12 @@ public class MovementModule : ModuleBase, IMovementModule
     direction.Normalize();
     TotalExteriorForce += direction * thrust;
   }
+
   public void Accelerate(Vector2 directionalVector)
   {
     Accelerate(directionalVector, Thrust);
   }
+
   public Vector2 VelocityAlongVector(Vector2 directionalVector)
   {
     directionalVector = new Vector2(directionalVector.X, directionalVector.Y);//unnecessary?
@@ -67,6 +69,7 @@ public class MovementModule : ModuleBase, IMovementModule
     Vector2 collissionRepulsion = 0.5f * Vector2.Normalize(-vectorFromOther) * (Vector2.Dot(Velocity, vectorFromOther) * Mass + Vector2.Dot(m.Velocity, -vectorFromOther) * m.Mass); //make velocity depend on position
     return collissionRepulsion;
   }
+
   public override object Clone()
   {
     var cloned = new MovementModule();

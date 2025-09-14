@@ -1,4 +1,5 @@
-﻿using Birds.src.containers.entity;
+﻿using Birds.src.collision;
+using Birds.src.containers.entity;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -8,9 +9,11 @@ public interface IModuleContainer
 {
   void AddModule<T>(T module) where T : ModuleBase;
   T GetModule<T>() where T : ModuleBase;
+  IEnumerable<TBase> GetAllModulesOfType<TBase>() where TBase : ModuleBase;
   bool HasModule<T>() where T : ModuleBase;
 
   List<IEntity> Entities { get; }
+  List<IModuleContainer> Collisions { get; }
 
   // Reactive properties
   ReactiveProperty<Vector2> Position { get; }

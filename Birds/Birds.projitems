@@ -21,7 +21,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\Link.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionDetectionModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionHandlerModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupMovementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupDrawModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleBase.cs" />
@@ -29,7 +28,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ReactiveProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupRotationModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\CollisionHandlerModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\collision-handling\CollisionHandlerModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\collision-handling\MomentumTransfer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\collision-handling\OverlapRepulsion.cs" />
+    <Compile Include="..\Birds\src\modules\entity\collision-handling\BaseCollisionResponseModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\CollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\LinkModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\DrawModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\RotationModule.cs" />
@@ -53,7 +56,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\entity\IEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\entity\WorldEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\Game1.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\collision\ICollidable.cs" />
+    <Compile Include="..\Birds\src\collision\ICollisionDetector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\BuildControllerState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\Button.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\ButtonContainer.cs" />

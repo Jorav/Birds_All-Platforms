@@ -99,13 +99,13 @@ public class CompositeController : ModuleContainer, IController, IEntity //remov
 
   private bool CollidesWithSubEntities(IEntity newEntity)
   {
-    var newEntityCollisionHandler = newEntity.GetModule<CollisionHandlerModule>();
+    var newEntityCollisionHandler = newEntity.GetModule<CollisionDetectionModule>();
     if (newEntityCollisionHandler == null || !newEntityCollisionHandler.IsCollidable)
       return false;
 
     foreach (IEntity e in Entities)
     {
-      var existingEntityCollisionHandler = e.GetModule<CollisionHandlerModule>();
+      var existingEntityCollisionHandler = e.GetModule<CollisionDetectionModule>();
       if (existingEntityCollisionHandler == null || !existingEntityCollisionHandler.IsCollidable)
         continue;
 

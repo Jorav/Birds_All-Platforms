@@ -121,37 +121,47 @@ public class AABBNode
   #endregion
   #region update-logic
 
-  public void GetInternalCollissions(Stack<(ICollidable, ICollidable)> collissions)
+  public void AddInternalCollissionsToEntities()
   {
     if (children.Count(x => x != null) == 2)
-      children[0].GetCollisions(children[1], collissions);
+      children[0].AddCollisionsToEntities(children[1]);
     if (children[0] != null)
-      children[0].GetInternalCollissions(collissions);
+      children[0].AddInternalCollissionsToEntities();
     if (children[1] != null)
-      children[1].GetInternalCollissions(collissions);
+      children[1].AddInternalCollissionsToEntities();
+    if(children[0] == null && children[1] == null && Entity != null)
+      Entity.AddInternalCollisions();
   }
 
-  public void GetCollisions(AABBNode node, Stack<(ICollidable, ICollidable)> collissions)
+  public void AddCollisionsToEntities(AABBNode node)
   {
-    if (AABB.CollidesWith(node.AABB))
+    if (!AABB.CollidesWith(node.AABB))
     {
-      if (Entity == null)
+      return;
+    }
+    if (Entity == null)
+    {
+      foreach (AABBNode child in children)
       {
-        foreach (AABBNode child in children)
-          if (child != null)
-            child.GetCollisions(node, collissions);
+        if (child != null)
+        {
+          child.AddCollisionsToEntities(node);
+        }
       }
-      else if (node.Entity == null)
+    }
+    else if (node.Entity == null)
+    {
+      foreach (AABBNode childOther in node.children)
       {
-        foreach (AABBNode childOther in node.children)
-          if (childOther != null)
-            GetCollisions(childOther, collissions);
+        if (childOther != null)
+        {
+          AddCollisionsToEntities(childOther);
+        }
       }
-      else
-      {
-        if (Entity.CollidesWith(node.Entity))
-          collissions.Push((this.Entity, node.Entity));
-      }
+    }
+    else
+    {
+      Entity.AddCollisionsToEntities(node.Entity);
     }
   }
 

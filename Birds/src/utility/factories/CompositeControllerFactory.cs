@@ -13,6 +13,9 @@ using Birds.src.containers.composite;
 using Birds.src.modules.entity;
 using Birds.src.modules.controller;
 using Birds.src.modules.shared.bounding_area;
+using Birds.src.modules;
+using Birds.src.modules.composite;
+using Birds.src.modules.entity.collision_handling;
 
 namespace Birds.src.factories
 {
@@ -37,11 +40,11 @@ namespace Birds.src.factories
       var entities = BlueprintFactory.CreateFromBlueprint(blueprint, position);
       var iEntities = entities.Cast<IEntity>().ToList();
 
-      compositeController.SetEntities(iEntities);
       compositeController.Position.Value = position;
 
       // Set modules based on blueprint
       SetCompositeModules(compositeController, GetCompositeIdFromBlueprint(blueprintName));
+      compositeController.SetEntities(iEntities);
 
       return compositeController;
     }
@@ -52,9 +55,9 @@ namespace Birds.src.factories
       return GetComposite(position, blueprintName);
     }
 
-    public static List<CompositeController> CreateComposites(Vector2 position, int numberOfEntities, ID_COMPOSITE id)
+    public static List<IEntity> CreateComposites(Vector2 position, int numberOfEntities, ID_COMPOSITE id)
     {
-      List<CompositeController> composites = new List<CompositeController>();
+      var composites = new List<IEntity>();
       for (int i = 0; i < numberOfEntities; i++)
       {
         composites.Add(GetComposite(position, id));
@@ -68,16 +71,31 @@ namespace Birds.src.factories
       {
         case ID_COMPOSITE.DEFAULT_SINGLE:
         case ID_COMPOSITE.DEFAULT_COMBINED:
+          composite.AddModule(new GroupMassModule());
+          composite.AddModule(new GroupWeightedPositionModule());
+          composite.AddModule(new GroupThrustModule());
           composite.AddModule(new MovementModule());
-          composite.AddModule(new RotationModule());
+          composite.AddModule(new CoherentGroupRotationModule());
           composite.AddModule(new GroupDrawModule());
           composite.AddModule(new BCCollisionDetectionModule());
           composite.AddModule(new GroupCollisionDetectionModule());
+          composite.AddModule(new SubEntityCollisionExtractionModule());
+          composite.AddModule(GetCollisionHandler());
+          //link management module (probably) mass?
           break;
 
         default:
           throw new System.NotImplementedException();
       }
+    }
+
+    public static CollisionHandlerModule GetCollisionHandler()
+    {
+      var collisionHandler = new CollisionHandlerModule();
+      collisionHandler.AddResponse(new MomentumTransfer());
+      collisionHandler.AddResponse(new OverlapRepulsion());
+      
+      return collisionHandler;
     }
 
     private static ID_COMPOSITE GetCompositeIdFromBlueprint(string blueprintName)

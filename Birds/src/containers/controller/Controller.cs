@@ -6,14 +6,9 @@ using Birds.src.utility;
 namespace Birds.src.containers.controller;
 public class Controller : ModuleContainer, IController
 {
-  protected List<IEntity> entities;
-  public Controller(List<IEntity> controllables, ID_OTHER team = ID_OTHER.TEAM_AI) : this()
+  public Controller(List<IEntity> controllables, ID_OTHER team = ID_OTHER.TEAM_AI) : base()
   {
     SetEntities(controllables);
-  }
-  public Controller() : base()
-  {
-    entities = new List<IEntity>();
   }
 
   public virtual void SetEntities(List<IEntity> newEntities)

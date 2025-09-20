@@ -4,7 +4,7 @@ using System;
 
 namespace Birds.src.modules.entity;
 
-public class RotationModule : ModuleBase, IRotationModule
+public class RotationModule : RotationModuleBase
 {
   public virtual float Rotation { get; set; }
   protected float rotation;
@@ -27,16 +27,7 @@ public class RotationModule : ModuleBase, IRotationModule
   {
   }
 
-  public static float CalculateRotation(Vector2 positionLookedAt, Vector2 currentPosition)
-  {
-    Vector2 position = positionLookedAt - currentPosition;
-    if (position.X >= 0)
-      return (float)Math.Atan(position.Y / position.X);
-    else
-      return (float)Math.Atan(position.Y / position.X) - MathHelper.ToRadians(180);
-  }
-
-  public virtual void RotateTo(Vector2 position)
+  public override void RotateTo(Vector2 position)
   {
     Rotation = CalculateRotation(position, Position);
   }

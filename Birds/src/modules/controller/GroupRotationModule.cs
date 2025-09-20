@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.controller;
 
-public class GroupRotationModule : ModuleBase, IRotationModule
+public class GroupRotationModule : RotationModuleBase
 {
   protected override void Update(GameTime gameTime)
   {
   }
-  public void RotateTo(Vector2 position)
+  public override void RotateTo(Vector2 position)
   {
     foreach (IEntity entity in container.Entities)
     {

@@ -20,6 +20,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\controller\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\Link.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\GroupPositionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SubEntityCollisionExtractionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupMassModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\GroupThrustModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupWeightedPositionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\collision_detection\BaseCollisionDetectionModule.cs" />
+    <Compile Include="..\Birds\src\modules\composite\CoherentGroupRotationModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupMovementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupDrawModule.cs" />
@@ -38,7 +45,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\RotationModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\IDrawModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\IMovementModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\IRotationModule.cs" />
+    <Compile Include="..\Birds\src\modules\RotationModuleBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\collision_detection\BCCollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\collision_detection\OBBCollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\storage\IBlueprintStorage.cs" />

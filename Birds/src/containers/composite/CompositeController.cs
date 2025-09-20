@@ -13,43 +13,7 @@ namespace Birds.src.containers.composite;
 
 public class CompositeController : ModuleContainer, IController, IEntity //remove Controller
 {
-  public new float Rotation
-  {
-    get { return rotation; }
-    set
-    {
-      float dRotation = Rotation - value;
-      foreach (WorldEntity e in entities)
-      {
-        Vector2 relativePosition = e.Position - Position.Value;
-        Vector2 newRelativePosition = Vector2.Transform(relativePosition, Matrix.CreateRotationZ(-dRotation));
-        //e.MovementModule.Velocity = newRelativePosition - relativePosition;
-        //e.Rotation = Rotation;
-
-      }
-      rotation = value;
-    }
-  }
-  private float rotation;
-  private IEnumerable<WorldEntity> entities;
-
   public Controller Manager { get; set; }
-
-  //EntityMovementModule IEntity.MovementModule => throw new NotImplementedException();
-
-  //float IEntity.Radius => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
-
-  //Vector2 ICollidable.Position => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
-
-  //float ICollidable.Radius => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
-
-  //float ICollidable.Mass => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
-
-  public bool IsCollidable => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
-
-  public BoundingCircle BoundingCircle => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
-
-  public IBoundingArea BoundingArea => throw new NotImplementedException(); //ADDED TO IGNORE ERROR
 
   public CompositeController() : base()
   {
@@ -62,11 +26,11 @@ public class CompositeController : ModuleContainer, IController, IEntity //remov
 
   public void AddEntity(IEntity e)
   {
-    bool collidesWithSubentities = CollidesWithSubEntities(e);
-    if (collidesWithSubentities)
-    {
-      throw new InvalidDataException("Collides with subentities");
-    }
+    //bool collidesWithSubentities = CollidesWithSubEntities(e);
+    //if (collidesWithSubentities)
+    //{
+    //  throw new InvalidDataException("Collides with subentities");
+    //}
     //e.MovementModule.Friction = 0;
 
     //base.AddEntity(e);
@@ -77,47 +41,27 @@ public class CompositeController : ModuleContainer, IController, IEntity //remov
       ConnectToOthers(ee);
     else
       throw new NotImplementedException("Only WorldEntity supported in CompositeController");
+    //e.Manager = this;
+    base.Entities.Add(e);
 
   }
 
   public void SetEntities(List<IEntity> newEntities)
   {
-    if (newEntities != null && newEntities.Count != 0)
+    if (newEntities == null || newEntities.Count == 0)
     {
       return;
     }
     //base.SetEntities(newEntities);
 
-    foreach (IEntity entity in Entities)
+    foreach (IEntity entity in newEntities)
     {
       //entity.MovementModule.Friction = 0;
-      entity.Rotation.Value = Rotation;
+      //entity.Rotation.Value = Rotation;
       //MovementModule.Mass += entity.Mass;
       //MovementModule.Thrust += entity.MovementModule.Thrust;
+      AddEntity(entity);
     }
-  }
-
-  private bool CollidesWithSubEntities(IEntity newEntity)
-  {
-    var newEntityCollisionHandler = newEntity.GetModule<CollisionDetectionModule>();
-    if (newEntityCollisionHandler == null || !newEntityCollisionHandler.IsCollidable)
-      return false;
-
-    foreach (IEntity e in Entities)
-    {
-      var existingEntityCollisionHandler = e.GetModule<CollisionDetectionModule>();
-      if (existingEntityCollisionHandler == null || !existingEntityCollisionHandler.IsCollidable)
-        continue;
-
-      if (existingEntityCollisionHandler.CollidesWith(newEntityCollisionHandler))
-      {
-        if (e is WorldEntity we && !we.IsFiller)
-        {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   protected void ConnectToOthers(WorldEntity entity)
@@ -303,21 +247,6 @@ public class CompositeController : ModuleContainer, IController, IEntity //remov
   */
   #endregion
 
-  public void Collide(ICollidable otherCollidable)
-  {/*
-    if (otherCollidable is CompositeController cc)
-    {
-      throw new NotImplementedException();//kollas åt båda hållen så denna behöver bara göra sin egna check
-    }
-    if (otherCollidable is IEntity entity)
-    {
-      Collide(entity);
-    }
-    if (otherCollidable is IController controller)
-    {
-      CollisionManager.CollideWithTree(controller.CollisionManager);
-    }*/
-  }
   public void Collide(IEntity e)
   {
     /*
@@ -336,30 +265,7 @@ public class CompositeController : ModuleContainer, IController, IEntity //remov
     Vector2 overlapRepulsion = 30f * Vector2.Normalize(position - e.Position) / distance2;
     TotalExteriorForce += overlapRepulsion;*/
   }
-  /** commented out to ignore error
-  public bool CollidesWith(ICollidable otherCollidable)
-  {
-    if (!IsCollidable || otherCollidable.IsCollidable)
-    {
-      return false;
-    }
-    if (otherCollidable is IEntity entity)
-    {
-      if (entity.BoundingCircle.CollidesWith(BoundingCircle))
-        return BoundingArea.CollidesWith(otherCollidable.BoundingArea);
-      else
-        return false;
-    }
-    else
-      return BoundingArea.CollidesWith(otherCollidable.BoundingArea);
-  }*/
-
   public void Deprecate()
-  {
-    throw new NotImplementedException();
-  }
-
-  public bool CollidesWith(ICollidable otherCollidable)
   {
     throw new NotImplementedException();
   }

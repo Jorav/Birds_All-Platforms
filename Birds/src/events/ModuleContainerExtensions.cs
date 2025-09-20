@@ -31,8 +31,8 @@ public static class ModuleContainerExtensions
 
   public static void RotateTo(this IModuleContainer container, Vector2 position)
   {
-    var rotation = container.GetModule<RotationModule>() as IRotationModule ??
-                  container.GetModule<GroupRotationModule>() as IRotationModule;
+    var rotation = container.GetModule<RotationModuleBase>();
+
     rotation?.RotateTo(position);
   }
 

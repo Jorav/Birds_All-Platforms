@@ -1,6 +1,5 @@
 using Birds.src.collision.bounding_areas;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 
 namespace Birds.src.collision;
 public interface ICollidable

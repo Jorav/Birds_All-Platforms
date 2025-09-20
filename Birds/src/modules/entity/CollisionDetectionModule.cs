@@ -1,24 +1,16 @@
 ﻿using Birds.src.collision;
 using Birds.src.collision.bounding_areas;
-using Birds.src.containers.entity;
-using Birds.src.events;
-using Birds.src.modules.entity.collision_handling;
 using Birds.src.modules.shared.bounding_area;
+using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
 
 namespace Birds.src.modules.entity;
 
-  public class CollisionDetectionModule : ModuleBase, ICollidable
+  public class CollisionDetectionModule : BaseCollisionDetectionModule
 {
-  public Vector2 Position { get; set; }
-  public bool IsCollidable { get; set; } = true;
-
   public BoundingCircle BoundingCircle => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
-  public IBoundingArea BoundingArea => GetSpecificBoundingArea();
+  public override IBoundingArea BoundingArea => GetSpecificBoundingArea();
 
   private IBoundingArea GetSpecificBoundingArea()
   {
@@ -33,7 +25,7 @@ namespace Birds.src.modules.entity;
   {
   }
 
-  public bool CollidesWith(ICollidable otherCollidable)
+  public override bool CollidesWith(ICollidable otherCollidable)
   {
     if (!IsCollidable || !otherCollidable.IsCollidable)
     {
@@ -53,7 +45,7 @@ namespace Birds.src.modules.entity;
     }
   }
 
-  public void AddCollisionsToEntities(ICollidable otherCollidable)
+  public override void AddCollisionsToEntities(ICollidable otherCollidable)
   {
     if (otherCollidable is not CollisionDetectionModule otherHandler)
     {
@@ -73,7 +65,7 @@ namespace Birds.src.modules.entity;
     return cloned;
   }
 
-  public void AddInternalCollisions()
+  public override void AddInternalCollisions()
   {
   }
 }

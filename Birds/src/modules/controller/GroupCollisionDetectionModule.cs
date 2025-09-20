@@ -1,22 +1,19 @@
 ﻿using Birds.src.collision;
 using Birds.src.collision.bounding_areas;
 using Birds.src.collision.BVH;
-using Birds.src.events;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.bounding_area;
+using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Birds.src.modules.collision;
 
-public class GroupCollisionDetectionModule : ModuleBase, ICollidable
+public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
 {
   public AABBTree CollisionManager { get; private set; }
-  public Vector2 Position { get; set; }
-  public bool IsCollidable { get; set; } = true;
-  public IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
+  public override IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
 
   public GroupCollisionDetectionModule()
   {
@@ -31,7 +28,7 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
   private void UpdateTreeWithEntities()
   {
     var entityCollisionHandlers = container.Entities
-        .Select(e => e.GetModule<CollisionDetectionModule>())
+        .Select(e => e.GetModule<BaseCollisionDetectionModule>())
         .Where(handler => handler != null && handler.IsCollidable)
         .Cast<ICollidable>()
         .ToList();
@@ -42,7 +39,7 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
     }
   }
 
-  public bool CollidesWith(ICollidable otherCollidable)
+  public override bool CollidesWith(ICollidable otherCollidable)
   {
     if (!IsCollidable || !otherCollidable.IsCollidable)
       return false;
@@ -50,7 +47,7 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
     return BoundingArea?.CollidesWith(otherCollidable.BoundingArea) ?? false;
   }
 
-  public void AddCollisionsToEntities(ICollidable otherCollidable)
+  public override void AddCollisionsToEntities(ICollidable otherCollidable)
   {
     if (otherCollidable is not GroupCollisionDetectionModule otherHandler)
     {
@@ -66,7 +63,7 @@ public class GroupCollisionDetectionModule : ModuleBase, ICollidable
     return cloned;
   }
 
-  public void AddInternalCollisions()
+  public override void AddInternalCollisions()
   {
     CollisionManager.AddInternalCollisionsToEntities();
   }

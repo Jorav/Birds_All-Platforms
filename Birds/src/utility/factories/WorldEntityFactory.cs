@@ -39,7 +39,8 @@ public static class EntityFactory
         we.AddModule(new BCCollisionDetectionModule());
         we.AddModule(new OBBCollisionDetectionModule());
         we.AddModule(new CollisionDetectionModule());
-        we.AddModule(GetCollisionHandler());
+        we.AddModule(new LinkModule());
+        we.AddModule(GetCollisionHandler(isComposite));
         if (!isComposite)
         {
           we.AddModule(new MovementModule());
@@ -80,11 +81,14 @@ public static class EntityFactory
     }
   }
 
-  public static CollisionHandlerModule GetCollisionHandler()
+  public static CollisionHandlerModule GetCollisionHandler(bool isComposite)
   {
     var collisionHandler = new CollisionHandlerModule();
-    collisionHandler.AddResponse(new MomentumTransfer());
-    collisionHandler.AddResponse(new OverlapRepulsion());
+    if (!isComposite)
+    {
+      collisionHandler.AddResponse(new MomentumTransfer());
+      collisionHandler.AddResponse(new OverlapRepulsion());
+    }
     return collisionHandler;
   }
 
@@ -103,7 +107,7 @@ public static class EntityFactory
       {
         for (int i = 0; i < numberOfEntities; i++)
         {
-          float rRadius = (float)(rnd.NextDouble() * 5 * numberOfEntities);
+          float rRadius = (float)(rnd.NextDouble() * 10 * numberOfEntities);
           float rAngle = (float)(rnd.NextDouble() * 2 * Math.PI);
           WorldEntity we = EntityFactory.GetEntity(new Vector2((float)Math.Sin(rAngle), (float)Math.Cos(rAngle)) * rRadius + position, id, isComposite);
           returnedList.Add(we);

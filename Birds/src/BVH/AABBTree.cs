@@ -18,7 +18,7 @@ namespace Birds.src.BVH
         public AABBNode root;
         private Stack<AABBNode> freeNodes = new();
         private HashSet<ICollidable> entities = new();
-        public Stack<(ICollidable, ICollidable)> CollissionPairs = new();
+        public List<(ICollidable, ICollidable)> CollissionPairs = new();
 
         public AABBTree()
         {
@@ -225,17 +225,6 @@ namespace Birds.src.BVH
         //adapted after this program specifically
         public void ResolveCollissions()
         {
-            while (CollissionPairs.Count > 0)
-            {
-                (ICollidable, ICollidable) pair = CollissionPairs.Pop();
-                if (pair.Item1 is IEntity e1 && pair.Item2 is IEntity e2)
-                {
-                    e1.Collide(e2);
-                    e2.Collide(e1);
-                }
-                else
-                    pair.Item1.Collide(pair.Item2);
-            }/*
             foreach ((ICollidable, ICollidable) pair in CollissionPairs)
             {
                 if(pair.Item1 is IEntity e1 && pair.Item2 is IEntity e2){
@@ -245,7 +234,7 @@ namespace Birds.src.BVH
                 else
                     pair.Item1.Collide(pair.Item2);
             }
-            CollissionPairs.Clear();*/
+            CollissionPairs.Clear();
         }
 
         private void RebuildTree()

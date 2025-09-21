@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework;
 
 namespace Birds.src.collision.bounding_areas;
 
-public class AxisAlignedBoundingBox : IBoundingArea
+public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
 {
-  private Vector2 UL { get; set; }
-  private Vector2 DL { get; set; }
-  private Vector2 DR { get; set; }
-  private Vector2 UR { get; set; }
+  public Vector2 UL { get; set; }
+  public Vector2 DL { get; set; }
+  public Vector2 DR { get; set; }
+  public Vector2 UR { get; set; }
   public float Area { get { return Width * Height; } }
   public float Width { get { return (int)(Math.Round((UR - UL).Length())); } }
   public float Height { get { return (int)(Math.Round((UR - DR).Length())); } }
@@ -36,6 +36,8 @@ public class AxisAlignedBoundingBox : IBoundingArea
   }
 
   float IBoundingArea.Radius { get { return (UL - DR).Length(); } }
+
+  public Vector2[] Axes { get; set; } = new Vector2[2];
 
   public float Radius;
 
@@ -136,17 +138,20 @@ public class AxisAlignedBoundingBox : IBoundingArea
             UL.Y < AABB.UL.Y + AABB.Height &&
             UL.Y + Height > AABB.UL.Y;
   }
+  public bool CollidesWith(BoundingCircle circle)
+  {
+    float closestX = Math.Max(MinXY.Item1, Math.Min(circle.Position.X, MaxXY.Item1));
+    float closestY = Math.Max(MinXY.Item2, Math.Min(circle.Position.Y, MaxXY.Item2));
+    float distanceX = circle.Position.X - closestX;
+    float distanceY = circle.Position.Y - closestY;
+    float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+    return distanceSquared <= (circle.Radius * circle.Radius);
+  }
 
   public bool Contains(Vector2 position)
   {
     return position.X >= UL.X && position.X <= UR.X &&
            position.Y >= DL.Y && position.Y <= UL.Y;
-  }
-
-  public bool CollidesWith(IBoundingArea boundingArea)
-  {
-    if (boundingArea is AxisAlignedBoundingBox aabb)
-      return CollidesWith(aabb);
-    throw new NotImplementedException();
   }
 }

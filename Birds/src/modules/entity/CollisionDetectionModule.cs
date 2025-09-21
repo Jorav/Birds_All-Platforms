@@ -37,11 +37,11 @@ namespace Birds.src.modules.entity;
       && BoundingCircle != null)
     {
       return BoundingCircle.CollidesWith(otherHandler.BoundingCircle)
-          && BoundingArea.CollidesWith(otherHandler.BoundingArea);
+          && IBoundingArea.CollidesWith(BoundingArea, otherHandler.BoundingArea);
     }
     else
     {
-      return BoundingArea?.CollidesWith(otherCollidable.BoundingArea) ?? false;
+      return IBoundingArea.CollidesWith(BoundingArea, otherCollidable.BoundingArea);
     }
   }
 

@@ -214,6 +214,11 @@ public class AABBTree
     root.AddCollisionsToEntities(tree.root);
   }
 
+  public void AddCollisionsToEntities(ICollidable collidable)
+  {
+    root.AddCollisionsToEntities(collidable);
+  }
+
   private void UnravelTree()
   {
     if (root != null)

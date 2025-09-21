@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\BoundingAreaFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\BoundingCircle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\IBoundingArea.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\IRectangle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\OrientedBoundingBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\AABBNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\AABBTree.cs" />
@@ -131,7 +132,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\solar\" />
     <Folder Include="$(MSBuildThisFileDirectory)src\containers\composite\" />
     <Folder Include="$(MSBuildThisFileDirectory)src\containers\controller\" />
-    <Folder Include="$(MSBuildThisFileDirectory)src\collision\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />

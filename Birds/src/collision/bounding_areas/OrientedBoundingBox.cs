@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace Birds.src.collision.bounding_areas;
 
-public class OrientedBoundingBox : IBoundingArea
+public class OrientedBoundingBox : IBoundingArea, IRectangle
 {
-  private Vector2 UL { get; set; }
-  private Vector2 DL { get; set; }
-  private Vector2 DR { get; set; }
-  private Vector2 UR { get; set; }
+  public Vector2 UL { get; set; }
+  public Vector2 DL { get; set; }
+  public Vector2 DR { get; set; }
+  public Vector2 UR { get; set; }
 
   private float width;
   private float height;
@@ -93,35 +93,11 @@ public class OrientedBoundingBox : IBoundingArea
   float IBoundingArea.Radius => Radius;
 
   public float Radius;
-  Vector2[] axes = new Vector2[2];
+  public Vector2[] Axes { get; set; } = new Vector2[2];
 
   public OrientedBoundingBox(Vector2 position, float rotation, int width, int height)
   {
     SetBox(position, rotation, width, height);
-  }
-
-  public bool CollidesWith(OrientedBoundingBox r)
-  {
-    bool collides = true;
-    GenerateAxes();
-    r.GenerateAxes();
-    axes = new Vector2[] { axes[0], axes[1], r.axes[0], r.axes[1] };
-    float[] scalarA = new float[4];
-    float[] scalarB = new float[4];
-    foreach (Vector2 axis in axes)
-    {
-      scalarA[0] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(UL, axis) / axis.LengthSquared()));
-      scalarA[1] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(DL, axis) / axis.LengthSquared()));
-      scalarA[2] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(DR, axis) / axis.LengthSquared()));
-      scalarA[3] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(UR, axis) / axis.LengthSquared()));
-      scalarB[0] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(r.UL, axis) / axis.LengthSquared()));
-      scalarB[1] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(r.DL, axis) / axis.LengthSquared()));
-      scalarB[2] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(r.DR, axis) / axis.LengthSquared()));
-      scalarB[3] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(r.UR, axis) / axis.LengthSquared()));
-      if (scalarB.Max() < scalarA.Min() + 0.01f || scalarA.Max() < scalarB.Min() + 0.01f)
-        collides = false;
-    }
-    return collides;
   }
 
   private void UpdateCorners()
@@ -159,20 +135,28 @@ public class OrientedBoundingBox : IBoundingArea
     Vector2 AB = UR - UL;
     return 0 <= Vector2.Dot(AM, AB) && Vector2.Dot(AM, AB) <= Vector2.Dot(AB, AB) && 0 <= Vector2.Dot(AM, AD) && Vector2.Dot(AM, AD) <= Vector2.Dot(AD, AD);
   }
-  public Vector2[] GenerateAxes()
+
+  public bool CollidesWith(BoundingCircle circle)
   {
-    axes[0] = new Vector2(UR.X - UL.X, UR.Y - UL.Y);
-    axes[1] = new Vector2(UR.X - DR.X, UR.Y - DR.Y);
-    return axes;
+    Matrix inverseTransform =
+        Matrix.CreateTranslation(-position.X, -position.Y, 0) *
+        Matrix.CreateRotationZ(-rotation) *
+        Matrix.CreateScale(1f / scale);
+
+    Vector2 localCirclePos = Vector2.Transform(circle.Position, inverseTransform);
+    float halfWidth = width / 2;
+    float halfHeight = height / 2;
+
+    float closestX = MathHelper.Clamp(localCirclePos.X, -halfWidth, halfWidth);
+    float closestY = MathHelper.Clamp(localCirclePos.Y, -halfHeight, halfHeight);
+
+    float deltaX = localCirclePos.X - closestX;
+    float deltaY = localCirclePos.Y - closestY;
+
+    float distanceSquared = deltaX * deltaX + deltaY * deltaY;
+    return distanceSquared <= (circle.Radius * circle.Radius);
   }
 
-  public bool CollidesWith(IBoundingArea boundingArea)
-  {
-    if (boundingArea is OrientedBoundingBox OBB)
-      return CollidesWith(OBB);
-    else
-      throw new NotImplementedException();
-  }
 
   public void SetBox(Vector2 upperLeftCorner, float rotation, int width, int height)
   {

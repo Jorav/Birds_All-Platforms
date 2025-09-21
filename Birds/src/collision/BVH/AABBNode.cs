@@ -137,6 +137,28 @@ public class AABBNode
     }
   }
 
+  public void AddCollisionsToEntities(ICollidable collidable)
+  {
+    if (!IBoundingArea.CollidesWith(AABB, collidable.BoundingArea))//AABB.CollidesWith(collidable.BoundingArea))
+    {
+      return;
+    }
+    if (Entity != null)
+    {
+      Entity.AddCollisionsToEntities(collidable);
+    }
+    else
+    {
+      foreach (AABBNode child in children)
+      {
+        if (child != null)
+        {
+          child.AddCollisionsToEntities(collidable);
+        }
+      }
+    }
+  }
+
   public void Update(GameTime gameTime)
   {
     foreach (AABBNode child in children)

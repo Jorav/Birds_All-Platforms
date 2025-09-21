@@ -44,16 +44,21 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
     if (!IsCollidable || !otherCollidable.IsCollidable)
       return false;
 
-    return BoundingArea?.CollidesWith(otherCollidable.BoundingArea) ?? false;
+    return IBoundingArea.CollidesWith(BoundingArea, otherCollidable.BoundingArea);
   }
 
   public override void AddCollisionsToEntities(ICollidable otherCollidable)
   {
-    if (otherCollidable is not GroupCollisionDetectionModule otherHandler)
+    if (otherCollidable is GroupCollisionDetectionModule otherGroupHandler)
     {
-      throw new NotImplementedException("EntityCollisionHandlerModule: Collision with non-EntityCollisionHandlerModule not implemented");
+      CollisionManager.AddCollisionsToEntities(otherGroupHandler.CollisionManager);
     }
-    CollisionManager.AddCollisionsToEntities(otherHandler.CollisionManager);
+    else if(otherCollidable is CollisionDetectionModule otherHandler)
+    {
+      CollisionManager.AddCollisionsToEntities(otherHandler);
+    }
+    else
+      throw new NotImplementedException("EntityCollisionHandlerModule: Collision with non-EntityCollisionHandlerModule not implemented");
   }
 
   public override object Clone()

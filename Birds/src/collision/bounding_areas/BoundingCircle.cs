@@ -61,15 +61,6 @@ public class BoundingCircle : IBoundingArea
   {
     return Vector2.DistanceSquared(position, Position) <= Radius * Radius;
   }
-  public bool CollidesWith(IBoundingArea boundingArea)
-  {
-    if (boundingArea is BoundingCircle boundingCircle)
-    {
-      return CollidesWith(boundingCircle);
-    }
-    else
-      throw new Exception("comparing different boundingarea types (that are not currently supported)");
-  }
 
   public Vector2 CalculateOverlapRepulsion(BoundingCircle c)
   {

@@ -1,43 +1,75 @@
 ﻿using Microsoft.Xna.Framework;
-using Birds.src.controllers;
-using Birds.src.controllers.steering;
 using Birds.src.utility;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
+using Birds.src.modules.controller.steering;
+using Birds.src.modules.controller;
+using Birds.src.modules.shared.bounding_area;
+using Birds.src.modules.collision;
+using Birds.src.containers.controller;
 
 namespace Birds.src.factories
 {
-    public class ControllerFactory
+  public class ControllerFactory
+  {
+    public static Controller Create(Vector2 position, ID_CONTROLLER id = ID_CONTROLLER.DEFAULT, int numberOfEntities = 1)
     {
+      Controller c;
+      switch (id)
+      {
+        case ID_CONTROLLER.DEFAULT:
+          c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
+          c.AddModule(new GroupMassModule());
+          c.AddModule(new GroupWeightedPositionModule());
+          c.AddModule(new GroupMovementModule());
+          c.AddModule(new GroupRotationModule());
+          c.AddModule(new BCCollisionDetectionModule());
+          c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupDrawModule());
+          c.Position.Value = position;
+          return c;
 
-        public static Controller Create(Vector2 position, ID_CONTROLLER id = ID_CONTROLLER.CONTROLLER_DEFAULT, int numberOfEntities = 1)
-        {
-            Controller c;
-            switch (id)
-            {
-                case ID_CONTROLLER.CONTROLLER_DEFAULT: return new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
-                //case IDs.CHASER_AI: return new ChaserAI(position);
-                case ID_CONTROLLER.PLAYER: c = new CohesiveController(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT)); c.Steering = new PlayerSteering(c); return c;
-                case ID_CONTROLLER.CHASER_AI: c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT)); c.Steering = new ChaserSteering(c); return c;
-                case ID_CONTROLLER.BACKGROUND_SUN: c = new Background(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.SUN, isBackground: true, scale: 4 ), Input.Camera, relativeSpeed: 0.2f); return c;
-                case ID_CONTROLLER.FOREGROUND_CLOUD: c = new Background(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.CLOUD, isBackground: true, scale: 3), Input.Camera, relativeSpeed: 1.5f); return c;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
+        case ID_CONTROLLER.PLAYER:
+          c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
+          c.AddModule(new GroupMassModule());
+          c.AddModule(new GroupWeightedPositionModule());
+          c.AddModule(new GroupMovementModule());
+          c.AddModule(new GroupRotationModule());
+          c.AddModule(new PlayerSteeringModule());
+          c.AddModule(new CohesionModule());
+          c.AddModule(new BCCollisionDetectionModule());
+          c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupDrawModule());
+          c.Position.Value = position;
+          return c;
 
-        public static String GetName(ID_CONTROLLER id)
-        {
-            switch (id)
-            {
-                case ID_CONTROLLER.CONTROLLER_DEFAULT: return Controller.GetName();
-                //case IDs.CHASER_AI: return ChaserAI.GetName();
-                //case IDs.PLAYER: return Player.GetName();
-                default:
-                    throw new NotImplementedException();
-            }
-        }
+        case ID_CONTROLLER.CHASER_AI:
+          c = new Controller(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
+          c.AddModule(new GroupMassModule());
+          c.AddModule(new GroupWeightedPositionModule());
+          c.AddModule(new GroupMovementModule());
+          c.AddModule(new GroupRotationModule());
+          c.AddModule(new ChaserSteeringModule());
+          c.AddModule(new BCCollisionDetectionModule());
+          c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupDrawModule());
+          c.Position.Value = position;
+          return c;
+
+        case ID_CONTROLLER.BACKGROUND_SUN:
+          c = new Background(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.SUN, isBackground: true), Input.Camera, relativeSpeed: 0.2f);//scale used to be 4
+          c.AddModule(new GroupDrawModule());
+          c.Position.Value = position;
+          return c;
+
+        case ID_CONTROLLER.FOREGROUND_CLOUD:
+          c = new Background(EntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.CLOUD, isBackground: true), Input.Camera, relativeSpeed: 1.5f);//scale used to be 3
+          c.AddModule(new GroupDrawModule());
+          c.Position.Value = position;
+          return c;
+
+        default:
+          throw new NotImplementedException();
+      }
     }
+  }
 }

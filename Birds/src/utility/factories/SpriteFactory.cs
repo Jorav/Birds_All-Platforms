@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Birds.src.utility;
+using Birds.src.visual;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 

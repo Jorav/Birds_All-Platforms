@@ -11,7 +11,6 @@ public abstract class SteeringModule : ModuleBase
   public abstract bool ShouldAccelerate { get; }
   public virtual bool ShouldRotate { get { return !actionsLocked; } }
   public abstract Vector2 PositionLookedAt { get; }
-  private bool moveWholeController = false;
 
   protected override void ConfigurePropertySync()
   {
@@ -37,18 +36,10 @@ public abstract class SteeringModule : ModuleBase
 
   private void AccelerateToTarget()
   {
-    if (moveWholeController)
+    foreach (IEntity e in container.Entities)
     {
-      Vector2 accelerationVector = Vector2.Normalize(PositionLookedAt - Position);
-      container.Accelerate(accelerationVector);
-    }
-    else
-    {
-      foreach (IEntity e in container.Entities)
-      {
-        Vector2 accelerationVector = Vector2.Normalize(PositionLookedAt - e.Position);
-        e.Accelerate(accelerationVector);
-      }
+      Vector2 accelerationVector = Vector2.Normalize(PositionLookedAt - e.Position);
+      e.Accelerate(accelerationVector);
     }
   }
 

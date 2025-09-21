@@ -41,9 +41,9 @@ public static class EntityFactory
         we.AddModule(new CollisionDetectionModule());
         we.AddModule(new LinkModule());
         we.AddModule(GetCollisionHandler(isComposite));
+        we.AddModule(new MovementModule(isComposite));
         if (!isComposite)
         {
-          we.AddModule(new MovementModule());
           we.AddModule(new RotationModule());
         }
         break;

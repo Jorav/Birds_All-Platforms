@@ -31,7 +31,7 @@ public class CompositeController : ModuleContainer, IController, IEntity //remov
     //{
     //  throw new InvalidDataException("Collides with subentities");
     //}
-    //e.MovementModule.Friction = 0;
+    //e.GetMovementModule.Friction = 0;
 
     //base.AddEntity(e);
     //MovementModule.Mass += e.MovementModule.Mass;

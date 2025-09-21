@@ -30,7 +30,7 @@ public abstract class ModuleContainer : IModuleContainer
   public ReactiveProperty<float> Scale => _scale ??= new ReactiveProperty<float>(1);
   public ReactiveProperty<float> Width => _width ??= new ReactiveProperty<float>();
   public ReactiveProperty<float> Height => _height ??= new ReactiveProperty<float>();
-  public ReactiveProperty<float> Thrust => _thrust ??= new ReactiveProperty<float>();
+  public ReactiveProperty<float> Thrust => _thrust ??= new ReactiveProperty<float>(1);
   public ReactiveProperty<bool> ResolveInternalCollisions => _resolveInternalCollisions ??= new ReactiveProperty<bool>(true);
 
   public List<IEntity> Entities { get; private set; } = new();

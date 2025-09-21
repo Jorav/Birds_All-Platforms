@@ -10,23 +10,25 @@ public class MovementModule : ModuleBase, IMovementModule
   public virtual float Thrust { get; set; }
   public virtual Vector2 Position { get; set; } = new();
   protected Vector2 position;
-
-  protected Vector2 velocity = new();
-  public virtual Vector2 Velocity { get { return velocity; } set { velocity = value; } }
-  public virtual float Friction { get; set; } = 0.1f;// percent, where 0.1f = 10% friction
+  public virtual Vector2 Velocity { get; set; }
+  public virtual float Friction { get; set; }
   public Vector2 TotalExteriorForce;
+
+  public MovementModule(bool isComposite = false) : base()
+  {
+    Friction = isComposite ? 0 : 0.1f;// percent, where 0.1f = 10% friction
+  }
 
   protected override void ConfigurePropertySync()
   {
     ReadWriteSync(() => Position, container.Position);
-    ReadWriteSync(() => Mass, container.Mass);
-    ReadWriteSync(() => Thrust, container.Thrust);
+    ReadSync(() => Mass, container.Mass);
+    ReadSync(() => Thrust, container.Thrust);
+    ReadWriteSync(() => Velocity, container.Velocity);
   }
   public override void Initialize(IModuleContainer container)
   {
     base.Initialize(container);
-    Mass = 1;
-    Thrust = 1;
   }
 
   public void AccelerateTo(Vector2 position, float thrust)
@@ -36,6 +38,8 @@ public class MovementModule : ModuleBase, IMovementModule
 
   public void Accelerate(Vector2 directionalVector, float thrust)
   {
+    if (directionalVector == Vector2.Zero)
+      return;
     Vector2 direction = new Vector2(directionalVector.X, directionalVector.Y);
     direction.Normalize();
     TotalExteriorForce += direction * thrust;
@@ -57,8 +61,13 @@ public class MovementModule : ModuleBase, IMovementModule
   {
     Vector2 FrictionForce = (Velocity * Mass + TotalExteriorForce) * Friction * (float)Game1.timeStep * 60;
     Velocity = Velocity + (TotalExteriorForce - FrictionForce) / Mass * (float)Game1.timeStep * 60;
-    Position += Velocity * (float)Game1.timeStep * 60;
+    Move(Velocity * (float)Game1.timeStep * 60);
     TotalExteriorForce = Vector2.Zero;
+  }
+
+  protected virtual void Move(Vector2 distance)
+  {
+    Position += distance;
   }
 
   public Vector2 CalculateCollissionRepulsion(MovementModule m)

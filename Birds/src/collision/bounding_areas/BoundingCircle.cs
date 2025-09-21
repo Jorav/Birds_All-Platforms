@@ -67,7 +67,7 @@ public class BoundingCircle : IBoundingArea
     float distance2 = (Position - c.Position).Length();
     if (distance2 < 20)
       distance2 = 20;
-    return 32f * Vector2.Normalize(Position - c.Position) / distance2;
+    return c.Radius * Vector2.Normalize(Position - c.Position) / distance2;
   }
 
   public void Deprecate()

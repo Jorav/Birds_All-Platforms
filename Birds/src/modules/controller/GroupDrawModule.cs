@@ -40,8 +40,7 @@ public class GroupDrawModule : ModuleBase, IDrawModule
   {
     foreach (IEntity entity in container.Entities)
     {
-      var entityRenderModule = entity.GetModule<DrawModule>();
-      entityRenderModule?.Draw(sb);
+      entity.Draw(sb);
     }
   }
 }

@@ -14,6 +14,7 @@ public class AABBTree
 
   public AABBTree()
   {
+    root = AllocateNode();
   }
 
   public void Add(ICollidable we)

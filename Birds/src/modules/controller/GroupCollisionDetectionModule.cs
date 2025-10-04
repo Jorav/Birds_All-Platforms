@@ -14,12 +14,12 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
 {
   public AABBTree CollisionManager { get; private set; }
   public override IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
-  private bool internalCollisions;
+  private bool evaluateInternalCollisions;
 
-  public GroupCollisionDetectionModule(bool internalCollisions = true)
+  public GroupCollisionDetectionModule(bool evaluateInternalCollisions = true)
   {
     CollisionManager = new AABBTree();
-    this.internalCollisions = internalCollisions;
+    this.evaluateInternalCollisions = evaluateInternalCollisions;
   }
 
   protected override void Update(GameTime gameTime)
@@ -72,7 +72,7 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
 
   public override void AddInternalCollisions()
   {
-    if (internalCollisions)
+    if (evaluateInternalCollisions)
     {
       CollisionManager.AddInternalCollisionsToEntities();
     }

@@ -17,21 +17,6 @@ public class GameController
   public void Add(Controller c)
   {
     controllers.Add(c);
-    UpdateGlobalCollisionTree();
-  }
-
-  private void UpdateGlobalCollisionTree()
-  {
-    var collisionHandlers = controllers
-        .Select(c => c.GetModule<GroupCollisionDetectionModule>())
-        .Where(handler => handler != null)
-        .Cast<ICollidable>()
-        .ToList();
-
-    if (collisionHandlers.Count > 0)
-    {
-      collisionManager.BuildTree(collisionHandlers);
-    }
   }
 
   public void Update(GameTime gameTime)
@@ -42,6 +27,20 @@ public class GameController
     }
     UpdateGlobalCollisionTree();
     collisionManager.AddInternalCollisionsToEntities();
+  }
+
+  private void UpdateGlobalCollisionTree()
+  {
+    var collisionDetectors = controllers
+        .Select(c => c.GetModule<GroupCollisionDetectionModule>())
+        .Where(handler => handler != null)
+        .Cast<ICollidable>()
+        .ToList();
+
+    if (collisionDetectors.Count > 0)
+    {
+      collisionManager.BuildTree(collisionDetectors);
+    }
   }
 
   public void Draw(SpriteBatch sb)

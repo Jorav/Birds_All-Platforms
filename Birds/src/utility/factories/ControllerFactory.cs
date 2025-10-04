@@ -24,6 +24,7 @@ namespace Birds.src.factories
           c.AddModule(new GroupRotationModule());
           c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupDrawModule());
           c.Position.Value = position;
           return c;
@@ -38,6 +39,7 @@ namespace Birds.src.factories
           c.AddModule(new CohesionModule());
           c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupDrawModule());
           c.Position.Value = position;
           return c;
@@ -51,6 +53,7 @@ namespace Birds.src.factories
           c.AddModule(new ChaserSteeringModule());
           c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupDrawModule());
           c.Position.Value = position;
           return c;

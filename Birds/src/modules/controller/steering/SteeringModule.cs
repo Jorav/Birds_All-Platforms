@@ -30,11 +30,7 @@ public abstract class SteeringModule : ModuleBase
   }
 
   private void RotateToTarget()
-  {/*
-    if(Vector2.Distance(PositionLookedAt, Position) < 1)
-    {
-      return;
-    }*/
+  {
     container.RotateTo(PositionLookedAt);
   }
 

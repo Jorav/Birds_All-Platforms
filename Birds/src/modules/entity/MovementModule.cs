@@ -72,7 +72,7 @@ public class MovementModule : ModuleBase, IMovementModule
   {
     Vector2 normal = Vector2.Normalize(Position - m.Position);
     float velocityAlongNormal = Vector2.Dot(Velocity - m.Velocity, normal);
-    return velocityAlongNormal > 0 ? Vector2.Zero : -2 * velocityAlongNormal / (1 / Mass + 1 / m.Mass) * normal;
+    return velocityAlongNormal > 0 ? Vector2.Zero : -1.5f * velocityAlongNormal / (1 / Mass + 1 / m.Mass) * normal;
   }
 
   public override object Clone()

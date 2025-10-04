@@ -78,13 +78,13 @@ public abstract class ModuleContainer : IModuleContainer
 
   public virtual void Update(GameTime gameTime)
   {
-    foreach (var module in modules.Values)
-    {
-      module.UpdateModule(gameTime);
-    }
     foreach(var entity in Entities)
     {
       entity.Update(gameTime);
+    }
+    foreach (var module in modules.Values)
+    {
+      module.UpdateModule(gameTime);
     }
   }
 

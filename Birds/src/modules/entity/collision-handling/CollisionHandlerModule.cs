@@ -30,7 +30,6 @@ public class CollisionHandlerModule : ModuleBase
         foreach (CollisionResponse response in _responses)
           response.HandleCollision(this.container, entity);
       }
-      container.Collisions.Clear();
     }
   }
 }

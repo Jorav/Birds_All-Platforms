@@ -80,7 +80,7 @@ public class AABBNode
 
   public void Reset()
   {
-    if (entity == null)
+    if (entity == null && AABB != null)
       BoundingAreaFactory.AABBs.Push(AABB);
     AABB = null;
     entity = null;

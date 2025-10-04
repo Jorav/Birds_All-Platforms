@@ -24,6 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\CompositeMovementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\GroupPositionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SubEntityCollisionExtractionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionClearer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupMassModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\GroupThrustModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupWeightedPositionModule.cs" />

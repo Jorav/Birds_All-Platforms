@@ -1,8 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 
 namespace Birds.src.modules.composite;
 
@@ -35,11 +31,11 @@ public class CoherentGroupRotationModule : RotationModuleBase
 
     foreach (var e in container.Entities)
     {
-      Vector2 relativePosition = e.Position - container.Position.Value;
+      e.Velocity.Value = Vector2.Zero;
+      Vector2 relativePosition = e.Position - Position;
       Vector2 newRelativePosition = Vector2.Transform(relativePosition, Matrix.CreateRotationZ(-dRotation));
+      e.Velocity.Value += newRelativePosition-relativePosition;
       e.Rotation.Value = Rotation;
-      //e.MovementModule.Velocity = newRelativePosition - relativePosition;
-      e.Position.Value = Position + newRelativePosition; //replace with above after
     }
     previousRotation = Rotation;
   }

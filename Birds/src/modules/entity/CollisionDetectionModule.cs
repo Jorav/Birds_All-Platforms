@@ -1,5 +1,6 @@
 ﻿using Birds.src.collision;
 using Birds.src.collision.bounding_areas;
+using Birds.src.modules.collision;
 using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
@@ -47,14 +48,21 @@ namespace Birds.src.modules.entity;
 
   public override void AddCollisionsToEntities(ICollidable otherCollidable)
   {
-    if (otherCollidable is not CollisionDetectionModule otherHandler)
+    if (otherCollidable is CollisionDetectionModule otherHandler)
+    {
+      if (CollidesWith(otherHandler))
+      {
+        container.Collisions.Add(otherHandler.container);
+        otherHandler.container.Collisions.Add(container);
+      }
+    }
+    else if(otherCollidable is GroupCollisionDetectionModule otherGroupHandler)
+    {
+      otherGroupHandler.AddCollisionsToEntities(this);
+    }
+    else
     {
       throw new NotImplementedException("EntityCollisionHandlerModule: Collision with non-EntityCollisionHandlerModule not implemented");
-    }
-    if (CollidesWith(otherCollidable))
-    {
-      container.Collisions.Add(otherHandler.container);
-      otherHandler.container.Collisions.Add(container);
     }
   }
 

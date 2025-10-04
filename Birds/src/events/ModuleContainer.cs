@@ -71,7 +71,6 @@ public abstract class ModuleContainer : IModuleContainer
     }
   }
 
-
   public bool HasModule<T>() where T : ModuleBase
   {
     return modules.ContainsKey(typeof(T));
@@ -79,13 +78,13 @@ public abstract class ModuleContainer : IModuleContainer
 
   public virtual void Update(GameTime gameTime)
   {
-    foreach(var entity in Entities)
-    {
-      entity.Update(gameTime);
-    }
     foreach (var module in modules.Values)
     {
       module.UpdateModule(gameTime);
+    }
+    foreach(var entity in Entities)
+    {
+      entity.Update(gameTime);
     }
   }
 
@@ -114,6 +113,13 @@ public abstract class ModuleContainer : IModuleContainer
       clonedModule.Initialize(cloned);
       cloned.modules[clonedModule.GetType()] = clonedModule;
     }
+
+    List<IEntity> clonedEntities = new List<IEntity>();
+    foreach (IEntity entity in Entities)
+    {
+      clonedEntities.Add((IEntity)entity.Clone());
+    }
+    cloned.Entities = clonedEntities;
 
     return cloned;
   }

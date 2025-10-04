@@ -36,7 +36,7 @@ public class GameState : State
     newEntities = new List<IEntity>();
     if (Player == null)
     {
-      Player = ControllerFactory.Create(Vector2.Zero, ID_CONTROLLER.PLAYER);
+      Player = ControllerFactory.Create(Vector2.Zero, ID_CONTROLLER.PLAYER, numberOfEntities: 0);
       controller.Add(Player);
     }
     Camera = new Camera(Player);

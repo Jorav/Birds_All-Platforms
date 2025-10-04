@@ -1,6 +1,4 @@
-﻿using Birds.src.collision;
-using Birds.src.collision.bounding_areas;
-using Birds.src.containers.controller;
+﻿using Birds.src.containers.controller;
 using Birds.src.containers.entity;
 using Birds.src.events;
 using Birds.src.modules.entity;
@@ -52,14 +50,9 @@ public class CompositeController : ModuleContainer, IController, IEntity //remov
     {
       return;
     }
-    //base.SetEntities(newEntities);
 
     foreach (IEntity entity in newEntities)
     {
-      //entity.MovementModule.Friction = 0;
-      //entity.Rotation.Value = Rotation;
-      //MovementModule.Mass += entity.Mass;
-      //MovementModule.Thrust += entity.MovementModule.Thrust;
       AddEntity(entity);
     }
   }

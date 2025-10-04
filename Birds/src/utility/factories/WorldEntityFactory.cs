@@ -35,17 +35,17 @@ public static class EntityFactory
     switch (id)
     {
       case ID_ENTITY.DEFAULT:
-        we.AddModule(new DrawModule(id));
         we.AddModule(new BCCollisionDetectionModule());
         we.AddModule(new OBBCollisionDetectionModule());
         we.AddModule(new CollisionDetectionModule());
-        we.AddModule(new LinkModule());
         we.AddModule(GetCollisionHandler(isComposite));
-        we.AddModule(new MovementModule(isComposite));
         if (!isComposite)
-        {
+        {        
+          we.AddModule(new MovementModule());
           we.AddModule(new RotationModule());
         }
+        we.AddModule(new DrawModule(id));
+        we.AddModule(new LinkModule());
         break;
 
       /*

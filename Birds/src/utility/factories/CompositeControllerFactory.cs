@@ -10,10 +10,8 @@ using Birds.src.containers.composite.blueprints;
 using Birds.src.containers.composite.blueprints.parts;
 using Birds.src.containers.entity;
 using Birds.src.containers.composite;
-using Birds.src.modules.entity;
 using Birds.src.modules.controller;
 using Birds.src.modules.shared.bounding_area;
-using Birds.src.modules;
 using Birds.src.modules.composite;
 using Birds.src.modules.entity.collision_handling;
 
@@ -42,7 +40,6 @@ namespace Birds.src.factories
 
       compositeController.Position.Value = position;
 
-      // Set modules based on blueprint
       SetCompositeModules(compositeController, GetCompositeIdFromBlueprint(blueprintName));
       compositeController.SetEntities(iEntities);
 
@@ -71,16 +68,16 @@ namespace Birds.src.factories
       {
         case ID_COMPOSITE.DEFAULT_SINGLE:
         case ID_COMPOSITE.DEFAULT_COMBINED:
+          composite.AddModule(new CoherentGroupRotationModule());
+          composite.AddModule(new CompositeMovementModule());
           composite.AddModule(new GroupMassModule());
           composite.AddModule(new GroupPositionModule());
           composite.AddModule(new GroupThrustModule());
-          composite.AddModule(new CompositeMovementModule());
-          composite.AddModule(new CoherentGroupRotationModule());
           composite.AddModule(new BCCollisionDetectionModule());
-          composite.AddModule(new GroupCollisionDetectionModule());
+          composite.AddModule(new GroupCollisionDetectionModule(false));
           composite.AddModule(new SubEntityCollisionExtractionModule());
-          composite.AddModule(new GroupDrawModule());
           composite.AddModule(GetCollisionHandler());
+          composite.AddModule(new GroupDrawModule());
           //link management module (probably) mass?
           break;
 

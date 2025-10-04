@@ -78,7 +78,7 @@ public class BuildControllerState : MenuState
         {
           if (controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
           {
-            controllerEdited.AddEntity(EntityFactory.GetEntity(Input.PositionGameCoords, ID_ENTITY.DEFAULT));
+            controllerEdited.Entities.Add(EntityFactory.GetEntity(Input.PositionGameCoords, ID_ENTITY.DEFAULT));
             ;//TODO: CheckCollisionWithEntitiesInControllerEdited();
           }
           else
@@ -117,7 +117,8 @@ public class BuildControllerState : MenuState
   private void ReturnToPreviousState()
   {
     game.ChangeState(previousState);
-    originalController.SetEntities(controllerEdited.Entities);
+    originalController.Entities.Clear(); //TODO: Turn this into deprecate?
+    originalController.Entities.AddRange(controllerEdited.Entities);
     originalController.GetModule<SteeringModule>().actionsLocked = false;
     Input.Camera.Controller = originalController;
   }

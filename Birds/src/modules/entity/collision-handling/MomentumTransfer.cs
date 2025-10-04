@@ -1,8 +1,5 @@
 ﻿using Birds.src.collision;
-using Birds.src.containers.entity;
 using Birds.src.events;
-using Microsoft.Xna.Framework;
-using System;
 
 namespace Birds.src.modules.entity.collision_handling;
 public class MomentumTransfer : CollisionResponse

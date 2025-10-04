@@ -1,9 +1,8 @@
-﻿using Birds.src.factories;
-using Birds.src.events;
+﻿using Birds.src.events;
 using Microsoft.Xna.Framework;
-using System;
 
 namespace Birds.src.modules.entity;
+
 public class MovementModule : ModuleBase, IMovementModule
 {
   public virtual float Mass { get; set; }
@@ -11,12 +10,11 @@ public class MovementModule : ModuleBase, IMovementModule
   public virtual Vector2 Position { get; set; } = new();
   protected Vector2 position;
   public virtual Vector2 Velocity { get; set; }
-  public virtual float Friction { get; set; }
+  public virtual float Friction { get; set; } = 0.1f;
   public Vector2 TotalExteriorForce;
 
-  public MovementModule(bool isComposite = false) : base()
+  public MovementModule() : base()
   {
-    Friction = isComposite ? 0 : 0.1f;// percent, where 0.1f = 10% friction
   }
 
   protected override void ConfigurePropertySync()
@@ -72,11 +70,9 @@ public class MovementModule : ModuleBase, IMovementModule
 
   public Vector2 CalculateCollissionRepulsion(MovementModule m)
   {
-    Vector2 vectorFromOther = m.Position - Position;
-    float distance = vectorFromOther.Length();
-    vectorFromOther.Normalize();
-    Vector2 collissionRepulsion = 0.5f * Vector2.Normalize(-vectorFromOther) * (Vector2.Dot(Velocity, vectorFromOther) * Mass + Vector2.Dot(m.Velocity, -vectorFromOther) * m.Mass); //make velocity depend on position
-    return collissionRepulsion;
+    Vector2 normal = Vector2.Normalize(Position - m.Position);
+    float velocityAlongNormal = Vector2.Dot(Velocity - m.Velocity, normal);
+    return velocityAlongNormal > 0 ? Vector2.Zero : -2 * velocityAlongNormal / (1 / Mass + 1 / m.Mass) * normal;
   }
 
   public override object Clone()

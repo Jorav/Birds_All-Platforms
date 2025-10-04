@@ -4,26 +4,11 @@ using Birds.src.events;
 using Birds.src.utility;
 
 namespace Birds.src.containers.controller;
-public class Controller : ModuleContainer, IController
+public class Controller : ModuleContainer
 {
-  public Controller(List<IEntity> controllables, ID_OTHER team = ID_OTHER.TEAM_AI) : base()
+  public Controller(List<IEntity> entities) : base()
   {
-    SetEntities(controllables);
-  }
-
-  public virtual void SetEntities(List<IEntity> newEntities)
-  {
-    DeprecateEntities();
-    foreach (IEntity e in newEntities)
-    {
-      AddEntity(e);
-    }
-  }
-
-  public virtual void AddEntity(IEntity e)
-  {
-    e.Manager = this;
-    base.Entities.Add(e);
+    Entities.AddRange(entities);
   }
 
   private void DeprecateEntities()
@@ -33,18 +18,6 @@ public class Controller : ModuleContainer, IController
       entity.Deprecate();
     }
     Entities.Clear();
-  }
-  public override object Clone()
-  {
-    var cloned = (Controller)base.Clone();
-    cloned.Entities.Clear();
-    List<IEntity> clonedEntities = new List<IEntity>();
-    foreach (IEntity entity in Entities)
-    {
-      clonedEntities.Add((IEntity)entity.Clone());
-    }
-    cloned.SetEntities(clonedEntities);
-    return cloned;
   }
 }
 

@@ -36,14 +36,6 @@ public static class ModuleContainerExtensions
     rotation?.RotateTo(position);
   }
 
-  public static Vector2 GetVelocity(this IModuleContainer container)
-  {
-    var entityMovement = container.GetModule<MovementModule>();
-    if (entityMovement != null) return entityMovement.Velocity;
-
-    return Vector2.Zero;
-  }
-
   public static void Draw(this IModuleContainer container, SpriteBatch sb)
   {
     var renderModule = container.GetModule<DrawModule>() as IDrawModule ??

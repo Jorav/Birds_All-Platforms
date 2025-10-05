@@ -66,7 +66,7 @@ public class Camera
   private void AdjustPosition()
   {
     PreviousPosition = Position;
-    Position = PreviousPosition + 0.1f * (Controller.Position - PreviousPosition);
+    Position = Controller.Position;// reviousPosition + 0.1f * (Controller.Position - PreviousPosition);
   }
 
   private void AdjustZoom(float optimalZoom)

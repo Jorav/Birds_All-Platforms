@@ -10,14 +10,5 @@ public class Controller : ModuleContainer
   {
     Entities.AddRange(entities);
   }
-
-  private void DeprecateEntities()
-  {
-    foreach (IEntity entity in Entities)
-    {
-      entity.Deprecate();
-    }
-    Entities.Clear();
-  }
 }
 

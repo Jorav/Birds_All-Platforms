@@ -64,9 +64,9 @@ public class CohesionModule : ModuleBase
         {
           distance = 32;
         }
-        res = 9f / distance;
+        res = 5f / distance;
         vectorToE.Normalize();
-        entity2.Accelerate(vectorToE, entity1.Mass.Value * res);
+        entity2.Accelerate(vectorToE, entity1.Mass.Value * entity2.Mass * res);
       }
     }
   }

@@ -9,14 +9,10 @@ using System.IO;
 
 namespace Birds.src.containers.composite;
 
-public class CompositeController : ModuleContainer, IController, IEntity //remove Controller
+public class CompositeController : ModuleContainer, IEntity
 {
   public Controller Manager { get; set; }
 
-  public CompositeController() : base()
-  {
-    //CollisionManager.ResolveInternalCollisions = false;
-  }
   public override void Update(GameTime gameTime)
   {
     base.Update(gameTime);
@@ -240,24 +236,6 @@ public class CompositeController : ModuleContainer, IController, IEntity //remov
   */
   #endregion
 
-  public void Collide(IEntity e)
-  {
-    /*
-    //collission repulsion
-    Vector2 vectorFromOther = e.Position - position;
-    float distance = vectorFromOther.Length();
-    vectorFromOther.Normalize();
-    Vector2 collissionRepulsion = 0.5f * Vector2.Normalize(-vectorFromOther) * (Vector2.Dot(velocity, vectorFromOther) * Mass + Vector2.Dot(e.Velocity, -vectorFromOther) * e.Mass); //make velocity depend on position
-    TotalExteriorForce += collissionRepulsion;
-
-    //overlap repulsion
-    float distance2 = (position - e.Position).Length();
-    if (distance2 < 5)
-        distance2 = 5;
-    float radius = Radius * (e.Mass + Mass) / 2;
-    Vector2 overlapRepulsion = 30f * Vector2.Normalize(position - e.Position) / distance2;
-    TotalExteriorForce += overlapRepulsion;*/
-  }
   public void Deprecate()
   {
     throw new NotImplementedException();

@@ -68,8 +68,7 @@ namespace Birds.src.factories
       {
         case ID_COMPOSITE.DEFAULT_SINGLE:
         case ID_COMPOSITE.DEFAULT_COMBINED:
-          composite.AddModule(new CoherentGroupRotationModule());
-          composite.AddModule(new CompositeMovementModule());
+          composite.AddModule(new SubEntityVelocityReseter());
           composite.AddModule(new GroupMassModule());
           composite.AddModule(new GroupPositionModule());
           composite.AddModule(new GroupThrustModule());
@@ -78,6 +77,8 @@ namespace Birds.src.factories
           composite.AddModule(new SubEntityCollisionExtractionModule());
           composite.AddModule(GetCollisionHandler());
           composite.AddModule(new GroupCollisionClearer());
+          composite.AddModule(new CohesiveGroupRotationModule());
+          composite.AddModule(new CompositeMovementModule());
           composite.AddModule(new GroupDrawModule());
           //link management module (probably) mass?
           break;

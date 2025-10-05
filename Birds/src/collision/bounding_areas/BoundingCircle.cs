@@ -1,6 +1,6 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
-using Microsoft.Xna.Framework;
 
 namespace Birds.src.collision.bounding_areas;
 public class BoundingCircle : IBoundingArea
@@ -64,10 +64,19 @@ public class BoundingCircle : IBoundingArea
 
   public Vector2 CalculateOverlapRepulsion(BoundingCircle c)
   {
-    float distance2 = (Position - c.Position).Length();
-    if (distance2 < 20)
-      distance2 = 20;
-    return c.Radius * Vector2.Normalize(Position - c.Position) / distance2/2;
+    Vector2 delta = Position - c.Position;
+    float distance = delta.Length();
+    if (distance < 0.1f)
+    {
+      distance = 0.1f;
+      delta = new Vector2(0.1f, 0.05f);
+    }
+    float overlap = Radius + c.Radius - distance;
+    if (overlap <= 0)
+      return Vector2.Zero;
+    if (overlap > 5f)
+      overlap = 5f;
+    return delta/distance * overlap/c.Radius;
   }
 
   public void Deprecate()

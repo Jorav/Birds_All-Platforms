@@ -72,9 +72,6 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
 
   public override void AddInternalCollisions()
   {
-    if (evaluateInternalCollisions)
-    {
-      CollisionManager.AddInternalCollisionsToEntities();
-    }
+    CollisionManager.AddInternalCollisionsToEntities();
   }
 }

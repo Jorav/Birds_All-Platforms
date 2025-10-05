@@ -2,7 +2,7 @@
 
 namespace Birds.src.modules.composite;
 
-public class CoherentGroupRotationModule : RotationModuleBase
+public class CohesiveGroupRotationModule : RotationModuleBase
 {
   public Vector2 Position { get; set; }
   public float Rotation { get; set; }
@@ -31,7 +31,6 @@ public class CoherentGroupRotationModule : RotationModuleBase
 
     foreach (var e in container.Entities)
     {
-      e.Velocity.Value = Vector2.Zero;
       Vector2 relativePosition = e.Position - Position;
       Vector2 newRelativePosition = Vector2.Transform(relativePosition, Matrix.CreateRotationZ(-dRotation));
       e.Velocity.Value += newRelativePosition-relativePosition;

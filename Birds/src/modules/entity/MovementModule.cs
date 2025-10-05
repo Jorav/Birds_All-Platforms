@@ -1,5 +1,6 @@
 ﻿using Birds.src.events;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace Birds.src.modules.entity;
 
@@ -70,9 +71,30 @@ public class MovementModule : ModuleBase, IMovementModule
 
   public Vector2 CalculateCollissionRepulsion(MovementModule m)
   {
-    Vector2 normal = Vector2.Normalize(Position - m.Position);
+    Vector2 delta = Position - m.Position;
+    float distance = delta.Length();
+
+    if (distance < 0.1f)
+    {
+      distance = 0.1f;
+      delta = new Vector2(0.1f, 0.05f);
+    }
+
+    Vector2 normal = delta / distance;
     float velocityAlongNormal = Vector2.Dot(Velocity - m.Velocity, normal);
-    return velocityAlongNormal > 0 ? Vector2.Zero : -1.5f * velocityAlongNormal / (1 / Mass + 1 / m.Mass) * normal;
+
+    if (velocityAlongNormal > 0)
+      return Vector2.Zero;
+
+    float impulse = -1.5f * velocityAlongNormal / (1 / Mass + 1 / m.Mass);
+
+    float maxImpulse = 50f;
+    if (Math.Abs(impulse) > maxImpulse)
+    {
+      impulse = Math.Sign(impulse) * maxImpulse;
+    }
+
+    return impulse * normal;
   }
 
   public override object Clone()

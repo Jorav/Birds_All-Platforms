@@ -5,10 +5,11 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Birds.src.events;
+
 public abstract class ModuleBase
 {
   protected IModuleContainer container;
-  private List<IWriteSyncProperty> _writeSyncProperties = new List<IWriteSyncProperty>();
+  private List<IPropertySync> _propertySyncs = new List<IPropertySync>();
 
   public virtual void Initialize(IModuleContainer container)
   {
@@ -20,30 +21,29 @@ public abstract class ModuleBase
 
   protected void ReadSync<T>(
       Expression<Func<T>> moduleProperty,
-      ReactiveProperty<T> containerProperty)
+      SyncedProperty<T> containerProperty)
   {
     var memberExpression = (MemberExpression)moduleProperty.Body;
     var propertyInfo = (PropertyInfo)memberExpression.Member;
 
     containerProperty.ValueChanged += value => propertyInfo.SetValue(this, value);
-
     propertyInfo.SetValue(this, containerProperty.Value);
   }
 
   protected void WriteSync<T>(
       Expression<Func<T>> moduleProperty,
-      ReactiveProperty<T> containerProperty)
+      SyncedProperty<T> containerProperty)
   {
     var memberExpression = (MemberExpression)moduleProperty.Body;
     var propertyInfo = (PropertyInfo)memberExpression.Member;
 
-    var writeSyncProp = new WriteSyncProperty<T>(this, propertyInfo, containerProperty);
-    _writeSyncProperties.Add(writeSyncProp);
+    var writeSync = new WriteSyncProperty<T>(this, propertyInfo, containerProperty);
+    _propertySyncs.Add(writeSync);
   }
 
   protected void ReadWriteSync<T>(
       Expression<Func<T>> moduleProperty,
-      ReactiveProperty<T> containerProperty)
+      SyncedProperty<T> containerProperty)
   {
     ReadSync(moduleProperty, containerProperty);
     WriteSync(moduleProperty, containerProperty);
@@ -59,37 +59,38 @@ public abstract class ModuleBase
 
   private void SyncWriteProperties()
   {
-    foreach (var writeSyncProp in _writeSyncProperties)
+    foreach (var propertySync in _propertySyncs)
     {
-      writeSyncProp.SyncToContainer();
+      propertySync.SyncToContainer();
     }
   }
 
   public virtual void Dispose()
   {
-    _writeSyncProperties.Clear();
-  }
-
-  private interface IWriteSyncProperty
-  {
-    void SyncToContainer();
+    _propertySyncs.Clear();
   }
 
   public virtual object Clone()
   {
     var cloned = (ModuleBase)this.MemberwiseClone();
     cloned.container = null;
+    cloned._propertySyncs = new List<IPropertySync>();
     return cloned;
   }
 
-  private class WriteSyncProperty<T> : IWriteSyncProperty
+  private interface IPropertySync
+  {
+    void SyncToContainer();
+  }
+
+  private class WriteSyncProperty<T> : IPropertySync
   {
     private readonly object _module;
     private readonly PropertyInfo _moduleProperty;
-    private readonly ReactiveProperty<T> _containerProperty;
+    private readonly SyncedProperty<T> _containerProperty;
     private T _lastValue;
 
-    public WriteSyncProperty(object module, PropertyInfo moduleProperty, ReactiveProperty<T> containerProperty)
+    public WriteSyncProperty(object module, PropertyInfo moduleProperty, SyncedProperty<T> containerProperty)
     {
       _module = module;
       _moduleProperty = moduleProperty;
@@ -109,4 +110,3 @@ public abstract class ModuleBase
     }
   }
 }
-

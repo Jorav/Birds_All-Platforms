@@ -1,14 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Birds.src.events;
 using System;
+using System.Collections.Generic;
 using Birds.src.containers.entity;
 
 namespace Birds.src.modules.controller;
 public class CohesionModule : ModuleBase
 {
   public Vector2 Position { get; set; }
-  public static float REPULSIONDISTANCE = 100;
+  public static float REPULSIONDISTANCE = 2f;
+  public static float OUTLIER_THRESHOLD = 1.5f;
   private float averageDistance;
+  private Dictionary<IEntity, float> entityWeightedAverageDistances = new Dictionary<IEntity, float>();
 
   protected override void ConfigurePropertySync()
   {
@@ -20,31 +23,84 @@ public class CohesionModule : ModuleBase
     if (container.Entities.Count > 0)
     {
       averageDistance = AverageDistance();
-      ApplyInternalGravity();
       ApplyInterParticleGravity();
       ApplyInterParticleRepulsion();
+      ApplyInternalGravity();
     }
   }
 
   protected void ApplyInternalGravity()
   {
-    Vector2 distanceFromController;
-    foreach (IEntity entity in container.Entities)
+    float globalWeightedAverage = CalculateGlobalWeightedAverageDistance();
+
+    foreach (var kvp in entityWeightedAverageDistances)
     {
-      distanceFromController = Position - entity.Position;
-      if (distanceFromController.Length() > entity.Radius)
+      IEntity entity = kvp.Key;
+      float weightedAvgDistance = kvp.Value;
+
+      if (weightedAvgDistance > globalWeightedAverage * OUTLIER_THRESHOLD)
       {
-        entity.Accelerate(Vector2.Normalize(Position - entity.Position), 0.04f * (float)((distanceFromController.Length() - entity.Radius) / averageDistance) / entity.Mass);
+        Vector2 distanceFromController = Position - entity.Position.Value;
+        float cohesionStrength = 1f * (weightedAvgDistance - globalWeightedAverage) / globalWeightedAverage;
+        entity.Accelerate(Vector2.Normalize(distanceFromController), cohesionStrength / entity.Mass.Value);
       }
     }
   }
 
+  private float CalculateGlobalWeightedAverageDistance()
+  {
+    float totalWeightedDistance = 0;
+    float totalWeight = 0;
+
+    foreach (IEntity entity1 in container.Entities)
+    {
+      foreach (IEntity entity2 in container.Entities)
+      {
+        if (entity1 != entity2)
+        {
+          float distance = Vector2.Distance(entity1.Position.Value, entity2.Position.Value);
+          float weight = entity2.Mass.Value;
+          totalWeightedDistance += distance * weight;
+          totalWeight += weight;
+        }
+      }
+    }
+
+    return totalWeight > 0 ? totalWeightedDistance / totalWeight : 100f;
+  }
+
   private void ApplyInterParticleGravity()
   {
+    entityWeightedAverageDistances.Clear();
+
     foreach (IEntity entity1 in container.Entities)
+    {
+      float weightedDistanceSum = 0;
+      float totalWeight = 0;
+
       foreach (IEntity entity2 in container.Entities)
+      {
         if (entity1 != entity2)
-          entity1.AccelerateTo(entity2.Position, 0.01f * averageDistance * entity1.Mass * entity2.Mass / (float)Math.Pow(((entity1.Position.Value - entity2.Position.Value).Length()), 1));
+        {
+          Vector2 direction = entity2.Position.Value - entity1.Position.Value;
+          float distance = direction.Length();
+
+          weightedDistanceSum += distance * entity2.Mass.Value;
+          totalWeight += entity2.Mass.Value;
+
+          if (distance == 0)
+          {
+            continue;
+          }
+          direction.Normalize();
+          float force = 1f * entity1.Mass.Value * entity2.Mass.Value / distance;
+          entity1.Accelerate(direction, force / entity1.Mass.Value);
+          entity2.Accelerate(-direction, force / entity2.Mass.Value);
+        }
+      }
+
+      entityWeightedAverageDistances[entity1] = totalWeight > 0 ? weightedDistanceSum / totalWeight : 0;
+    }
   }
 
   public void ApplyInterParticleRepulsion()
@@ -53,20 +109,33 @@ public class CohesionModule : ModuleBase
     {
       foreach (IEntity entity2 in container.Entities)
       {
-        if (entity1 == entity2 || entity1.Radius + entity2.Radius + REPULSIONDISTANCE <= Vector2.Distance(entity1.Position, entity2.Position))
+        if (entity1 == entity2)
         {
           continue;
         }
-        Vector2 vectorToE = entity2.Position.Value - entity1.Position.Value;
-        float distance = vectorToE.Length();
-        float res = 0;
-        if (distance < 32)
+        float distance = Vector2.Distance(entity1.Position.Value, entity2.Position.Value);
+        float minDistance = (entity1.Radius.Value + entity2.Radius.Value) * REPULSIONDISTANCE;
+
+        if (distance >= minDistance)
         {
-          distance = 32;
+          continue;
         }
-        res = 5f / distance;
-        vectorToE.Normalize();
-        entity2.Accelerate(vectorToE, entity1.Mass.Value * entity2.Mass * res);
+        Vector2 repulsionDirection = entity1.Position.Value - entity2.Position.Value;
+        if (repulsionDirection.Length() < 0.1f)
+        {
+          repulsionDirection = new Vector2(0.1f, 0.05f);
+        }
+        repulsionDirection.Normalize();
+
+        float overlap = minDistance - distance;
+        if (distance < entity1.Radius.Value + entity2.Radius.Value)
+        {
+          distance = entity1.Radius.Value + entity2.Radius.Value;
+        }
+        float repulsionForce = 0.7f * overlap / distance;
+
+        entity1.Accelerate(repulsionDirection, repulsionForce / entity1.Mass.Value);
+        entity2.Accelerate(-repulsionDirection, repulsionForce / entity2.Mass.Value);
       }
     }
   }
@@ -94,4 +163,3 @@ public class CohesionModule : ModuleBase
     return cNew;
   }
 }
-

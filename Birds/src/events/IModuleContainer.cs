@@ -1,5 +1,4 @@
-﻿using Birds.src.collision;
-using Birds.src.containers.entity;
+﻿using Birds.src.containers.entity;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
@@ -11,21 +10,22 @@ public interface IModuleContainer
   T GetModule<T>() where T : ModuleBase;
   IEnumerable<TBase> GetAllModulesOfType<TBase>() where TBase : ModuleBase;
   bool HasModule<T>() where T : ModuleBase;
+  object Clone();
 
   List<IEntity> Entities { get; }
   List<IModuleContainer> Collisions { get; }
 
   // Reactive properties
-  ReactiveProperty<Vector2> Position { get; }
-  ReactiveProperty<float> Rotation { get; }
-  ReactiveProperty<float> Mass { get; }
-  ReactiveProperty<float> Radius { get; }
-  ReactiveProperty<Microsoft.Xna.Framework.Color> Color { get; }
-  ReactiveProperty<ID_OTHER> Team { get; }
-  ReactiveProperty<Vector2> Velocity { get; }
-  ReactiveProperty<float> Scale { get; }
-  ReactiveProperty<float> Width { get; }
-  ReactiveProperty<float> Height { get; }
-  ReactiveProperty<float> Thrust { get; }
-  ReactiveProperty<bool> ResolveInternalCollisions { get; }
+  SyncedProperty<Vector2> Position { get; }
+  SyncedProperty<float> Rotation { get; }
+  SyncedProperty<float> Mass { get; }
+  SyncedProperty<float> Radius { get; }
+  SyncedProperty<Microsoft.Xna.Framework.Color> Color { get; }
+  SyncedProperty<ID_OTHER> Team { get; }
+  SyncedProperty<Vector2> Velocity { get; }
+  SyncedProperty<float> Scale { get; }
+  SyncedProperty<float> Width { get; }
+  SyncedProperty<float> Height { get; }
+  SyncedProperty<float> Thrust { get; }
+  SyncedProperty<bool> ResolveInternalCollisions { get; }
 }

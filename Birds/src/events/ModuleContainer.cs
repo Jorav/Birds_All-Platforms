@@ -5,33 +5,34 @@ using System;
 using System.Collections.Generic;
 
 namespace Birds.src.events;
+
 public abstract class ModuleContainer : IModuleContainer
 {
-  private ReactiveProperty<Vector2> _position;
-  private ReactiveProperty<float> _rotation;
-  private ReactiveProperty<float> _mass;
-  private ReactiveProperty<float> _radius;
-  private ReactiveProperty<Color> _color;
-  private ReactiveProperty<ID_OTHER> _team;
-  private ReactiveProperty<Vector2> _velocity;
-  private ReactiveProperty<float> _scale;
-  private ReactiveProperty<float> _width;
-  private ReactiveProperty<float> _height;
-  private ReactiveProperty<float> _thrust;
-  private ReactiveProperty<bool> _resolveInternalCollisions;
+  private SyncedProperty<Vector2> _position;
+  private SyncedProperty<float> _rotation;
+  private SyncedProperty<float> _mass;
+  private SyncedProperty<float> _radius;
+  private SyncedProperty<Color> _color;
+  private SyncedProperty<ID_OTHER> _team;
+  private SyncedProperty<Vector2> _velocity;
+  private SyncedProperty<float> _scale;
+  private SyncedProperty<float> _width;
+  private SyncedProperty<float> _height;
+  private SyncedProperty<float> _thrust;
+  private SyncedProperty<bool> _resolveInternalCollisions;
 
-  public ReactiveProperty<Vector2> Position => _position ??= new ReactiveProperty<Vector2>();
-  public ReactiveProperty<float> Rotation => _rotation ??= new ReactiveProperty<float>(0);
-  public ReactiveProperty<float> Mass => _mass ??= new ReactiveProperty<float>(1);
-  public ReactiveProperty<float> Radius => _radius ??= new ReactiveProperty<float>(0);
-  public ReactiveProperty<Color> Color => _color ??= new ReactiveProperty<Color>(Microsoft.Xna.Framework.Color.Red);
-  public ReactiveProperty<ID_OTHER> Team => _team ??= new ReactiveProperty<ID_OTHER>();
-  public ReactiveProperty<Vector2> Velocity => _velocity ??= new ReactiveProperty<Vector2>();
-  public ReactiveProperty<float> Scale => _scale ??= new ReactiveProperty<float>(1);
-  public ReactiveProperty<float> Width => _width ??= new ReactiveProperty<float>();
-  public ReactiveProperty<float> Height => _height ??= new ReactiveProperty<float>();
-  public ReactiveProperty<float> Thrust => _thrust ??= new ReactiveProperty<float>(1);
-  public ReactiveProperty<bool> ResolveInternalCollisions => _resolveInternalCollisions ??= new ReactiveProperty<bool>(true);
+  public SyncedProperty<Vector2> Position => _position ??= new SyncedProperty<Vector2>();
+  public SyncedProperty<float> Rotation => _rotation ??= new SyncedProperty<float>(0);
+  public SyncedProperty<float> Mass => _mass ??= new SyncedProperty<float>(1);
+  public SyncedProperty<float> Radius => _radius ??= new SyncedProperty<float>(0);
+  public SyncedProperty<Color> Color => _color ??= new SyncedProperty<Color>(Microsoft.Xna.Framework.Color.Red);
+  public SyncedProperty<ID_OTHER> Team => _team ??= new SyncedProperty<ID_OTHER>();
+  public SyncedProperty<Vector2> Velocity => _velocity ??= new SyncedProperty<Vector2>();
+  public SyncedProperty<float> Scale => _scale ??= new SyncedProperty<float>(1);
+  public SyncedProperty<float> Width => _width ??= new SyncedProperty<float>();
+  public SyncedProperty<float> Height => _height ??= new SyncedProperty<float>();
+  public SyncedProperty<float> Thrust => _thrust ??= new SyncedProperty<float>(1);
+  public SyncedProperty<bool> ResolveInternalCollisions => _resolveInternalCollisions ??= new SyncedProperty<bool>(true);
 
   public List<IEntity> Entities { get; private set; } = new();
   public List<IModuleContainer> Collisions { get; } = new();
@@ -78,7 +79,7 @@ public abstract class ModuleContainer : IModuleContainer
 
   public virtual void Update(GameTime gameTime)
   {
-    foreach(var entity in Entities)
+    foreach (var entity in Entities)
     {
       entity.Update(gameTime);
     }
@@ -94,18 +95,18 @@ public abstract class ModuleContainer : IModuleContainer
     cloned.modules = new Dictionary<Type, ModuleBase>();
     cloned.Entities = new List<IEntity>();
 
-    if (_position != null) cloned._position = new ReactiveProperty<Vector2>(_position.Value);
-    if (_rotation != null) cloned._rotation = new ReactiveProperty<float>(_rotation.Value);
-    if (_mass != null) cloned._mass = new ReactiveProperty<float>(_mass.Value);
-    if (_radius != null) cloned._radius = new ReactiveProperty<float>(_radius.Value);
-    if (_color != null) cloned._color = new ReactiveProperty<Color>(_color.Value);
-    if (_team != null) cloned._team = new ReactiveProperty<ID_OTHER>(_team.Value);
-    if (_velocity != null) cloned._velocity = new ReactiveProperty<Vector2>(_velocity.Value);
-    if (_scale != null) cloned._scale = new ReactiveProperty<float>(_scale.Value);
-    if (_width != null) cloned._width = new ReactiveProperty<float>(_width.Value);
-    if (_height != null) cloned._height = new ReactiveProperty<float>(_height.Value);
-    if (_thrust != null) cloned._thrust = new ReactiveProperty<float>(_thrust.Value);
-    if (_resolveInternalCollisions != null) cloned._resolveInternalCollisions = new ReactiveProperty<bool>(_resolveInternalCollisions.Value);
+    if (_position != null) cloned._position = new SyncedProperty<Vector2>(_position.Value);
+    if (_rotation != null) cloned._rotation = new SyncedProperty<float>(_rotation.Value);
+    if (_mass != null) cloned._mass = new SyncedProperty<float>(_mass.Value);
+    if (_radius != null) cloned._radius = new SyncedProperty<float>(_radius.Value);
+    if (_color != null) cloned._color = new SyncedProperty<Color>(_color.Value);
+    if (_team != null) cloned._team = new SyncedProperty<ID_OTHER>(_team.Value);
+    if (_velocity != null) cloned._velocity = new SyncedProperty<Vector2>(_velocity.Value);
+    if (_scale != null) cloned._scale = new SyncedProperty<float>(_scale.Value);
+    if (_width != null) cloned._width = new SyncedProperty<float>(_width.Value);
+    if (_height != null) cloned._height = new SyncedProperty<float>(_height.Value);
+    if (_thrust != null) cloned._thrust = new SyncedProperty<float>(_thrust.Value);
+    if (_resolveInternalCollisions != null) cloned._resolveInternalCollisions = new SyncedProperty<bool>(_resolveInternalCollisions.Value);
 
     foreach (var kvp in modules)
     {

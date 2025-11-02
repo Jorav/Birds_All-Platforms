@@ -1,11 +1,10 @@
 ﻿using Birds.src.containers.controller;
 using Birds.src.containers.entity;
 using Birds.src.events;
-using Birds.src.modules.entity;
+using Birds.src.modules.composite;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Birds.src.containers.composite;
 
@@ -20,24 +19,11 @@ public class CompositeController : ModuleContainer, IEntity
 
   public void AddEntity(IEntity e)
   {
-    //bool collidesWithSubentities = CollidesWithSubEntities(e);
-    //if (collidesWithSubentities)
-    //{
-    //  throw new InvalidDataException("Collides with subentities");
-    //}
-    //e.GetMovementModule.Friction = 0;
-
-    //base.AddEntity(e);
-    //MovementModule.Mass += e.MovementModule.Mass;
-    //MovementModule.Thrust = e.MovementModule.Thrust;
-
-    if (e is WorldEntity ee)
-      ConnectToOthers(ee);
+    var linkModule = GetModule<LinkManagementModule>();
+    if (linkModule != null)
+      linkModule.AddEntity(e);
     else
-      throw new NotImplementedException("Only WorldEntity supported in CompositeController");
-    //e.Manager = this;
-    base.Entities.Add(e);
-
+      Entities.Add(e);
   }
 
   public void SetEntities(List<IEntity> newEntities)
@@ -53,124 +39,6 @@ public class CompositeController : ModuleContainer, IEntity
     }
   }
 
-  protected void ConnectToOthers(WorldEntity entity)
-  {
-    if (Entities.Count <= 0 || entity.IsFiller)
-    {
-      return;
-    }
-
-    var entityLinkModule = entity.GetModule<LinkModule>();
-    if (entityLinkModule == null) return;
-
-    foreach (WorldEntity e in Entities)
-    {
-      if (entity == e || e.IsFiller)
-      {
-        continue;
-      }
-
-      var eLinkModule = e.GetModule<LinkModule>();
-      if (eLinkModule == null) continue;
-
-      foreach (Link lE in eLinkModule.Links)
-      {
-        if (!lE.ConnectionAvailable)
-        {
-          continue;
-        }
-        foreach (Link lEntity in entityLinkModule.Links)
-        {
-          if (lEntity.ConnectionAvailable)
-          {
-            lE.ConnectTo(lEntity);
-          }
-        }
-      }
-    }
-  }
-
-  #region ConnectSeperatedEntities
-  /*private List<HashSet<WorldEntity>> GetSetsOfEntities()
-  {
-      List<HashSet<WorldEntity>> sets = new List<HashSet<WorldEntity>>();
-      //Entities.Sort((a, b) => a.Links.Count.CompareTo(a.Links.Count));
-      foreach (WorldEntity e in entities)
-      {
-          bool containsEntity = false;
-          foreach (HashSet<WorldEntity> s in sets)
-              if (s.Contains(e))
-                  containsEntity = true;
-          if (!containsEntity)
-          {
-              HashSet<WorldEntity> set = new HashSet<WorldEntity>();
-              set.Add(e);
-              GetConnectedEntities(e, set);
-              sets.Add(set);
-          }
-
-      }
-      return sets;
-  }
-  private HashSet<WorldEntity> GetConnectedEntities(WorldEntity e, HashSet<WorldEntity> foundEntities)
-  {
-      foreach (Link l in e.Links)
-          if (!l.ConnectionAvailable)
-              if (!foundEntities.Contains(l.connection.Entity))
-              {
-                  foundEntities.Add(l.connection.Entity);
-                  GetConnectedEntities(l.connection.Entity, foundEntities);
-              }
-      return foundEntities;
-  }
-  /*public bool Remove(IControllable c)
-  {
-      if (c is WorldEntity we)
-      {
-          if (we != null && Controllables.Remove(we))
-          {
-              foreach (Link l in we.Links)
-                  if (!l.ConnectionAvailable && l.connection.Entity.Links.Count == 1)
-                      ;// RemoveEntity(l.connection.Entity);
-              if (we is Shooter s)
-                  projectiles.Remove(s.Projectiles);
-
-              foreach (Link l in we.Links) //remove filler links
-                  if (!l.ConnectionAvailable)
-                  {
-                      if (l.connection.Entity.IsFiller)
-                          Controllables.Remove(l.connection.Entity);
-                      l.SeverConnection();
-                  }
-              List<HashSet<WorldEntity>> connectedEntities = GetSetsOfEntities();
-              for (int i = 1; i < connectedEntities.Count; i++)
-              {
-                  WorldEntity[] tempEntities = new WorldEntity[connectedEntities[i].Count];
-                  connectedEntities[i].CopyTo(tempEntities);
-                  foreach (WorldEntity eSeperated in tempEntities)
-                      Controllables.Remove(eSeperated);
-                  EntityController ec = new EntityController(tempEntities, Rotation);
-
-                  SeperatedEntities.Add(ec);
-              }
-              UpdatePosition();
-              UpdateRadius();
-              we.Manager = null;
-              return true;
-          }
-          else
-          {
-              bool removed = false;
-              foreach (EntityController ec in SeperatedEntities)
-                  if (ec.Remove(we))
-                      removed = true;
-              return removed;
-          }
-      }
-      else
-          return false;
-  }*/
-  #endregion
   #region Links
   /*public void AddAvailableLinkDisplays()
   {

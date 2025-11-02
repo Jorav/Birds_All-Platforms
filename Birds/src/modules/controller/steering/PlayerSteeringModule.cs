@@ -16,6 +16,7 @@ public class PlayerSteeringModule : SteeringModule
   {
     get
     {
+      //bool accelerate = false;
       bool accelerate = false;
       if (actionsLocked)
       {

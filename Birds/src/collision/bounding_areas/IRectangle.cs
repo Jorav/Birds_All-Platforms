@@ -37,7 +37,7 @@ public interface IRectangle
       scalarB[1] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(r2.DL, axis) / axis.LengthSquared()));
       scalarB[2] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(r2.DR, axis) / axis.LengthSquared()));
       scalarB[3] = Vector2.Dot(axis, Vector2.Multiply(axis, Vector2.Dot(r2.UR, axis) / axis.LengthSquared()));
-      if (scalarB.Max() < scalarA.Min() + 0.01f || scalarA.Max() < scalarB.Min() + 0.01f)
+      if (scalarB.Max() < scalarA.Min() + 0.1f || scalarA.Max() < scalarB.Min() + 0.1f)
         collides = false;
     }
     return collides;

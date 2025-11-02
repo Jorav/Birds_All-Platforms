@@ -21,8 +21,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\controller\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\Link.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\events\SyncedProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\CompositeMovementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\GroupPositionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\LinkManagementModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SeperatedEntitiesDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SubEntityCollisionExtractionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SubEntityVelocityReseter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionClearer.cs" />

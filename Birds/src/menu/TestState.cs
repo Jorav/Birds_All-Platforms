@@ -17,10 +17,10 @@ class TestState : GameState
       controller.Add(ControllerFactory.Create(new Vector2(200, 200), numberOfEntities: 1));
       controller.Add(ControllerFactory.Create(new Vector2(300, 300), numberOfEntities: 7));
       controller.Add(ControllerFactory.Create(new Vector2(353, 42)));*/
-    //Player.Entities.AddRange(EntityFactory.CreateEntities(Vector2.Zero, 10, ID_ENTITY.DEFAULT));
+    Player.Entities.AddRange(EntityFactory.CreateEntities(Vector2.Zero, 10, ID_ENTITY.DEFAULT));
     Player.Entities.AddRange(CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, ID_COMPOSITE.DEFAULT_COMBINED));
     Player.Entities.AddRange(CompositeControllerFactory.CreateComposites(Vector2.One, 1, ID_COMPOSITE.DEFAULT_COMBINED));
-    //Player.Entities.AddRange(EntityFactory.CreateEntities(Vector2.Zero, 10, ID_ENTITY.DEFAULT));
+    Player.Entities.AddRange(EntityFactory.CreateEntities(Vector2.Zero, 10, ID_ENTITY.DEFAULT));
 
     controller.Add(ControllerFactory.Create(new Vector2(100, 100), numberOfEntities: 10, id: ID_CONTROLLER.DEFAULT));
     foregrounds.Add((Background)ControllerFactory.Create(Vector2.Zero, numberOfEntities: 7, id: ID_CONTROLLER.FOREGROUND_CLOUD));

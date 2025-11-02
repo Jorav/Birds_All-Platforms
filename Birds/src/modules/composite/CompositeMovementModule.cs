@@ -1,5 +1,4 @@
 ﻿using Birds.src.containers.entity;
-using Birds.src.events;
 using Birds.src.modules.entity;
 using Microsoft.Xna.Framework;
 
@@ -9,12 +8,12 @@ public class CompositeMovementModule : MovementModule
 {
   protected override void Move(Vector2 distance)
   {
-    foreach(IEntity entity in container.Entities)
+    Vector2 compositeVelocity = distance / ((float)Game1.timeStep * 60f);
+
+    foreach (IEntity entity in container.Entities)
     {
-      entity.Velocity.Value += distance;
-      entity.Position.Value += entity.Velocity.Value;
+      entity.Velocity.Value += compositeVelocity;
+      entity.Position.Value += entity.Velocity.Value * (float)Game1.timeStep * 60f;
     }
-    Position += distance;
   }
 }
-

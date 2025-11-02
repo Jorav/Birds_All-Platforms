@@ -10,22 +10,19 @@ public static class ModuleContainerExtensions
 {
   public static void Accelerate(this IModuleContainer container, Vector2 directionalVector, float thrust)
   {
-    var movement = container.GetModule<MovementModule>() as IMovementModule ??
-                  container.GetModule<GroupMovementModule>() as IMovementModule;
+    var movement = container.GetModule<MovementModule>();
     movement?.Accelerate(directionalVector, thrust);
   }
 
   public static void Accelerate(this IModuleContainer container, Vector2 directionalVector)
   {
-    var movement = container.GetModule<MovementModule>() as IMovementModule ??
-                  container.GetModule<GroupMovementModule>() as IMovementModule;
+    var movement = container.GetModule<MovementModule>();
     movement?.Accelerate(directionalVector);
   }
 
   public static void AccelerateTo(this IModuleContainer container, Vector2 position, float thrust)
   {
-    var movement = container.GetModule<MovementModule>() as IMovementModule ??
-                  container.GetModule<GroupMovementModule>() as IMovementModule;
+    var movement = container.GetModule<MovementModule>();
     movement?.AccelerateTo(position, thrust);
   }
 

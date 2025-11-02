@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Birds.src.events;
+using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.composite;
 
@@ -11,8 +12,14 @@ public class CohesiveGroupRotationModule : RotationModuleBase
 
   protected override void ConfigurePropertySync()
   {
-    ReadSync(() => Position, container.Position);
-    ReadWriteSync(() => Rotation, container.Rotation);
+  ReadSync(() => Position, container.Position);
+  ReadWriteSync(() => Rotation, container.Rotation);
+  }
+
+  public override void Initialize(IModuleContainer container)
+  {
+    base.Initialize(container);
+    previousRotation = Rotation;
   }
 
   protected override void Update(GameTime gameTime)
@@ -27,16 +34,19 @@ public class CohesiveGroupRotationModule : RotationModuleBase
 
   public void UpdateSubentities()
   {
-    float dRotation = previousRotation - Rotation;
+    float dRotation = Rotation - previousRotation;
+    float deltaTime = (float)Game1.timeStep * 60f;
 
     foreach (var e in container.Entities)
     {
-      Vector2 relativePosition = e.Position - Position;
-      Vector2 newRelativePosition = Vector2.Transform(relativePosition, Matrix.CreateRotationZ(-dRotation));
-      e.Velocity.Value += newRelativePosition-relativePosition;
+      Vector2 relativePosition = e.Position.Value - Position;
+      Vector2 newRelativePosition = Vector2.Transform(relativePosition, Matrix.CreateRotationZ(dRotation));
+
+      Vector2 velocityChange = (newRelativePosition - relativePosition) / deltaTime;
+      e.Velocity.Value += velocityChange;
       e.Rotation.Value = Rotation;
     }
     previousRotation = Rotation;
   }
-}
 
+}

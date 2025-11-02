@@ -17,4 +17,3 @@ public abstract class RotationModuleBase : ModuleBase
       return (float)Math.Atan(position.Y / position.X) - MathHelper.ToRadians(180);
   }
 }
-

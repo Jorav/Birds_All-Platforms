@@ -59,6 +59,24 @@ public class LinkModule : ModuleBase
     }
   }
 
+  public void ConnectTo(LinkModule otherModule)
+  {
+    foreach (Link lE in otherModule.Links)
+    {
+      if (!lE.ConnectionAvailable)
+      {
+        continue;
+      }
+      foreach (Link lEntity in Links)
+      {
+        if (lEntity.ConnectionAvailable)
+        {
+          lE.ConnectTo(lEntity);
+        }
+      }
+    }
+  }
+
   public void SeverConnection(IEntity e)
   {
     foreach (var link in Links)

@@ -10,7 +10,7 @@ public class GroupWeightedPositionModule : ModuleBase
 
   protected override void ConfigurePropertySync()
   {
-    WriteSync(() => Position, container.Position);
+    ReadWriteSync(() => Position, container.Position);
     ReadSync(() => Mass, container.Mass);
   }
 

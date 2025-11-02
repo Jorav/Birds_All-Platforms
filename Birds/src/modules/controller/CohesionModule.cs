@@ -1,10 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Birds.src.events;
-using System;
 using System.Collections.Generic;
 using Birds.src.containers.entity;
 
 namespace Birds.src.modules.controller;
+
 public class CohesionModule : ModuleBase
 {
   public Vector2 Position { get; set; }
@@ -66,7 +66,7 @@ public class CohesionModule : ModuleBase
       }
     }
 
-    return totalWeight > 0 ? totalWeightedDistance / totalWeight : 100f;
+    return totalWeightedDistance / totalWeight;
   }
 
   private void ApplyInterParticleGravity()
@@ -80,23 +80,24 @@ public class CohesionModule : ModuleBase
 
       foreach (IEntity entity2 in container.Entities)
       {
-        if (entity1 != entity2)
+        if (entity1 == entity2)
         {
-          Vector2 direction = entity2.Position.Value - entity1.Position.Value;
-          float distance = direction.Length();
-
-          weightedDistanceSum += distance * entity2.Mass.Value;
-          totalWeight += entity2.Mass.Value;
-
-          if (distance == 0)
-          {
-            continue;
-          }
-          direction.Normalize();
-          float force = 1f * entity1.Mass.Value * entity2.Mass.Value / distance;
-          entity1.Accelerate(direction, force / entity1.Mass.Value);
-          entity2.Accelerate(-direction, force / entity2.Mass.Value);
+          continue;
         }
+        Vector2 direction = entity2.Position.Value - entity1.Position.Value;
+        float distance = direction.Length();
+
+        weightedDistanceSum += distance * entity2.Mass.Value;
+        totalWeight += entity2.Mass.Value;
+
+        if (distance == 0)
+        {
+          continue;
+        }
+        direction.Normalize();
+        float force = 1f * entity1.Mass.Value * entity2.Mass.Value / distance;
+        entity1.Accelerate(direction, force / entity1.Mass.Value);
+        entity2.Accelerate(-direction, force / entity2.Mass.Value);
       }
 
       entityWeightedAverageDistances[entity1] = totalWeight > 0 ? weightedDistanceSum / totalWeight : 0;

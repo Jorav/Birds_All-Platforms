@@ -1,8 +1,12 @@
 ﻿using Birds.src.containers.entity;
+using Birds.src.factories;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
 
 namespace Birds.src.events;
 
@@ -34,10 +38,41 @@ public abstract class ModuleContainer : IModuleContainer
   public SyncedProperty<float> Thrust => _thrust ??= new SyncedProperty<float>(1);
   public SyncedProperty<bool> ResolveInternalCollisions => _resolveInternalCollisions ??= new SyncedProperty<bool>(true);
 
-  public List<IEntity> Entities { get; private set; } = new();
+  private ObservableCollection<IEntity> _entities = new();
+  public ObservableCollection<IEntity> Entities => _entities;
   public List<IModuleContainer> Collisions { get; } = new();
 
   private Dictionary<Type, ModuleBase> modules = new Dictionary<Type, ModuleBase>();
+
+  public ModuleContainer()
+  {
+    _entities.CollectionChanged += OnEntitiesCollectionChanged;
+  }
+
+  private void OnEntitiesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+  {
+    if (e.NewItems != null)
+    {
+      foreach (IEntity entity in e.NewItems)
+      {
+        foreach (var module in modules.Values.OfType<IEntityCollectionListener>())
+        {
+          module.OnEntityAdded(entity);
+        }
+      }
+    }
+
+    if (e.OldItems != null)
+    {
+      foreach (IEntity entity in e.OldItems)
+      {
+        foreach (var module in modules.Values.OfType<IEntityCollectionListener>())
+        {
+          module.OnEntityRemoved(entity);
+        }
+      }
+    }
+  }
 
   public void AddModule<T>(T module) where T : ModuleBase
   {
@@ -79,7 +114,7 @@ public abstract class ModuleContainer : IModuleContainer
 
   public virtual void Update(GameTime gameTime)
   {
-    foreach (var entity in Entities)
+    foreach (var entity in _entities)
     {
       entity.Update(gameTime);
     }
@@ -93,7 +128,8 @@ public abstract class ModuleContainer : IModuleContainer
   {
     var cloned = (ModuleContainer)this.MemberwiseClone();
     cloned.modules = new Dictionary<Type, ModuleBase>();
-    cloned.Entities = new List<IEntity>();
+    cloned._entities = new ObservableCollection<IEntity>();
+    cloned._entities.CollectionChanged += cloned.OnEntitiesCollectionChanged;
 
     if (_position != null) cloned._position = new SyncedProperty<Vector2>(_position.Value);
     if (_rotation != null) cloned._rotation = new SyncedProperty<float>(_rotation.Value);
@@ -114,19 +150,14 @@ public abstract class ModuleContainer : IModuleContainer
       clonedModule.Initialize(cloned);
       cloned.modules[clonedModule.GetType()] = clonedModule;
     }
-
-    List<IEntity> clonedEntities = new List<IEntity>();
-    foreach (IEntity entity in Entities)
-    {
-      clonedEntities.Add((IEntity)entity.Clone());
-    }
-    cloned.Entities = clonedEntities;
+    cloned.Entities.Set(_entities.Select(e => (IEntity)e.Clone()));
 
     return cloned;
   }
 
   public virtual void Dispose()
   {
+    _entities.CollectionChanged -= OnEntitiesCollectionChanged;
     foreach (var module in modules.Values)
     {
       module.Dispose();

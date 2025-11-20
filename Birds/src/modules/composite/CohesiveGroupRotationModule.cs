@@ -12,8 +12,8 @@ public class CohesiveGroupRotationModule : RotationModuleBase
 
   protected override void ConfigurePropertySync()
   {
-  ReadSync(() => Position, container.Position);
-  ReadWriteSync(() => Rotation, container.Rotation);
+    ReadSync(() => Position, container.Position);
+    ReadWriteSync(() => Rotation, container.Rotation);
   }
 
   public override void Initialize(IModuleContainer container)
@@ -49,4 +49,12 @@ public class CohesiveGroupRotationModule : RotationModuleBase
     previousRotation = Rotation;
   }
 
+  public override object Clone()
+  {
+    var cloned = (CohesiveGroupRotationModule)base.Clone();
+    cloned.Position = this.Position;
+    cloned.Rotation = this.Rotation;
+    cloned.previousRotation = this.previousRotation;
+    return cloned;
+  }
 }

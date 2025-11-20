@@ -14,6 +14,7 @@ using Birds.src.modules.controller;
 using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.composite;
 using Birds.src.modules.entity.collision_handling;
+using Birds.src.events;
 
 namespace Birds.src.factories
 {
@@ -41,7 +42,7 @@ namespace Birds.src.factories
       compositeController.Position.Value = position;
 
       SetCompositeModules(compositeController, GetCompositeIdFromBlueprint(blueprintName));
-      compositeController.SetEntities(iEntities);
+      compositeController.Entities.Set(iEntities);
 
       return compositeController;
     }

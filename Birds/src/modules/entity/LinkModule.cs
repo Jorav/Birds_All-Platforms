@@ -5,15 +5,14 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 namespace Birds.src.modules.entity;
+
 public class LinkModule : ModuleBase
 {
   public List<Link> Links { get; private set; } = new List<Link>();
   public float InternalRotation { get; set; } = 0f;
 
-
   protected override void ConfigurePropertySync()
   {
-    // Links don't sync properties directly
   }
 
   public override void Initialize(IModuleContainer container)
@@ -24,7 +23,6 @@ public class LinkModule : ModuleBase
 
   protected override void Update(GameTime gameTime)
   {
-    // Links update themselves based on entity position/rotation
   }
 
   private void AddLinks()
@@ -34,7 +32,6 @@ public class LinkModule : ModuleBase
 
     if (container is IEntity entity)
     {
-      // Get width from sprite module
       var spriteModule = entity.GetModule<DrawModule>();
       if (spriteModule != null)
       {
@@ -95,6 +92,7 @@ public class LinkModule : ModuleBase
       link.Scale = scale;
     }
   }
+
   public override object Clone()
   {
     var cloned = new LinkModule();
@@ -102,4 +100,3 @@ public class LinkModule : ModuleBase
     return cloned;
   }
 }
-

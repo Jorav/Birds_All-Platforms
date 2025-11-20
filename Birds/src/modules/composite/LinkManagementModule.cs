@@ -7,74 +7,34 @@ using System.Linq;
 
 namespace Birds.src.modules.composite;
 
-public class LinkManagementModule : ModuleBase
+public class LinkManagementModule : ModuleBase, IEntityCollectionListener
 {
-  private HashSet<IEntity> processedEntities = new HashSet<IEntity>();
-
   public override void Initialize(IModuleContainer container)
   {
     base.Initialize(container);
 
-    if (container.Entities.Count > 0)
+    foreach (var entity in container.Entities)
     {
-      RebuildLinks();
+      ConnectToOthers(entity);
     }
   }
 
   protected override void Update(GameTime gameTime)
   {
-    var unprocessedEntities = container.Entities.Where(e => !processedEntities.Contains(e)).ToList();
-
-    foreach (var entity in unprocessedEntities)
-    {
-      if (entity is WorldEntity we)
-      {
-        ConnectToOthers(we);
-        processedEntities.Add(entity);
-      }
-    }
   }
 
-  public void AddEntity(IEntity entity)
+  public void OnEntityAdded(IEntity entity)
   {
     ConnectToOthers(entity);
-    processedEntities.Add(entity);
-    container.Entities.Add(entity);
   }
 
-  public void RemoveEntity(IEntity entity)
+  public void OnEntityRemoved(IEntity entity)
   {
-    processedEntities.Remove(entity);
-    container.Entities.Remove(entity);
-  }
-
-  public void SetEntities(List<IEntity> newEntities)
-  {
-    if (newEntities == null || newEntities.Count == 0)
-      return;
-
-    foreach (IEntity entity in newEntities)
-      AddEntity(entity);
-  }
-
-  private void RebuildLinks()
-  {
-    processedEntities.Clear();
-
-    var worldEntities = container.Entities.OfType<IEntity>().ToList();
-    foreach (var entity in worldEntities)
-    {
-      if (true)//!entity.IsFiller)
-      {
-        ConnectToOthers(entity);
-        processedEntities.Add(entity);
-      }
-    }
   }
 
   protected void ConnectToOthers(IEntity entity)
   {
-    if (container.Entities.Count <= 0)// || entity.IsFiller
+    if (container.Entities.Count <= 0)
     {
       return;
     }
@@ -84,7 +44,7 @@ public class LinkManagementModule : ModuleBase
 
     foreach (IEntity entityOther in container.Entities)
     {
-      if (entity == entityOther)// || e.IsFiller
+      if (entity == entityOther)
       {
         continue;
       }
@@ -100,21 +60,20 @@ public class LinkManagementModule : ModuleBase
 
   public List<HashSet<IEntity>> GetDisconnectedGroups()
   {
-    List<HashSet<IEntity>> sets = new List<HashSet<IEntity>>();
+    var groups = new List<HashSet<IEntity>>();
+    var visited = new HashSet<IEntity>();
     var worldEntities = container.Entities.OfType<IEntity>().ToList();
 
-    foreach (IEntity e in worldEntities)
+    foreach (IEntity entity in worldEntities)
     {
-      bool containsEntity = sets.Any(s => s.Contains(e));
-      if (!containsEntity)
+      if (!visited.Contains(entity))
       {
-        HashSet<IEntity> set = new HashSet<IEntity>();
-        set.Add(e);
-        GetConnectedEntities(e, set);
-        sets.Add(set);
+        var connectedGroup = GetConnectedEntities(entity, new HashSet<IEntity>());
+        groups.Add(connectedGroup);
+        visited.UnionWith(connectedGroup);
       }
     }
-    return sets;
+    return groups;
   }
 
   private HashSet<IEntity> GetConnectedEntities(IEntity e, HashSet<IEntity> foundEntities)
@@ -131,10 +90,5 @@ public class LinkManagementModule : ModuleBase
       }
     }
     return foundEntities;
-  }
-
-  public override object Clone()
-  {
-    return new LinkManagementModule();
   }
 }

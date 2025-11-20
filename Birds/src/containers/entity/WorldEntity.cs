@@ -22,7 +22,7 @@ public class WorldEntity : ModuleContainer, IEntity
     cloned.Manager = null;
     return cloned;
   }
-  public void Deprecate()
+  public void Dispose()
   {
     EntityFactory.availableEntities.Push(this);
   }

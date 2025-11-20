@@ -99,7 +99,7 @@ public class MovementModule : ModuleBase, IMovementModule
 
   public override object Clone()
   {
-    var cloned = new MovementModule();
+    var cloned = (MovementModule)base.Clone();
     cloned.Mass = this.Mass;
     cloned.Thrust = this.Thrust;
     cloned.Friction = this.Friction;

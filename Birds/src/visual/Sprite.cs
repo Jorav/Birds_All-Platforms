@@ -44,7 +44,7 @@ public class Sprite : IComponent
       sb.Draw(texture, Position, null, new Color(Color, alpha: Alpha), Rotation, Origin, Scale, SpriteEffects.None, 0f);
   }
 
-  public void Deprecate()
+  public void Dispose()
   {
     SpriteFactory.availableSprites.Push(this);
   }

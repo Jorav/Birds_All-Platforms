@@ -27,14 +27,14 @@ public class BCCollisionDetectionModule : ModuleBase
     if (BoundingCircle != null)
     {
       BoundingCircle.Position = Position;
-      BoundingCircle.Radius = Radius;  // Works because BoundingCircle has settable Radius
+      BoundingCircle.Radius = Radius;
     }
   }
 
   public override object Clone()
   {
-    BCCollisionDetectionModule cloned = (BCCollisionDetectionModule)base.Clone();
-    cloned.BoundingCircle = null;
+    var cloned = (BCCollisionDetectionModule)base.Clone();
+    cloned.BoundingCircle = BoundingAreaFactory.GetCircle(this.Position, this.Radius);
     return cloned;
   }
 }

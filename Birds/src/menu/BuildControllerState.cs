@@ -10,6 +10,8 @@ using Birds.src.modules.shared.bounding_area;
 using Birds.src.events;
 using Birds.src.containers.controller;
 using Birds.src.visual;
+using System.Linq;
+using Birds.src.containers.entity;
 
 namespace Birds.src.menu;
 public class BuildControllerState : MenuState
@@ -117,8 +119,7 @@ public class BuildControllerState : MenuState
   private void ReturnToPreviousState()
   {
     game.ChangeState(previousState);
-    originalController.Entities.Clear(); //TODO: Turn this into deprecate?
-    originalController.Entities.AddRange(controllerEdited.Entities);
+    originalController.Entities.Set(controllerEdited.Entities);//or clone?
     originalController.GetModule<SteeringModule>().actionsLocked = false;
     Input.Camera.Controller = originalController;
   }

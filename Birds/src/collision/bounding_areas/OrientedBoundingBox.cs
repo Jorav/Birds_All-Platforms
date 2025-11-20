@@ -170,7 +170,7 @@ public class OrientedBoundingBox : IBoundingArea, IRectangle
     UpdateRadius();
   }
 
-  public void Deprecate()
+  public void Dispose()
   {
     BoundingAreaFactory.OBBs.Push(this);
   }

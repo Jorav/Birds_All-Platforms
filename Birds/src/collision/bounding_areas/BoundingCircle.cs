@@ -79,7 +79,7 @@ public class BoundingCircle : IBoundingArea
     return delta/distance * overlap/c.Radius;
   }
 
-  public void Deprecate()
+  public void Dispose()
   {
     BoundingAreaFactory.circles.Append(this);
   }

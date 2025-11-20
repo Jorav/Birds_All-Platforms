@@ -2,8 +2,10 @@
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Birds.src.events;
+
 public interface IModuleContainer
 {
   void AddModule<T>(T module) where T : ModuleBase;
@@ -12,10 +14,9 @@ public interface IModuleContainer
   bool HasModule<T>() where T : ModuleBase;
   object Clone();
 
-  List<IEntity> Entities { get; }
+  ObservableCollection<IEntity> Entities { get; }
   List<IModuleContainer> Collisions { get; }
 
-  // Reactive properties
   SyncedProperty<Vector2> Position { get; }
   SyncedProperty<float> Rotation { get; }
   SyncedProperty<float> Mass { get; }

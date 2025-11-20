@@ -2,13 +2,14 @@
 using Birds.src.events;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Birds.src.modules.composite;
 
 public class SeparationDetectionModule : ModuleBase
 {
   public List<IModuleContainer> SeparatedGroups { get; private set; } = new List<IModuleContainer>();
+
+  protected override void ConfigurePropertySync() { }
 
   protected override void Update(GameTime gameTime)
   {
@@ -32,7 +33,7 @@ public class SeparationDetectionModule : ModuleBase
 
         foreach (var entity in disconnectedGroups[i])
         {
-          linkModule.RemoveEntity(entity);
+          container.Entities.Remove(entity);
         }
       }
     }
@@ -43,11 +44,10 @@ public class SeparationDetectionModule : ModuleBase
     var separated = container.Clone() as IModuleContainer;
     separated.Entities.Clear();
 
-    var separatedLinkModule = separated.GetModule<LinkManagementModule>();
     foreach (var entity in entities)
     {
       var clonedEntity = (IEntity)entity.Clone();
-      separatedLinkModule?.AddEntity(clonedEntity);
+      separated.Entities.Add(clonedEntity);
     }
 
     return separated;

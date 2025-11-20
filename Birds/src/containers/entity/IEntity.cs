@@ -8,5 +8,5 @@ public interface IEntity : IModuleContainer
 {
   public Controller Manager { get; set; }
   public void Update(GameTime gameTime);
-  public void Deprecate();
+  public void Dispose();
 }

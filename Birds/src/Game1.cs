@@ -55,14 +55,22 @@ public class Game1 : Game
     };
     GRAVITY = 10;
     Texture2D[] textures = new Texture2D[Enum.GetNames(typeof(ID_SPRITE)).Length];
-    textures[(int)ID_SPRITE.HULL_RECTANGULAR] = Content.Load<Texture2D>("RotatingHull");
-    textures[(int)ID_SPRITE.CLOUD] = Content.Load<Texture2D>("cloud");
-    textures[(int)ID_SPRITE.SUN] = Content.Load<Texture2D>("solar");
-    textures[(int)ID_SPRITE.BACKGROUND_WHITE] = Content.Load<Texture2D>("backgroundWhite-small");
-    textures[(int)ID_SPRITE.BACKGROUND_GRAY] = Content.Load<Texture2D>("backgroundGray");
-    textures[(int)ID_SPRITE.BUTTON] = Content.Load<Texture2D>("button");
+    textures[(int)ID_SPRITE.HULL_RECTANGULAR] = Content.Load<Texture2D>("parts/HULL_RECTANGULAR");
+    textures[(int)ID_SPRITE.HULL_CIRCULAR] = Content.Load<Texture2D>("parts/HULL_CIRCULAR");
+    textures[(int)ID_SPRITE.HULL_LINK] = Content.Load<Texture2D>("parts/HULL_LINK");
+    textures[(int)ID_SPRITE.ENGINE] = Content.Load<Texture2D>("parts/ENGINE");
+    textures[(int)ID_SPRITE.GUN] = Content.Load<Texture2D>("parts/GUN");
+    textures[(int)ID_SPRITE.PART_EMPTY] = Content.Load<Texture2D>("parts/ENGINE");
+    textures[(int)ID_SPRITE.SPIKE] = Content.Load<Texture2D>("parts/SPIKE");
+    textures[(int)ID_SPRITE.CLOUD] = Content.Load<Texture2D>("background/CLOUD");
+    textures[(int)ID_SPRITE.SUN] = Content.Load<Texture2D>("background/SUN");
+    textures[(int)ID_SPRITE.BACKGROUND_WHITE] = Content.Load<Texture2D>("background/WHITE_SMALL");
+    textures[(int)ID_SPRITE.BACKGROUND_GRAY] = Content.Load<Texture2D>("background/GRAY");
+    textures[(int)ID_SPRITE.BUTTON] = Content.Load<Texture2D>("menu/BUTTON");
+    textures[(int)ID_SPRITE.BUTTON_ENTITY] = Content.Load<Texture2D>("menu/BUTTON_ENTITY");
+
     SpriteFactory.textures = textures;
-    font = Content.Load<SpriteFont>("font");
+    font = Content.Load<SpriteFont>("menu/FONT");
 
 
     currentState = new MainMenu(this, GraphicsDevice, Content, input);

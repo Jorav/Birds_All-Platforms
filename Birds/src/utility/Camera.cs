@@ -1,4 +1,5 @@
 ﻿using Birds.src.containers.controller;
+using Birds.src.events;
 using Microsoft.Xna.Framework;
 using System;
 using System.Runtime.InteropServices;
@@ -29,13 +30,13 @@ public class Camera
   public bool AutoAdjustZoom { get; set; }
   public float GameZoom { get { if (Controller != null) return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (900 + 1 * Controller.Radius); else return 1; } }
   //        public float GameZoom { get { if (Controller != null) return  Game1.ScreenWidth / 3 / Controller.Radius; else return 1; } }
-  private Controller controller;
-  public Controller Controller { get { return controller; } set { if (value != null) { Position = value.Position; PreviousPosition = value.Position; } controller = value; } }
+  private IModuleContainer controller;
+  public IModuleContainer Controller { get { return controller; } set { if (value != null) { Position = value.Position; PreviousPosition = value.Position; } controller = value; } }
   private float zoomSpeed;
   private float maxZoom = 3;
   private float minZoom = 0.5f;
 
-  public Camera([OptionalAttribute] Controller controller, float zoomSpeed = 0.01f)
+  public Camera([OptionalAttribute] IModuleContainer controller, float zoomSpeed = 0.01f)
   {
     if (controller != null)
       Controller = controller;

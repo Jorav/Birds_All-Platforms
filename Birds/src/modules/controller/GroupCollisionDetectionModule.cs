@@ -1,6 +1,8 @@
 ﻿using Birds.src.collision;
 using Birds.src.collision.bounding_areas;
 using Birds.src.collision.BVH;
+using Birds.src.containers.entity;
+using Birds.src.events;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.shared.collision_detection;
@@ -74,5 +76,15 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
   {
     if(evaluateInternalCollisions)
       CollisionManager.AddInternalCollisionsToEntities();
+  }
+
+  public override bool Contains(Vector2 position)
+  {
+    foreach(IEntity entity in container.Entities)
+    {
+      if (entity.Contains(position))
+        return true;
+    }
+    return false;
   }
 }

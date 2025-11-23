@@ -16,5 +16,7 @@ public abstract class BaseCollisionDetectionModule : ModuleBase, ICollidable
   public abstract void AddInternalCollisions();
 
   public abstract bool CollidesWith(ICollidable otherCollidable);
+
+  public abstract bool Contains(Vector2 position);
 }
 

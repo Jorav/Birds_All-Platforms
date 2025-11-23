@@ -8,7 +8,7 @@ using System;
 
 namespace Birds.src.modules.entity;
 
-  public class CollisionDetectionModule : BaseCollisionDetectionModule
+public class CollisionDetectionModule : BaseCollisionDetectionModule
 {
   public BoundingCircle BoundingCircle => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
   public override IBoundingArea BoundingArea => GetSpecificBoundingArea();
@@ -75,5 +75,10 @@ namespace Birds.src.modules.entity;
 
   public override void AddInternalCollisions()
   {
+  }
+
+  public override bool Contains(Vector2 position)
+  {
+    return BoundingArea.Contains(position);
   }
 }

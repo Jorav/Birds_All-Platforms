@@ -24,6 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ObservableCollectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\SyncedProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\EditEntityState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\CompositeMovementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\GroupPositionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\LinkManagementModule.cs" />

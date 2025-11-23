@@ -11,6 +11,8 @@ using Birds.src.events;
 using Birds.src.containers.controller;
 using Birds.src.visual;
 using Birds.src.modules.collision;
+using Birds.src.collision.bounding_areas;
+using Birds.src.containers.entity;
 
 namespace Birds.src.menu;
 public class BuildControllerState : MenuState
@@ -29,6 +31,9 @@ public class BuildControllerState : MenuState
   private bool playerLastClicked = false;
   Stopwatch timer = new Stopwatch();
   private int doubleClickTreshold = 400;
+  private const float selectionBuffer = 1.5f;
+  private BoundingCircle selectionCircle;
+
   public BuildControllerState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, State previousState, Input input, Controller originalController/*, MenuController menuController = null*/) : base(game, graphicsDevice, content, input)
   {
     this.controllerEdited = (Controller)originalController.Clone();
@@ -41,6 +46,8 @@ public class BuildControllerState : MenuState
       GameState.Player.GetModule<SteeringModule>().actionsLocked = true;
     overlay = SpriteFactory.GetSprite(ID_SPRITE.BACKGROUND_WHITE, new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2), SpriteFactory.textures[(int)ID_SPRITE.BACKGROUND_WHITE].Height / Game1.ScreenHeight);
     components = new();
+    var boundingCircle = controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle;
+    selectionCircle = BoundingAreaFactory.GetCircle(boundingCircle.Position, boundingCircle.Radius * selectionBuffer);
   }
 
   /*protected List<IEntity> CopyEntitiesFromController(Controller controller)
@@ -58,14 +65,20 @@ public class BuildControllerState : MenuState
     controllerEdited.Update(gameTime);
     var collisionDetector = controllerEdited.GetModule<GroupCollisionDetectionModule>();
     collisionDetector.CollisionManager.AddInternalCollisionsToEntities();
+
+    var boundingCircle = controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle;
+    selectionCircle.Radius = boundingCircle.Radius * selectionBuffer;
+    selectionCircle.Position = boundingCircle.Position;
     HandleScroll();
     CheckDoubleClick();
     wasPressed = Input.IsPressed;
   }
+
   private void HandleScroll()
   {
     Input.HandleZoom();
   }
+
   private void CheckDoubleClick()
   {
     if (timer.IsRunning && timer.ElapsedMilliseconds >= doubleClickTreshold)
@@ -73,45 +86,60 @@ public class BuildControllerState : MenuState
       timer.Stop();
       timer.Reset();
     }
-    if (!wasPressed && Input.IsPressed)
+    if (wasPressed || !Input.IsPressed)
     {
-      if (timer.IsRunning)
+      return;
+    }
+    var playerWithBufferClicked = selectionCircle.Contains(Input.PositionGameCoords);
+    if (playerWithBufferClicked)
+    {
+      CheckIfEntityClicked();
+    }
+    if (timer.IsRunning)
+    {
+      if (playerLastClicked)
       {
-        if (playerLastClicked)
+        if (playerWithBufferClicked)
         {
-          if (controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
-          {
-            controllerEdited.Entities.Add(EntityFactory.GetEntity(Input.PositionGameCoords, ID_ENTITY.DEFAULT, false));
-          }
-          else
-          {
-            timer.Restart();
-            playerLastClicked = false;
-          }
+          controllerEdited.Entities.Add(EntityFactory.GetEntity(Input.PositionGameCoords, ID_ENTITY.DEFAULT, false));
         }
         else
         {
-          if (controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
-          {
-            timer.Restart();
-            playerLastClicked = true;
-          }
-          else
-          {
-            ReturnToPreviousState();
-          }
+          timer.Restart();
+          playerLastClicked = false;
         }
       }
       else
       {
-        if (controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
+        if (playerWithBufferClicked)
         {
+          timer.Restart();
           playerLastClicked = true;
         }
         else
-          playerLastClicked = false;
-        timer.Reset();
-        timer.Start();
+        {
+          ReturnToPreviousState();
+        }
+      }
+    }
+    else
+    {
+      playerLastClicked = controllerEdited
+          .GetModule<BCCollisionDetectionModule>()
+          .BoundingCircle
+          .Contains(Input.PositionGameCoords);
+      timer.Reset();
+      timer.Start();
+    }
+  }
+
+  private void CheckIfEntityClicked()
+  {
+    foreach(IEntity entity in controllerEdited.Entities)
+    {
+      if (entity.Contains(Input.PositionGameCoords))
+      {
+        game.ChangeState(new EditEntityState(game, graphicsDevice, content, this, input, entity));
       }
     }
   }

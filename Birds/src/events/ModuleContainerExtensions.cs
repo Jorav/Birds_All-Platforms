@@ -3,6 +3,7 @@ using Birds.src.modules.controller;
 using Birds.src.modules;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Birds.src.modules.shared.collision_detection;
 
 namespace Birds.src.events;
 
@@ -31,6 +32,12 @@ public static class ModuleContainerExtensions
     var rotation = container.GetModule<RotationModuleBase>();
 
     rotation?.RotateTo(position);
+  }
+
+  public static bool Contains(this IModuleContainer container, Vector2 position)
+  {
+    var CDModule = container.GetModule<BaseCollisionDetectionModule>();
+    return CDModule.Contains(position);
   }
 
   public static void Draw(this IModuleContainer container, SpriteBatch sb)

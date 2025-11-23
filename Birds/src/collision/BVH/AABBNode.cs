@@ -1,6 +1,6 @@
 using Birds.src.collision.bounding_areas;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 using System.Linq;
 
 namespace Birds.src.collision.BVH;
@@ -166,4 +166,17 @@ public class AABBNode
         child.Update(gameTime);
   }
   #endregion
+
+  public void DrawNode(SpriteBatch sb, Color color)
+  {
+    if (AABB != null)
+    {
+      DrawModule.DrawRectangleOutline(sb, AABB.UL, AABB.UR, AABB.DR, AABB.DL, color, 1);
+    }
+
+    if (children[0] != null)
+      children[0].DrawNode(sb, color);
+    if (children[1] != null)
+      children[1].DrawNode(sb, color);
+  }
 }

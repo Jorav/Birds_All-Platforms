@@ -1,5 +1,6 @@
 using Birds.src.collision.bounding_areas;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -245,5 +246,13 @@ public class AABBTree
   public void AddInternalCollisionsToEntities()
   {
     root.AddInternalCollissionsToEntities();
+  }
+
+  public void DrawTree(SpriteBatch sb, Color color)
+  {
+    if (root != null)
+    {
+      root.DrawNode(sb, color);
+    }
   }
 }

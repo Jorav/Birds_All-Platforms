@@ -2,9 +2,6 @@
 using Birds.src.collision.bounding_areas;
 using Birds.src.events;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Birds.src.modules.shared.collision_detection;
 

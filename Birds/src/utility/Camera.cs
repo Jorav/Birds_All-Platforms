@@ -27,7 +27,7 @@ public class Camera
   public float Width { get { return Game1.ScreenWidth / Zoom; } }
   public float Height { get { return Game1.ScreenHeight / Zoom; } }
   public bool AutoAdjustZoom { get; set; }
-  public float GameZoom { get { if (Controller != null) return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (800 + 1 * Controller.Radius); else return 1; } }
+  public float GameZoom { get { if (Controller != null) return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (900 + 1 * Controller.Radius); else return 1; } }
   //        public float GameZoom { get { if (Controller != null) return  Game1.ScreenWidth / 3 / Controller.Radius; else return 1; } }
   private Controller controller;
   public Controller Controller { get { return controller; } set { if (value != null) { Position = value.Position; PreviousPosition = value.Position; } controller = value; } }

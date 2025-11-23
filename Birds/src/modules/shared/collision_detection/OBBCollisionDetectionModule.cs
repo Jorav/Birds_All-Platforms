@@ -27,21 +27,14 @@ public class OBBCollisionDetectionModule : ModuleBase
 
   protected override void Update(GameTime gameTime)
   {
-    if (OBB != null)
-    {
-      OBB.Position = Position;
-      OBB.Rotation = Rotation;
-      if (OBB.Width != 0 || OBB.Height != 0)
-        return;
-      OBB.Width = Width;
-      OBB.Height = Height;
-    }
+    OBB.SetDimensions(Width, Height);
+    OBB.Rotation = Rotation;
+    OBB.Position = Position;
   }
 
   public override object Clone()
   {
     OBBCollisionDetectionModule cloned = (OBBCollisionDetectionModule)base.Clone();
-    cloned.OBB = null;
     return cloned;
   }
 

@@ -70,10 +70,11 @@ namespace Birds.src.factories
         case ID_COMPOSITE.DEFAULT_SINGLE:
         case ID_COMPOSITE.DEFAULT_COMBINED:
           composite.AddModule(new LinkManagementModule());
+          composite.AddModule(new GroupPositionModule());
+          composite.AddModule(new GroupRadiusModule());
           composite.AddModule(new CohesiveGroupRotationModule());        
           composite.AddModule(new CompositeMovementModule());
           composite.AddModule(new SubEntityVelocityReseter());
-          composite.AddModule(new GroupPositionModule());
           composite.AddModule(new GroupMassModule());
           composite.AddModule(new GroupThrustModule());
           composite.AddModule(new BCCollisionDetectionModule());

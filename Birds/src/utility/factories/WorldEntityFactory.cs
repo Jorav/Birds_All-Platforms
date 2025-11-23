@@ -35,15 +35,16 @@ public static class EntityFactory
     switch (id)
     {
       case ID_ENTITY.DEFAULT:
-        we.AddModule(new BCCollisionDetectionModule());
-        we.AddModule(new OBBCollisionDetectionModule());
-        we.AddModule(new CollisionDetectionModule());
         we.AddModule(GetCollisionHandler(isComposite));
         if (!isComposite)
         {        
           we.AddModule(new MovementModule());
           we.AddModule(new RotationModule());
         }
+        we.AddModule(new BCCollisionDetectionModule());
+        we.AddModule(new OBBCollisionDetectionModule());
+        we.AddModule(new CollisionDetectionModule());
+        we.AddModule(new RadiusModule());
         we.AddModule(new DrawModule(id));
         we.AddModule(new LinkModule());
         break;
@@ -126,13 +127,4 @@ public static class EntityFactory
     }
     return returnedList;
   }
-
-  /**
-  public static void LoadTextures(Texture2D hull, Texture2D gun, Texture2D projectile, Texture2D cloud) //TODO - add support for multiple skins
-  {
-      this.hull = hull;
-      this.gun = gun;
-      this.projectile = projectile;
-      this.cloud = cloud;
-  }*/
 }

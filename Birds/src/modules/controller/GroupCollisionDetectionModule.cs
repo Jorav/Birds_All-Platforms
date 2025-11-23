@@ -31,7 +31,7 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
   {
     var entityCollisionHandlers = container.Entities
         .Select(e => e.GetModule<BaseCollisionDetectionModule>())
-        .Where(handler => handler != null && handler.IsCollidable)
+        .Where(CDModule => CDModule != null && CDModule.IsCollidable)
         .Cast<ICollidable>()
         .ToList();
 

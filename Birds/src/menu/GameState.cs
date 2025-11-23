@@ -27,6 +27,10 @@ public class GameState : State
   Stopwatch timer = new Stopwatch();
   private int doubleClickTreshold = 400;
 
+  public static bool DRAW_OBB_OUTLINE = false;
+  public static bool DRAW_BC_OUTLINE = false;
+  public static bool DRAW_AABB_OUTLINE = false;
+
   public GameState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, Input input, [OptionalAttribute] State previousState) : base(game, graphicsDevice, content, input)
   {
     controller = new GameController();

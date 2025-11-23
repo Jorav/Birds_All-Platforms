@@ -28,13 +28,13 @@ public abstract class ModuleContainer : IModuleContainer
   public SyncedProperty<Vector2> Position => _position ??= new SyncedProperty<Vector2>();
   public SyncedProperty<float> Rotation => _rotation ??= new SyncedProperty<float>(0);
   public SyncedProperty<float> Mass => _mass ??= new SyncedProperty<float>(1);
-  public SyncedProperty<float> Radius => _radius ??= new SyncedProperty<float>(0);
+  public SyncedProperty<float> Radius => _radius ??= new SyncedProperty<float>(1);
   public SyncedProperty<Color> Color => _color ??= new SyncedProperty<Color>(Microsoft.Xna.Framework.Color.Red);
   public SyncedProperty<ID_OTHER> Team => _team ??= new SyncedProperty<ID_OTHER>();
   public SyncedProperty<Vector2> Velocity => _velocity ??= new SyncedProperty<Vector2>();
   public SyncedProperty<float> Scale => _scale ??= new SyncedProperty<float>(1);
-  public SyncedProperty<float> Width => _width ??= new SyncedProperty<float>();
-  public SyncedProperty<float> Height => _height ??= new SyncedProperty<float>();
+  public SyncedProperty<float> Width => _width ??= new SyncedProperty<float>(1);
+  public SyncedProperty<float> Height => _height ??= new SyncedProperty<float>(1);
   public SyncedProperty<float> Thrust => _thrust ??= new SyncedProperty<float>(1);
   public SyncedProperty<bool> ResolveInternalCollisions => _resolveInternalCollisions ??= new SyncedProperty<bool>(true);
 
@@ -144,13 +144,14 @@ public abstract class ModuleContainer : IModuleContainer
     if (_thrust != null) cloned._thrust = new SyncedProperty<float>(_thrust.Value);
     if (_resolveInternalCollisions != null) cloned._resolveInternalCollisions = new SyncedProperty<bool>(_resolveInternalCollisions.Value);
 
+    cloned.Entities.Set(_entities.Select(e => (IEntity)e.Clone()));
+
     foreach (var kvp in modules)
     {
       var clonedModule = (ModuleBase)kvp.Value.Clone();
       clonedModule.Initialize(cloned);
       cloned.modules[clonedModule.GetType()] = clonedModule;
     }
-    cloned.Entities.Set(_entities.Select(e => (IEntity)e.Clone()));
 
     return cloned;
   }

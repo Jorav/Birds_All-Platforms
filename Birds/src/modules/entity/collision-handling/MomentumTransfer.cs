@@ -1,5 +1,4 @@
-﻿using Birds.src.collision;
-using Birds.src.events;
+﻿using Birds.src.events;
 
 namespace Birds.src.modules.entity.collision_handling;
 public class MomentumTransfer : CollisionResponse

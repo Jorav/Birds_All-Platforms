@@ -33,7 +33,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionClearer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupMassModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\GroupThrustModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupRadiusModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupWeightedPositionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\CollisionsClearer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\RadiusModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\collision_detection\BaseCollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\CohesiveGroupRotationModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionDetectionModule.cs" />

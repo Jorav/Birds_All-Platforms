@@ -21,7 +21,6 @@ public class OrientedBoundingBox : IBoundingArea, IRectangle
     set
     {
       width = value;
-      origin = new Vector2(width / 2, height / 2);
       UpdateCorners();
       UpdateRadius();
     }
@@ -33,7 +32,6 @@ public class OrientedBoundingBox : IBoundingArea, IRectangle
     set
     {
       height = value;
-      origin = new Vector2(width / 2, height / 2);
       UpdateCorners();
       UpdateRadius();
     }
@@ -50,35 +48,23 @@ public class OrientedBoundingBox : IBoundingArea, IRectangle
     }
   }
 
-  public Vector2 AbsolutePosition { get { return (UL + DR) / 2; } }
   public (float, float) MaxXY { get; set; }
   public (float, float) MinXY { get; set; }
-  private Vector2 origin;
-  public Vector2 Origin
-  {
-    set
-    {
-      origin = value;
-      UpdateCorners();
-    }
-    get
-    {
-      return origin;
-    }
-  }
+
   private Vector2 position;
   public Vector2 Position
   {
+    get
+    {
+      return position;
+    }
     set
     {
       position = value;
       UpdateCorners();
     }
-    get
-    {
-      return position;
-    }
   }
+
   private float rotation = 0;
   public float Rotation
   {
@@ -104,10 +90,13 @@ public class OrientedBoundingBox : IBoundingArea, IRectangle
   {
     Matrix transform = Matrix.CreateScale(scale) * Matrix.CreateRotationZ(rotation) * Matrix.CreateTranslation(position.X, position.Y, 0);
 
-    Vector2 topLeft = new Vector2(0, 0) - origin;
-    Vector2 topRight = new Vector2(width, 0) - origin;
-    Vector2 bottomLeft = new Vector2(0, height) - origin;
-    Vector2 bottomRight = new Vector2(width, height) - origin;
+    float halfWidth = width / 2;
+    float halfHeight = height / 2;
+
+    Vector2 topLeft = new Vector2(-halfWidth, -halfHeight);
+    Vector2 topRight = new Vector2(halfWidth, -halfHeight);
+    Vector2 bottomLeft = new Vector2(-halfWidth, halfHeight);
+    Vector2 bottomRight = new Vector2(halfWidth, halfHeight);
 
     UL = Vector2.Transform(topLeft, transform);
     UR = Vector2.Transform(topRight, transform);
@@ -158,14 +147,21 @@ public class OrientedBoundingBox : IBoundingArea, IRectangle
   }
 
 
-  public void SetBox(Vector2 upperLeftCorner, float rotation, int width, int height)
+  public void SetBox(Vector2 centerPosition, float rotation, int width, int height)
   {
-    this.position = upperLeftCorner;
+    this.position = centerPosition;
     this.width = width;
     this.height = height;
     this.rotation = rotation;
     this.scale = 1f;
-    origin = new Vector2(width / 2, height / 2);
+    UpdateCorners();
+    UpdateRadius();
+  }
+
+  public void SetDimensions(float width, float height)
+  {
+    this.width = width;
+    this.height = height;
     UpdateCorners();
     UpdateRadius();
   }

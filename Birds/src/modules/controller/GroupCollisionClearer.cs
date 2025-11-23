@@ -12,7 +12,6 @@ public class GroupCollisionClearer : ModuleBase
     {
       entity.Collisions.Clear();
     }
-    container.Collisions.Clear();
   }
 }
 

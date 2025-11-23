@@ -15,7 +15,6 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
   public float Height { get { return (int)(Math.Round((UR - DR).Length())); } }
   public (float, float) MaxXY { get; set; }
   public (float, float) MinXY { get; set; }
-  //public Vector2 AbsolutePosition { get { return (UL + DR) / 2; } }
   private Vector2 position;
   public Vector2 Position
   {
@@ -41,9 +40,9 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
 
   public float Radius;
 
-  public AxisAlignedBoundingBox(Vector2 upperLeftCorner, int width, int height)
+  public AxisAlignedBoundingBox(Vector2 centerPosition, int width, int height)
   {
-    SetBox(upperLeftCorner, width, height);
+    SetBox(centerPosition, width, height);
   }
 
   public AxisAlignedBoundingBox(IBoundingArea boundingArea)
@@ -52,16 +51,18 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
     (float, float) maxXY = boundingArea.MaxXY;
     float width = maxXY.Item1 - minXY.Item1;
     float height = maxXY.Item2 - minXY.Item2;
-    SetBox(new Vector2(minXY.Item1, minXY.Item2), width, height);
+    SetBox(new Vector2(minXY.Item1 + width / 2, minXY.Item2 + height / 2), width, height);
   }
 
-  public void SetBox(Vector2 upperLeftCorner, float width, float height)
+  public void SetBox(Vector2 centerPosition, float width, float height)
   {
-    UL = new Vector2(upperLeftCorner.X, upperLeftCorner.Y);
-    DL = new Vector2(upperLeftCorner.X, upperLeftCorner.Y + height);
-    DR = new Vector2(upperLeftCorner.X + width, upperLeftCorner.Y + height);
-    UR = new Vector2(upperLeftCorner.X + width, upperLeftCorner.Y);
-    this.position = upperLeftCorner;// + new Vector2(width/2, height/2);
+    float halfWidth = width / 2;
+    float halfHeight = height / 2;
+    UL = new Vector2(centerPosition.X - halfWidth, centerPosition.Y - halfHeight);
+    DL = new Vector2(centerPosition.X - halfWidth, centerPosition.Y + halfHeight);
+    DR = new Vector2(centerPosition.X + halfWidth, centerPosition.Y + halfHeight);
+    UR = new Vector2(centerPosition.X + halfWidth, centerPosition.Y - halfHeight);
+    this.position = centerPosition;
     Radius = (float)Math.Sqrt(Math.Pow(Width / 2, 2) + Math.Pow(Height / 2, 2));
     UpdateMaxAndMin();
   }
@@ -76,7 +77,9 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
     float xMax = Math.Max(maxXY1.Item1, maxXY2.Item1);
     float yMin = Math.Min(minXY1.Item2, minXY2.Item2);
     float yMax = Math.Max(maxXY1.Item2, maxXY2.Item2);
-    return BoundingAreaFactory.GetAABB(new Vector2(xMin, yMin), (int)Math.Round(xMax - xMin), (int)Math.Round(yMax - yMin));
+    float width = xMax - xMin;
+    float height = yMax - yMin;
+    return BoundingAreaFactory.GetAABB(new Vector2(xMin + width / 2, yMin + height / 2), (int)Math.Round(width), (int)Math.Round(height));
   }
 
   public static AxisAlignedBoundingBox SurroundingAABB(IBoundingArea AABB)
@@ -87,12 +90,14 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
     float xMax = maxXY.Item1;
     float yMin = minXY.Item2;
     float yMax = maxXY.Item2;
-    return BoundingAreaFactory.GetAABB(new Vector2(xMin, yMin), (int)Math.Round(xMax - xMin), (int)Math.Round(yMax - yMin));
+    float width = xMax - xMin;
+    float height = yMax - yMin;
+    return BoundingAreaFactory.GetAABB(new Vector2(xMin + width / 2, yMin + height / 2), (int)Math.Round(width), (int)Math.Round(height));
   }
 
   public static AxisAlignedBoundingBox SurroundingAABB(List<ICollidable> entities)
   {
-    IBoundingArea[] OBBs = new IBoundingArea[entities.Count]; //TODO: SORT LIST ON AXIS
+    IBoundingArea[] OBBs = new IBoundingArea[entities.Count];
     for (int i = 0; i < entities.Count; i++)
       OBBs[i] = entities[i].BoundingArea;
     return SurroundingAABB(OBBs);
@@ -117,7 +122,9 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
       if (minXY.Item2 < minY)
         minY = minXY.Item2;
     }
-    return BoundingAreaFactory.GetAABB(new Vector2(minX, minY), (int)Math.Round(maxX - minX), (int)Math.Round(maxY - minY));
+    float width = maxX - minX;
+    float height = maxY - minY;
+    return BoundingAreaFactory.GetAABB(new Vector2(minX + width / 2, minY + height / 2), (int)Math.Round(width), (int)Math.Round(height));
   }
   public void UpdateMaxAndMin()
   {

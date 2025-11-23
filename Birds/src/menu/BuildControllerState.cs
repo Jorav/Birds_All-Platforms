@@ -10,8 +10,7 @@ using Birds.src.modules.shared.bounding_area;
 using Birds.src.events;
 using Birds.src.containers.controller;
 using Birds.src.visual;
-using System.Linq;
-using Birds.src.containers.entity;
+using Birds.src.modules.collision;
 
 namespace Birds.src.menu;
 public class BuildControllerState : MenuState
@@ -57,6 +56,8 @@ public class BuildControllerState : MenuState
     base.Update(gameTime);
     previousScrollValue = currentScrollValue;
     controllerEdited.Update(gameTime);
+    var collisionDetector = controllerEdited.GetModule<GroupCollisionDetectionModule>();
+    collisionDetector.CollisionManager.AddInternalCollisionsToEntities();
     HandleScroll();
     CheckDoubleClick();
     wasPressed = Input.IsPressed;
@@ -80,8 +81,7 @@ public class BuildControllerState : MenuState
         {
           if (controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
           {
-            controllerEdited.Entities.Add(EntityFactory.GetEntity(Input.PositionGameCoords, ID_ENTITY.DEFAULT));
-            ;//TODO: CheckCollisionWithEntitiesInControllerEdited();
+            controllerEdited.Entities.Add(EntityFactory.GetEntity(Input.PositionGameCoords, ID_ENTITY.DEFAULT, false));
           }
           else
           {
@@ -122,11 +122,6 @@ public class BuildControllerState : MenuState
     originalController.Entities.Set(controllerEdited.Entities);//or clone?
     originalController.GetModule<SteeringModule>().actionsLocked = false;
     Input.Camera.Controller = originalController;
-  }
-
-  private void HandleDoubleClick()
-  {
-    throw new NotImplementedException();
   }
 
   public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

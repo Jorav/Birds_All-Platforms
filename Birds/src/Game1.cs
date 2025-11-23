@@ -35,6 +35,7 @@ public class Game1 : Game
     ScreenWidth = _graphics.PreferredBackBufferWidth;
     ScreenHeight = _graphics.PreferredBackBufferHeight;
     _graphics.PreferMultiSampling = true;
+    DrawModule.InitializePixel(GraphicsDevice);
     base.Initialize();
   }
 

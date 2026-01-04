@@ -1,4 +1,5 @@
 ﻿using Birds.src.events;
+using Birds.src.modules.entity;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.composite;
@@ -44,7 +45,7 @@ public class CohesiveGroupRotationModule : RotationModuleBase
 
       Vector2 velocityChange = (newRelativePosition - relativePosition) / deltaTime;
       e.Velocity.Value += velocityChange;
-      e.Rotation.Value = Rotation;
+      e.Rotation.Value +=dRotation;
     }
     previousRotation = Rotation;
   }

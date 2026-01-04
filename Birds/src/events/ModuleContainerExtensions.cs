@@ -40,6 +40,13 @@ public static class ModuleContainerExtensions
     return CDModule.Contains(position);
   }
 
+  public static bool CollidesWith(this IModuleContainer container, IModuleContainer otherContainer)
+  {
+    var CDModule = container.GetModule<BaseCollisionDetectionModule>();
+    var otherCDModule = otherContainer.GetModule<BaseCollisionDetectionModule>();
+    return CDModule != null && otherCDModule != null && CDModule.CollidesWith(otherCDModule);
+  }
+
   public static void Draw(this IModuleContainer container, SpriteBatch sb)
   {
     var renderModule = container.GetModule<DrawModule>() as IDrawModule ??

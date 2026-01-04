@@ -14,6 +14,7 @@ public enum ID_ENTITY
   ENGINE,
   CLOUD,
   SUN,
+  FILLER
 }
 
 public enum ID_COMPOSITE
@@ -47,7 +48,7 @@ public enum ID_SPRITE
   PROJECTILE,
   CLOUD,
   SUN,
-  PART_EMPTY,
+  FILLER,
   SPIKE,
   BUTTON_ENTITY,
   HULL_LINK,

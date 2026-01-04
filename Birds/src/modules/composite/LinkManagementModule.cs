@@ -1,6 +1,9 @@
-﻿using Birds.src.containers.entity;
+﻿using Birds.src.containers.composite;
+using Birds.src.containers.entity;
 using Birds.src.events;
+using Birds.src.factories;
 using Birds.src.modules.entity;
+using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +12,11 @@ namespace Birds.src.modules.composite;
 
 public class LinkManagementModule : ModuleBase, IEntityCollectionListener
 {
+  private HashSet<IEntity> fillerEntities = new HashSet<IEntity>();
+
   public override void Initialize(IModuleContainer container)
   {
     base.Initialize(container);
-
-    foreach (var entity in container.Entities)
-    {
-      ConnectToOthers(entity);
-    }
   }
 
   protected override void Update(GameTime gameTime)
@@ -25,7 +25,6 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
 
   public void OnEntityAdded(IEntity entity)
   {
-    ConnectToOthers(entity);
   }
 
   public void OnEntityRemoved(IEntity entity)
@@ -54,7 +53,29 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
       {
         continue;
       }
-      otherLinkModule.ConnectTo(linkModule);
+      ConnectMatchingPositionLinks(linkModule, otherLinkModule);
+    }
+  }
+
+  private void ConnectMatchingPositionLinks(LinkModule module1, LinkModule module2)
+  {
+    const float positionTolerance = 5f;
+
+    foreach (var link1 in module1.Links)
+    {
+      if (!link1.ConnectionAvailable) continue;
+
+      foreach (var link2 in module2.Links)
+      {
+        if (!link2.ConnectionAvailable) continue;
+
+        float distance = Vector2.Distance(link1.ConnectionPosition, link2.ConnectionPosition);
+        if (distance <= positionTolerance)
+        {
+          link1.ConnectTo(link2);
+          return;
+        }
+      }
     }
   }
 
@@ -90,5 +111,68 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
       }
     }
     return foundEntities;
+  }
+
+  public void AddFillerEntities()
+  {
+    ClearFillerEntities();
+
+    foreach (var entity in container.Entities.ToList())
+    {
+      var entityLinkModule = entity.GetModule<LinkModule>();
+      if (entityLinkModule == null) continue;
+
+      foreach (var link in entityLinkModule.Links)
+      {
+        if (!link.ConnectionAvailable)
+          continue;
+
+        var fillerEntity = EntityFactory.GetEntity(link.ConnectionPosition, ID_ENTITY.FILLER, false);
+        var fillerLinkModule = fillerEntity.GetModule<LinkModule>();
+        var backLink = fillerLinkModule.Links[2];
+        if (backLink != null)
+          fillerLinkModule.ConnectAgainst(entity, backLink, link);
+
+        bool overlaps = false;
+        foreach (var existingEntity in container.Entities)
+        {
+          if (fillerEntity.CollidesWith(existingEntity))
+          {
+            overlaps = true;
+            break;
+          }
+        }
+
+        if (true)
+        {
+          fillerEntities.Add(fillerEntity);
+          container.Entities.Add(fillerEntity);
+        }
+        else
+        {
+          fillerLinkModule.SeverConnections();
+          fillerEntity.Dispose();
+        }
+      }
+    }
+  }
+
+
+  public void ClearFillerEntities()
+  {
+    foreach (var fillerEntity in fillerEntities)
+    {
+      var linkModule = fillerEntity.GetModule<LinkModule>();
+      if (linkModule != null)
+      {
+        foreach (var link in linkModule.Links)
+        {
+          link.SeverConnection();
+        }
+      }
+      container.Entities.Remove(fillerEntity);
+      fillerEntity.Dispose();
+    }
+    fillerEntities.Clear();
   }
 }

@@ -111,6 +111,14 @@ public abstract class ModuleContainer : IModuleContainer
   {
     return modules.ContainsKey(typeof(T));
   }
+  public void ClearModules()
+  {
+    foreach(ModuleBase module in modules.Values.ToList())
+    {
+      module.Dispose();
+    }
+    modules.Clear();
+  }
 
   public virtual void Update(GameTime gameTime)
   {

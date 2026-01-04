@@ -60,7 +60,7 @@ public class Game1 : Game
     textures[(int)ID_SPRITE.HULL_LINK] = Content.Load<Texture2D>("parts/HULL_LINK");
     textures[(int)ID_SPRITE.ENGINE] = Content.Load<Texture2D>("parts/ENGINE");
     textures[(int)ID_SPRITE.GUN] = Content.Load<Texture2D>("parts/GUN");
-    textures[(int)ID_SPRITE.PART_EMPTY] = Content.Load<Texture2D>("parts/ENGINE");
+    textures[(int)ID_SPRITE.FILLER] = Content.Load<Texture2D>("parts/PART_EMPTY_DIRECTED");
     textures[(int)ID_SPRITE.SPIKE] = Content.Load<Texture2D>("parts/SPIKE");
     textures[(int)ID_SPRITE.CLOUD] = Content.Load<Texture2D>("background/CLOUD");
     textures[(int)ID_SPRITE.SUN] = Content.Load<Texture2D>("background/SUN");

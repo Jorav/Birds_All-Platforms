@@ -47,34 +47,24 @@ public class Link
   }
   public bool ConnectionAvailable { get { return connection == null; } }
 
-  public Link(Vector2 relativePosition, IEntity entity, Link connection = null)
-  {
+public Link(Vector2 relativePosition, IEntity entity, Link connection = null)
+{
     this.Entity = entity;
     this.RelativePosition = relativePosition;
     this.connection = connection;
-    if (relativePosition.Length() != 0)
-    {
-      if (relativePosition.X >= 0)
-        LinkRotation = (float)Math.Atan(relativePosition.Y / relativePosition.X);
-      else
-        LinkRotation = (float)Math.Atan(relativePosition.Y / relativePosition.X) - MathHelper.ToRadians(180);
-    }
+    
+    LinkRotation = (float)Math.Atan2(relativePosition.Y, relativePosition.X);
+    
     Scale = 1;
-  }
+}
 
-  public float ConnectTo(Link l)
+  public void ConnectTo(Link l)
   {
     if (!l.ConnectionAvailable)
       l.SeverConnection();
     connection = l;
     l.connection = this;
-
-    var otherLinkModule = l.Entity.GetModule<LinkModule>();
-    float otherInternalRotation = otherLinkModule?.InternalRotation ?? 0f;
-
-    return MathHelper.WrapAngle(otherInternalRotation + l.LinkRotation + LinkRotation + MathHelper.ToRadians(180));
   }
-
 
   public void SeverConnection()
   {

@@ -65,6 +65,7 @@ namespace Birds.src.factories
 
     private static void SetCompositeModules(CompositeController composite, ID_COMPOSITE id)
     {
+      composite.ClearModules();
       switch (id)
       {
         case ID_COMPOSITE.DEFAULT_SINGLE:
@@ -83,7 +84,7 @@ namespace Birds.src.factories
           composite.AddModule(GetCollisionHandler());
           composite.AddModule(new GroupCollisionClearer());
           composite.AddModule(new GroupDrawModule());
-          //link management module (probably) mass?
+          //(probably) mass?
           break;
 
         default:
@@ -174,20 +175,20 @@ namespace Birds.src.factories
       {
         Name = "Cross Shape",
         Entities = new List<EntityPlacement>
-                {
-                    new EntityPlacement { Id = 0, EntityType = ID_ENTITY.DEFAULT }, // Center
-                    new EntityPlacement { Id = 1, EntityType = ID_ENTITY.DEFAULT }, // Top
-                    new EntityPlacement { Id = 2, EntityType = ID_ENTITY.DEFAULT }, // Right
-                    new EntityPlacement { Id = 3, EntityType = ID_ENTITY.DEFAULT }, // Bottom
-                    new EntityPlacement { Id = 4, EntityType = ID_ENTITY.DEFAULT }  // Left
-                },
+        {
+            new EntityPlacement { Id = 0, EntityType = ID_ENTITY.DEFAULT }, // Center
+            new EntityPlacement { Id = 1, EntityType = ID_ENTITY.DEFAULT }, // Right
+            new EntityPlacement { Id = 2, EntityType = ID_ENTITY.DEFAULT }, // Bottom
+            new EntityPlacement { Id = 3, EntityType = ID_ENTITY.DEFAULT }, // Left
+            new EntityPlacement { Id = 4, EntityType = ID_ENTITY.DEFAULT }  // Top
+        },
         Connections = new List<Connection>
-                {
-                    new Connection { EntityId1 = 0, EntityId2 = 1, LinkIndex1 = 0, LinkIndex2 = 2 }, // Center top → Top bottom
-                    new Connection { EntityId1 = 0, EntityId2 = 2, LinkIndex1 = 1, LinkIndex2 = 3 }, // Center right → Right left
-                    new Connection { EntityId1 = 0, EntityId2 = 3, LinkIndex1 = 2, LinkIndex2 = 0 }, // Center bottom → Bottom top
-                    new Connection { EntityId1 = 0, EntityId2 = 4, LinkIndex1 = 3, LinkIndex2 = 1 }  // Center left → Left right
-                }
+        {
+            new Connection { EntityId1 = 0, EntityId2 = 1, LinkIndex1 = 0, LinkIndex2 = 2 }, // Center right → Right left
+            new Connection { EntityId1 = 0, EntityId2 = 2, LinkIndex1 = 1, LinkIndex2 = 2 }, // Center bottom → Bottom top
+            new Connection { EntityId1 = 0, EntityId2 = 3, LinkIndex1 = 2, LinkIndex2 = 2 }, // Center left → Left right
+            new Connection { EntityId1 = 0, EntityId2 = 4, LinkIndex1 = 3, LinkIndex2 = 2 }  // Center top → Top bottom
+        }
       };
     }
   }

@@ -1,6 +1,9 @@
 ﻿using Birds.src.containers.entity;
+using Birds.src.events;
 using Birds.src.factories;
 using Birds.src.menu.controls;
+using Birds.src.modules.composite;
+using Birds.src.modules.entity;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -22,11 +25,14 @@ public class EditEntityState : MenuState
   {
     this.previousState = previousState;
     components = new List<IComponent>();
-    Input.Camera.Controller = this.entityEdited;
     this.entityEdited = entityEdited;
-    //idToBeAddded = IDs.COMPOSITE;
-    float scale = 3;
-
+    Input.Camera.Controller = this.entityEdited;
+    Input.Camera.Zoom = Input.Camera.BuildMenuZoom;
+    Input.Camera.InBuildScreen = true;
+    idToBeAddded = ID_ENTITY.DEFAULT;
+    float scale = 3f;
+    float xOffset = 50f;
+    float buttonDistance = 5f;
     #region AddingButtons
     EntityButton addRectangularHullButton =
       new EntityButton(
@@ -35,7 +41,7 @@ public class EditEntityState : MenuState
         true)
       {
         Scale = scale,
-        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - 100, 20),
+        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - xOffset, 20),
       };
     addRectangularHullButton.Click += AddRectangularHullButton_Click;
     addRectangularHullButton.IsClicked = true;
@@ -48,7 +54,7 @@ public class EditEntityState : MenuState
         true)
       {
         Scale = scale,
-        Position = new Vector2(addRectangularHullButton.Position.X - SpriteFactory.textures[(int)ID_SPRITE.HULL_CIRCULAR].Width * scale, 20),
+        Position = new Vector2(addRectangularHullButton.Position.X - addRectangularHullButton.entitySprite.Width * scale - buttonDistance, 20),
       };
     addCircularHullButton.Click += AddCircularHullButton_Click;
 
@@ -59,7 +65,7 @@ public class EditEntityState : MenuState
         true)
       {
         Scale = scale,
-        Position = new Vector2(addCircularHullButton.Position.X - SpriteFactory.textures[(int)ID_SPRITE.HULL_LINK].Width * scale, 20),
+        Position = new Vector2(addCircularHullButton.Position.X - addCircularHullButton.entitySprite.Width * scale - buttonDistance, 20),
       };
     addLinkHullButton.Click += AddLinkHullButton_Click;
 
@@ -69,7 +75,7 @@ public class EditEntityState : MenuState
         SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale))
       {
         Scale = scale,
-        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - 100, 5 + addRectangularHullButton.Position.Y + addRectangularHullButton.Rectangle.Height),
+        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - xOffset, buttonDistance + addRectangularHullButton.Position.Y + addRectangularHullButton.Rectangle.Height),
       };
     addEngineButton.Click += AddEngineButton_Click;
 
@@ -79,7 +85,7 @@ public class EditEntityState : MenuState
         SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale))
       {
         Scale = scale,
-        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - 100, 5 + addEngineButton.Position.Y + addEngineButton.Rectangle.Height),
+        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - xOffset, buttonDistance + addEngineButton.Position.Y + addEngineButton.Rectangle.Height),
       };
     addShooterButton.Click += AddShooterButton_Click;
 
@@ -89,7 +95,7 @@ public class EditEntityState : MenuState
         SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale))
       {
         Scale = scale,
-        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - 100, 5 + addShooterButton.Position.Y + addShooterButton.Rectangle.Height),
+        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - xOffset, buttonDistance + addShooterButton.Position.Y + addShooterButton.Rectangle.Height),
       };
     addSpikeButton.Click += AddSpikeButton_Click;
     #endregion
@@ -103,6 +109,7 @@ public class EditEntityState : MenuState
       addShooterButton,
       addSpikeButton,
     };
+    AddOpenLinks();
   }
 
   #region OnClicks
@@ -145,7 +152,8 @@ public class EditEntityState : MenuState
 
   public override void Update(GameTime gameTime)
   {
-    base.Update(gameTime);/*
+    base.Update(gameTime);
+    entityEdited.Update(gameTime);
     if (clicked != previouslyClicked)
     {
       if (previouslyClicked != null)
@@ -155,10 +163,10 @@ public class EditEntityState : MenuState
     }
     bool interactWithMenuController = true;
     foreach (IComponent c in components)
-      if (c is Button b && b.MouseIntersects())
+      if (c is Button b && b.IsHovering())
         interactWithMenuController = false;
     if (interactWithMenuController)
-    {
+    {/*
       if (menuController.clickedOnControllable)
       {
         IControllable clickedC = menuController.controllableClicked;
@@ -186,14 +194,14 @@ public class EditEntityState : MenuState
         previousState.currentScrollValue = currentScrollValue;
         game.ChangeState(previousState);
         menuController.clickedOutside = false;
-      }
+      }*/
     }
     else
-    {
+    {/*
       menuController.newClickRequired = true;
       menuController.clickedOutside = false;
       menuController.removeEntity = false;
-      menuController.clickedOnControllable = false;
+      menuController.clickedOnControllable = false;*/
     }
     if (input.BuildClicked)
     {
@@ -204,9 +212,45 @@ public class EditEntityState : MenuState
 
           buildOverviewState.menuController.AddControllable(c);
 
-      }*//*
+      }
       menuController.DeFocus();
-      previousState.BuildClicked();
-    }*/
+      previousState.BuildClicked();*/
+    }
+  }
+
+  private void AddOpenLinks()
+  {
+    var managementModule = entityEdited.GetModule<LinkManagementModule>();
+    managementModule.AddFillerEntities();
+  }
+
+  public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+  {
+    previousState.Draw(gameTime, spriteBatch);
+
+    spriteBatch.Begin(transformMatrix: Input.Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.AnisotropicClamp);
+    entityEdited.Draw(spriteBatch);
+    DrawAvailableLinks(spriteBatch);
+    spriteBatch.End();
+
+    base.Draw(gameTime, spriteBatch);
+  }
+
+  private void DrawAvailableLinks(SpriteBatch spriteBatch)
+  {
+    var pixelTexture = new Texture2D(graphicsDevice, 1, 1);
+    pixelTexture.SetData(new[] { Color.Green });
+    foreach (IEntity entity in entityEdited.Entities)
+    {
+      var linkModule = entity.GetModule<LinkModule>();
+      foreach (var link in linkModule.Links)
+      {
+        if (link.ConnectionAvailable)
+        {
+          spriteBatch.Draw(pixelTexture, new Rectangle((int)link.AbsolutePosition.X - 2, (int)link.AbsolutePosition.Y - 2, 4, 4), Color.Yellow);
+          spriteBatch.Draw(pixelTexture, new Rectangle((int)link.ConnectionPosition.X - 2, (int)link.ConnectionPosition.Y - 2, 4, 4), Color.Blue);
+        }
+      }
+    }
   }
 }

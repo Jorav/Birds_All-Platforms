@@ -37,41 +37,22 @@ public class LinkModule : ModuleBase
       {
         float width = spriteModule.Sprite.Width;
 
-        Links.Add(new Link(new Vector2(0, -width / 2), entity));
-        Links.Add(new Link(new Vector2(width / 2, 0), entity));
-        Links.Add(new Link(new Vector2(0, width / 2), entity));
-        Links.Add(new Link(new Vector2(-width / 2, 0), entity));
+        Links.Add(new Link(new Vector2(width / 2, 0), entity));   // Right (0)
+        Links.Add(new Link(new Vector2(0, width / 2), entity));   // Down (1)
+        Links.Add(new Link(new Vector2(-width / 2, 0), entity));  // Left (2)
+        Links.Add(new Link(new Vector2(0, -width / 2), entity));  // Up (3)
       }
     }
   }
 
-  public void ConnectTo(IEntity eConnectedTo, Link lConnectedTo)
+  public void ConnectAgainst(IEntity otherEntity, Link myLink, Link otherLink)
   {
-    if (Links.Count > 0 && Links[0] != null && container is IEntity entity)
-    {
-      lConnectedTo.SeverConnection();
-      var internalRotation = Links[0].ConnectTo(lConnectedTo);
-      entity.Rotation.Value = eConnectedTo.Rotation.Value - internalRotation;
-      entity.Position.Value = lConnectedTo.ConnectionPosition;
-    }
-  }
-
-  public void ConnectTo(LinkModule otherModule)
-  {
-    foreach (Link lE in otherModule.Links)
-    {
-      if (!lE.ConnectionAvailable)
-      {
-        continue;
-      }
-      foreach (Link lEntity in Links)
-      {
-        if (lEntity.ConnectionAvailable)
-        {
-          lE.ConnectTo(lEntity);
-        }
-      }
-    }
+    otherLink.SeverConnection();
+    float otherLinkWorldAngle = otherLink.LinkRotation + otherEntity.Rotation.Value;
+    float targetLinkWorldAngle = otherLinkWorldAngle + MathHelper.Pi;
+    container.Rotation.Value = MathHelper.WrapAngle(targetLinkWorldAngle - myLink.LinkRotation);
+    container.Position.Value = otherLink.ConnectionPosition;
+    myLink.ConnectTo(otherLink);
   }
 
   public void SeverConnection(IEntity e)
@@ -79,6 +60,17 @@ public class LinkModule : ModuleBase
     foreach (var link in Links)
     {
       if (!link.ConnectionAvailable && link.connection.Entity == e)
+      {
+        link.SeverConnection();
+      }
+    }
+  }
+
+  public void SeverConnections()
+  {
+    foreach (var link in Links)
+    {
+      if (!link.ConnectionAvailable)
       {
         link.SeverConnection();
       }

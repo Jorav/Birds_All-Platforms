@@ -41,6 +41,7 @@ public class BuildControllerState : MenuState
 
     Input.Camera.Controller = this.controllerEdited;
     this.controllerEdited.GetModule<SteeringModule>().actionsLocked = true;
+    Input.Camera.InBuildScreen = true;
     this.previousState = previousState;
     if (previousState is GameState)
       GameState.Player.GetModule<SteeringModule>().actionsLocked = true;
@@ -150,6 +151,7 @@ public class BuildControllerState : MenuState
     originalController.Entities.Set(controllerEdited.Entities);//or clone?
     originalController.GetModule<SteeringModule>().actionsLocked = false;
     Input.Camera.Controller = originalController;
+    Input.Camera.InBuildScreen = false;
   }
 
   public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

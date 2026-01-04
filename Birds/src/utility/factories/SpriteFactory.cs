@@ -39,7 +39,7 @@ public static class SpriteFactory
       case ID_SPRITE.ENGINE: s.Texture = textures[(int)ID_SPRITE.ENGINE]; break;
       case ID_SPRITE.GUN: s.Texture = textures[(int)ID_SPRITE.GUN]; break;
       case ID_SPRITE.SPIKE: s.Texture = textures[(int)ID_SPRITE.SPIKE]; break;
-      case ID_SPRITE.PART_EMPTY: s.Texture = textures[(int)ID_SPRITE.PART_EMPTY]; break;
+      case ID_SPRITE.FILLER: s.Texture = textures[(int)ID_SPRITE.FILLER]; break;
       #endregion
       #region background
       case ID_SPRITE.CLOUD: s.Texture = textures[(int)ID_SPRITE.CLOUD]; break;
@@ -66,6 +66,7 @@ public static class SpriteFactory
     switch (id)
     {
       case ID_ENTITY.DEFAULT: return GetSprite(ID_SPRITE.HULL_RECTANGULAR, position, scale);
+      case ID_ENTITY.FILLER: return GetSprite(ID_SPRITE.FILLER, position, scale);
       #region background
       case ID_ENTITY.CLOUD: return GetSprite(ID_SPRITE.CLOUD, position, scale);
       case ID_ENTITY.SUN: return GetSprite(ID_SPRITE.SUN, position, scale);

@@ -30,23 +30,25 @@ public static class EntityFactory
     return we;
   }
 
-  public static void SetModules(WorldEntity we, ID_ENTITY id, bool isComposite = false)
+  public static void SetModules(IEntity entity, ID_ENTITY id, bool isPartOfComposite = false)
   {
+    entity.ClearModules();
     switch (id)
     {
       case ID_ENTITY.DEFAULT:
-        we.AddModule(GetCollisionHandler(isComposite));
-        if (!isComposite)
+      case ID_ENTITY.FILLER:
+        entity.AddModule(GetCollisionHandler(isPartOfComposite));
+        if (!isPartOfComposite)
         {        
-          we.AddModule(new MovementModule());
-          we.AddModule(new RotationModule());
+          entity.AddModule(new MovementModule());
+          entity.AddModule(new RotationModule());
         }
-        we.AddModule(new BCCollisionDetectionModule());
-        we.AddModule(new OBBCollisionDetectionModule());
-        we.AddModule(new CollisionDetectionModule());
-        we.AddModule(new RadiusModule());
-        we.AddModule(new DrawModule(id));
-        we.AddModule(new LinkModule());
+        entity.AddModule(new BCCollisionDetectionModule());
+        entity.AddModule(new OBBCollisionDetectionModule());
+        entity.AddModule(new CollisionDetectionModule());
+        entity.AddModule(new RadiusModule());
+        entity.AddModule(new DrawModule(id));
+        entity.AddModule(new LinkModule());
         break;
 
       /*
@@ -65,15 +67,15 @@ public static class EntityFactory
       //case (int)IDs.COMPOSITE: return new Composite(new Sprite(hull), position);*/
       #region background
       case ID_ENTITY.CLOUD:
-        we.AddModule(new DrawModule(id));
-        we.AddModule(new MovementModule());
-        we.Scale.Value = 3;
+        entity.AddModule(new DrawModule(id));
+        entity.AddModule(new MovementModule());
+        entity.Scale.Value = 3;
         break;
 
       case ID_ENTITY.SUN:
-        we.AddModule(new DrawModule(id));
-        we.AddModule(new MovementModule());
-        we.Scale.Value = 5;
+        entity.AddModule(new DrawModule(id));
+        entity.AddModule(new MovementModule());
+        entity.Scale.Value = 5;
         break;
       #endregion
 
@@ -126,5 +128,16 @@ public static class EntityFactory
       }
     }
     return returnedList;
+  }
+
+  public static void ConvertToComposite(IEntity entity)
+  {
+    throw new NotImplementedException();
+    var entityID = (entity as WorldEntity)?.EntityID ?? ID_ENTITY.DEFAULT;
+    var childEntity = (IEntity)entity.Clone();
+    SetModules(childEntity, entityID, isPartOfComposite: true);
+    //set id of oldentity to composite
+    //convert to composite with compositefactory
+    entity.Entities.Add(childEntity);
   }
 }

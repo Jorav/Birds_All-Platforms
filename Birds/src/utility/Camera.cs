@@ -25,11 +25,26 @@ public class Camera
       zoom = value;
     }
   }
+  private bool inBuildScreen;
+  public bool InBuildScreen
+  {
+    get { return inBuildScreen; }
+    set
+    {
+      if (value)
+        Zoom = BuildMenuZoom;
+      else
+        Zoom = GameZoom;
+      inBuildScreen = value;
+    }
+  }
   public float Width { get { return Game1.ScreenWidth / Zoom; } }
   public float Height { get { return Game1.ScreenHeight / Zoom; } }
   public bool AutoAdjustZoom { get; set; }
   public float GameZoom { get { if (Controller != null) return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (900 + 1 * Controller.Radius); else return 1; } }
   //        public float GameZoom { get { if (Controller != null) return  Game1.ScreenWidth / 3 / Controller.Radius; else return 1; } }
+  public float BuildMenuZoom { get { if (Controller != null) return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (2 * Controller.Radius + 900 / 8); else return 1; } }
+
   private IModuleContainer controller;
   public IModuleContainer Controller { get { return controller; } set { if (value != null) { Position = value.Position; PreviousPosition = value.Position; } controller = value; } }
   private float zoomSpeed;
@@ -57,7 +72,14 @@ public class Camera
       AdjustPosition();
     if (AutoAdjustZoom)
     {
-      AdjustZoom(GameZoom);
+      if (InBuildScreen)
+      {
+        AdjustZoom(BuildMenuZoom);
+      }
+      else
+      {
+        AdjustZoom(GameZoom);
+      }
     }
 
     Rotation = 0;

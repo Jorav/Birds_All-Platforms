@@ -12,6 +12,7 @@ public interface IModuleContainer
   T GetModule<T>() where T : ModuleBase;
   IEnumerable<TBase> GetAllModulesOfType<TBase>() where TBase : ModuleBase;
   bool HasModule<T>() where T : ModuleBase;
+  void ClearModules();
   object Clone();
 
   ObservableCollection<IEntity> Entities { get; }

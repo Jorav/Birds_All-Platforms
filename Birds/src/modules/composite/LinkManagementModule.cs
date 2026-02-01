@@ -127,7 +127,7 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
         if (!link.ConnectionAvailable)
           continue;
 
-        var fillerEntity = EntityFactory.GetEntity(link.ConnectionPosition, ID_ENTITY.FILLER, false);
+        var fillerEntity = WorldEntityFactory.GetEntity(link.ConnectionPosition, ID_ENTITY.FILLER, false);
         var fillerLinkModule = fillerEntity.GetModule<LinkModule>();
         var backLink = fillerLinkModule.Links[2];
         if (backLink != null)

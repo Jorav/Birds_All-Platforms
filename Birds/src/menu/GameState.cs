@@ -40,7 +40,10 @@ public class GameState : State
     newEntities = new List<IEntity>();
     if (Player == null)
     {
-      Player = ControllerFactory.Create(Vector2.Zero, ID_CONTROLLER.PLAYER, numberOfEntities: 0);
+      Player = ControllerFactory.Create(
+        CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, ID_COMPOSITE.DEFAULT_COMBINED),
+        ID_CONTROLLER.PLAYER
+        );
       controller.Add(Player);
     }
     Camera = new Camera(Player);

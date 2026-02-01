@@ -45,10 +45,11 @@ public class EditEntityState : MenuState
     components = new List<IComponent>();
     this.editedEntity = (IEntity)editedEntity.Clone();
     originalEntity = editedEntity;
-    editedController = ControllerFactory.Create(editedEntity.Position, numberOfEntities: 0);
-    editedController.Entities.Add(this.editedEntity);
-    Input.Camera.Controller = this.editedController;
-    Input.Camera.Zoom = Input.Camera.BuildMenuZoom;
+    editedController = ControllerFactory.Create(
+         new List<IEntity> { this.editedEntity },
+        ID_CONTROLLER.DEFAULT
+        );
+    Input.Camera.Controller = editedController;
     Input.Camera.InBuildScreen = true;
     idToBeAddded = ID_ENTITY.DEFAULT;
     float scale = 3f;
@@ -175,6 +176,7 @@ public class EditEntityState : MenuState
 
   public override void Update(GameTime gameTime)
   {
+
     base.Update(gameTime);
     Input.HandleZoom();
     editedController.Update(gameTime);
@@ -217,7 +219,7 @@ public class EditEntityState : MenuState
       IControllable clickedC = menuController.controllableClicked;
       if (clickedC is WorldEntity clickedE && clickedE.IsFiller)
       {
-        menuController.ReplaceEntity(clickedE, EntityFactory.Create(menuController.Position, idToBeAddded));
+        menuController.ReplaceEntity(clickedE, WorldEntityFactory.Create(menuController.Position, idToBeAddded));
       }
       menuController.clickedOnControllable = false;
     }
@@ -271,6 +273,7 @@ public class EditEntityState : MenuState
     managementModule.ClearFillerEntities();
     originalController.Entities.Add(editedEntity);
     Input.Camera.Controller = originalController;
+    Input.Camera.InBuildScreen = true;
   }
 
   public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

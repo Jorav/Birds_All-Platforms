@@ -8,6 +8,12 @@ public class GroupWeightedPositionModule : ModuleBase
   public Vector2 Position { get; set; }
   public float Mass { get; set; }
 
+  public override void Initialize(IModuleContainer container)
+  {
+    base.Initialize(container);
+    UpdatePosition();
+  }
+
   protected override void ConfigurePropertySync()
   {
     ReadWriteSync(() => Position, container.Position);
@@ -15,6 +21,11 @@ public class GroupWeightedPositionModule : ModuleBase
   }
 
   protected override void Update(GameTime gameTime)
+  {
+    UpdatePosition();
+  }
+
+  private void UpdatePosition()
   {
     Vector2 sum = Vector2.Zero;
     float weight = 0;

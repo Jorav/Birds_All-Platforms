@@ -9,6 +9,12 @@ public class GroupRadiusModule : ModuleBase
   public float Radius { get; set; }
   public Vector2 Position { get; set; }
 
+  public override void Initialize(IModuleContainer container)
+  {
+    base.Initialize(container);
+    UpdateRadius();
+  }
+
   protected override void ConfigurePropertySync()
   {
     WriteSync(() => Radius, container.Radius);

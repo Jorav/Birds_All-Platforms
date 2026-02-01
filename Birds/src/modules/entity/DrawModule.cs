@@ -147,11 +147,11 @@ public class DrawModule : ModuleBase, IDrawModule
       {
         if (container.Collisions.Count > 0)
         {
-          DrawModule.DrawCircleOutline(sb, bcModule.BoundingCircle.Position, bcModule.BoundingCircle.Radius, Color.Red, 32, 3);
+          DrawCircleOutline(sb, bcModule.BoundingCircle.Position, bcModule.BoundingCircle.Radius, Color.Red, 32, 3);
         }
         else
         {
-          DrawModule.DrawCircleOutline(sb, bcModule.BoundingCircle.Position, bcModule.BoundingCircle.Radius, Color.Blue);
+          DrawCircleOutline(sb, bcModule.BoundingCircle.Position, bcModule.BoundingCircle.Radius, Color.Blue);
         }
       }
     }

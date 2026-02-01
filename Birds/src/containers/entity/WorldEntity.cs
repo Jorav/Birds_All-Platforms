@@ -28,7 +28,7 @@ public class WorldEntity : ModuleContainer, IEntity
     base.Dispose();
     Height.Value = 1f;
 
-    EntityFactory.availableEntities.Push(this);
+    WorldEntityFactory.availableEntities.Push(this);
   }
 }
 

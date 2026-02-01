@@ -33,13 +33,19 @@ public class BuildControllerState : MenuState
   private const float selectionBuffer = 1.5f;
   private BoundingCircle selectionCircle;
 
-  public BuildControllerState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, State previousState, Input input, Controller originalController/*, MenuController menuController = null*/) : base(game, graphicsDevice, content, input)
+  public BuildControllerState(
+    Game1 game, 
+    GraphicsDevice graphicsDevice, 
+    ContentManager content, 
+    State previousState, 
+    Input input, 
+    Controller originalController) : base(game, graphicsDevice, content, input)
   {
-    this.controllerEdited = (Controller)originalController.Clone();
+    controllerEdited = (Controller)originalController.Clone();
     this.originalController = originalController;
 
-    Input.Camera.Controller = this.controllerEdited;
-    this.controllerEdited.GetModule<SteeringModule>().actionsLocked = true;
+    Input.Camera.Controller = controllerEdited;
+    controllerEdited.GetModule<SteeringModule>().actionsLocked = true;
     Input.Camera.InBuildScreen = true;
     this.previousState = previousState;
     if (previousState is GameState)
@@ -103,7 +109,7 @@ public class BuildControllerState : MenuState
     }
     if (playerLastClicked)
     {
-      controllerEdited.Entities.Add(EntityFactory.GetEntity(Input.PositionGameCoords, ID_ENTITY.DEFAULT, false));
+      controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(Input.PositionGameCoords, 1, ID_COMPOSITE.DEFAULT_SINGLE));
       timer.Stop();
       timer.Reset();
     }

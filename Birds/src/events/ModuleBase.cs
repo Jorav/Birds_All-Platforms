@@ -57,7 +57,7 @@ public abstract class ModuleBase
 
   protected abstract void Update(GameTime gameTime);
 
-  private void SyncWriteProperties()
+  public void SyncWriteProperties()
   {
     foreach (var propertySync in _propertySyncs)
     {

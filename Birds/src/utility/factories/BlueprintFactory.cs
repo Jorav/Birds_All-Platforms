@@ -20,7 +20,7 @@ public static class BlueprintFactory
 
     foreach (var placement in blueprint.Entities)
     {
-      var entity = EntityFactory.GetEntity(spawnPosition, placement.EntityType, true);
+      var entity = WorldEntityFactory.GetEntity(spawnPosition, placement.EntityType, true);
       entities.Add(entity);
       entityLookup[placement.Id] = entity;
     }

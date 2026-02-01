@@ -41,8 +41,8 @@ namespace Birds.src.factories
 
       compositeController.Position.Value = position;
 
-      SetCompositeModules(compositeController, GetCompositeIdFromBlueprint(blueprintName));
       compositeController.Entities.Set(iEntities);
+      SetCompositeModules(compositeController, GetCompositeIdFromBlueprint(blueprintName));
 
       return compositeController;
     }
@@ -53,14 +53,26 @@ namespace Birds.src.factories
       return GetComposite(position, blueprintName);
     }
 
-    public static List<IEntity> CreateComposites(Vector2 position, int numberOfEntities, ID_COMPOSITE id)
+    public static List<IEntity> CreateComposites(Vector2 position, int numberOfComposites, ID_COMPOSITE id)
     {
-      var composites = new List<IEntity>();
-      for (int i = 0; i < numberOfEntities; i++)
+      List<IEntity> returnedList = new List<IEntity>();
+
+      CompositeController composite = GetComposite(position, id);
+      returnedList.Add(composite);
+      if (numberOfComposites > 1)
       {
-        composites.Add(GetComposite(position, id));
+        Random rnd = new Random();
+
+        for (int i = 0; i < numberOfComposites - 1; i++)
+        {
+          float rRadius = (float)(rnd.NextDouble() * composite.Radius * 2 * Math.Sqrt(numberOfComposites));
+          float rAngle = (float)(rnd.NextDouble() * 2 * Math.PI);
+          Vector2 compositePosition = new Vector2((float)Math.Cos(rAngle), (float)Math.Sin(rAngle)) * rRadius + position;
+          composite = GetComposite(compositePosition, id);
+          returnedList.Add(composite);
+        }
       }
-      return composites;
+      return returnedList;
     }
 
     private static void SetCompositeModules(CompositeController composite, ID_COMPOSITE id)
@@ -73,7 +85,7 @@ namespace Birds.src.factories
           composite.AddModule(new LinkManagementModule());
           composite.AddModule(new GroupPositionModule());
           composite.AddModule(new GroupRadiusModule());
-          composite.AddModule(new CohesiveGroupRotationModule());        
+          composite.AddModule(new CohesiveGroupRotationModule());
           composite.AddModule(new CompositeMovementModule());
           composite.AddModule(new SubEntityVelocityReseter());
           composite.AddModule(new GroupMassModule());
@@ -97,7 +109,7 @@ namespace Birds.src.factories
       var collisionHandler = new CollisionHandlerModule();
       collisionHandler.AddResponse(new MomentumTransfer());
       collisionHandler.AddResponse(new OverlapRepulsion());
-      
+
       return collisionHandler;
     }
 

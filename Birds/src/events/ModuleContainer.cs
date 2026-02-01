@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reflection;
 
 namespace Birds.src.events;
 
@@ -60,6 +61,7 @@ public abstract class ModuleContainer : IModuleContainer
           module.OnEntityAdded(entity);
         }
       }
+      SyncWriteProperties();
     }
 
     if (e.OldItems != null)
@@ -71,13 +73,21 @@ public abstract class ModuleContainer : IModuleContainer
           module.OnEntityRemoved(entity);
         }
       }
+      SyncWriteProperties();
     }
+  }
+
+  public void SyncWriteProperties()
+  {
+    foreach (var module in modules.Values)
+      module.SyncWriteProperties();
   }
 
   public void AddModule<T>(T module) where T : ModuleBase
   {
     module.Initialize(this);
     modules[typeof(T)] = module;
+    module.SyncWriteProperties();
   }
 
   public T GetModule<T>() where T : ModuleBase
@@ -113,7 +123,7 @@ public abstract class ModuleContainer : IModuleContainer
   }
   public void ClearModules()
   {
-    foreach(ModuleBase module in modules.Values.ToList())
+    foreach (ModuleBase module in modules.Values.ToList())
     {
       module.Dispose();
     }
@@ -160,6 +170,7 @@ public abstract class ModuleContainer : IModuleContainer
       clonedModule.Initialize(cloned);
       cloned.modules[clonedModule.GetType()] = clonedModule;
     }
+    SyncWriteProperties();
 
     return cloned;
   }
@@ -172,7 +183,7 @@ public abstract class ModuleContainer : IModuleContainer
       module.Dispose();
     }
     modules.Clear();
-    foreach(IEntity entity in Entities)
+    foreach (IEntity entity in Entities)
     {
       entity.Dispose();
     }

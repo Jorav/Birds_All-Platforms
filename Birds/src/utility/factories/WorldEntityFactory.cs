@@ -9,7 +9,7 @@ using Birds.src.containers.entity;
 using Birds.src.modules.entity.collision_handling;
 
 namespace Birds.src.factories;
-public static class EntityFactory
+public static class WorldEntityFactory
 {
   public static Stack<WorldEntity> availableEntities = new();
 
@@ -39,15 +39,15 @@ public static class EntityFactory
       case ID_ENTITY.FILLER:
         entity.AddModule(GetCollisionHandler(isPartOfComposite));
         if (!isPartOfComposite)
-        {        
+        {
           entity.AddModule(new MovementModule());
           entity.AddModule(new RotationModule());
         }
         entity.AddModule(new BCCollisionDetectionModule());
         entity.AddModule(new OBBCollisionDetectionModule());
         entity.AddModule(new CollisionDetectionModule());
-        entity.AddModule(new RadiusModule());
         entity.AddModule(new DrawModule(id));
+        entity.AddModule(new RadiusModule());
         entity.AddModule(new LinkModule());
         break;
 
@@ -98,31 +98,29 @@ public static class EntityFactory
   public static List<IEntity> CreateEntities(Vector2 position, int numberOfEntities, ID_ENTITY id, bool isBackground = false, bool isComposite = false)
   {
     List<IEntity> returnedList = new List<IEntity>();
-    if (numberOfEntities == 1)
-    {
-      WorldEntity we = EntityFactory.GetEntity(position, id, isComposite);
-      returnedList.Add(we);
-    }
-    else if (numberOfEntities > 1)
+    WorldEntity we = GetEntity(position, id, isComposite);
+    returnedList.Add(we);
+
+    if (numberOfEntities > 1)
     {
       Random rnd = new Random();
       if (!isBackground)
       {
-        for (int i = 0; i < numberOfEntities; i++)
+        for (int i = 0; i < numberOfEntities-1; i++)
         {
-          float rRadius = (float)(rnd.NextDouble() * 10 * numberOfEntities);
+          float rRadius = (float)(rnd.NextDouble() * we.Radius * 2 * Math.Sqrt(numberOfEntities));
           float rAngle = (float)(rnd.NextDouble() * 2 * Math.PI);
-          WorldEntity we = EntityFactory.GetEntity(new Vector2((float)Math.Sin(rAngle), (float)Math.Cos(rAngle)) * rRadius + position, id, isComposite);
+          we = GetEntity(new Vector2((float)Math.Cos(rAngle), (float)Math.Sin(rAngle)) * rRadius + position, id, isComposite);
           returnedList.Add(we);
         }
       }
       else
       {
-        for (int i = 0; i < numberOfEntities; i++)
+        for (int i = 0; i < numberOfEntities-1; i++)
         {
           float x = GameState.Player.Position.Value.X + (float)((rnd.NextDouble() * (Game1.ScreenWidth - 32 * 2) - Game1.ScreenWidth / 2) + 32);
           float y = GameState.Player.Position.Value.Y + (float)((rnd.NextDouble() * (Game1.ScreenHeight - 32 * 2) - Game1.ScreenHeight / 2) + 32);
-          WorldEntity we = EntityFactory.GetEntity(new Vector2(x, y), id, isComposite);
+          we = GetEntity(new Vector2(x, y), id, isComposite);
           returnedList.Add(we);
         }
       }

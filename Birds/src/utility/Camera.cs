@@ -32,9 +32,15 @@ public class Camera
     set
     {
       if (value)
+      {
         Zoom = BuildMenuZoom;
+        zoomSpeed = 10f;
+      }
       else
+      {
+        zoomSpeed = 0.01f;
         Zoom = GameZoom;
+      }
       inBuildScreen = value;
     }
   }

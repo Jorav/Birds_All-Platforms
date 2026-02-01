@@ -10,8 +10,15 @@ public class RadiusModule : ModuleBase
 
   protected override void ConfigurePropertySync()
   {
-    WriteSync(() => Radius, container.Radius);
+    ReadWriteSync(() => Radius, container.Radius);
   }
+
+  public override void Initialize(IModuleContainer container)
+  {
+    base.Initialize(container);
+    UpdateRadius();
+  }
+
 
   protected override void Update(GameTime gameTime)
   {

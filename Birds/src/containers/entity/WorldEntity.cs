@@ -2,6 +2,7 @@
 using Birds.src.events;
 using Birds.src.factories;
 using Birds.src.utility;
+using Microsoft.Xna.Framework;
 
 namespace Birds.src.containers.entity;
 public class WorldEntity : ModuleContainer, IEntity
@@ -24,6 +25,9 @@ public class WorldEntity : ModuleContainer, IEntity
   }
   public void Dispose()
   {
+    base.Dispose();
+    Height.Value = 1f;
+
     EntityFactory.availableEntities.Push(this);
   }
 }

@@ -29,7 +29,7 @@ public abstract class ModuleContainer : IModuleContainer
   public SyncedProperty<float> Rotation => _rotation ??= new SyncedProperty<float>(0);
   public SyncedProperty<float> Mass => _mass ??= new SyncedProperty<float>(1);
   public SyncedProperty<float> Radius => _radius ??= new SyncedProperty<float>(1);
-  public SyncedProperty<Color> Color => _color ??= new SyncedProperty<Color>(Microsoft.Xna.Framework.Color.Red);
+  public SyncedProperty<Color> Color => _color ??= new SyncedProperty<Color>(Microsoft.Xna.Framework.Color.White);
   public SyncedProperty<ID_OTHER> Team => _team ??= new SyncedProperty<ID_OTHER>();
   public SyncedProperty<Vector2> Velocity => _velocity ??= new SyncedProperty<Vector2>();
   public SyncedProperty<float> Scale => _scale ??= new SyncedProperty<float>(1);
@@ -172,5 +172,9 @@ public abstract class ModuleContainer : IModuleContainer
       module.Dispose();
     }
     modules.Clear();
+    foreach(IEntity entity in Entities)
+    {
+      entity.Dispose();
+    }
   }
 }

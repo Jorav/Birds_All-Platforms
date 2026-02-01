@@ -13,18 +13,17 @@ using Birds.src.visual;
 using Birds.src.modules.collision;
 using Birds.src.collision.bounding_areas;
 using Birds.src.containers.entity;
+using Birds.src.containers.composite;
 
 namespace Birds.src.menu;
 public class BuildControllerState : MenuState
 {
-  protected State previousState;
+  public State previousState;
   //public MenuController menuController;
   //protected Controller controllerEdited;
   protected Controller controllerEdited;
   protected Controller originalController;
   protected bool buildMode;
-  public int previousScrollValue;
-  public int currentScrollValue;
   private readonly Sprite overlay;
   protected Color originalColor;
   private bool wasPressed = true;
@@ -62,7 +61,7 @@ public class BuildControllerState : MenuState
   public override void Update(GameTime gameTime)
   {
     base.Update(gameTime);
-    previousScrollValue = currentScrollValue;
+    Input.HandleZoom();
     controllerEdited.Update(gameTime);
     var collisionDetector = controllerEdited.GetModule<GroupCollisionDetectionModule>();
     collisionDetector.CollisionManager.AddInternalCollisionsToEntities();
@@ -70,17 +69,11 @@ public class BuildControllerState : MenuState
     var boundingCircle = controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle;
     selectionCircle.Radius = boundingCircle.Radius * selectionBuffer;
     selectionCircle.Position = boundingCircle.Position;
-    HandleScroll();
-    CheckDoubleClick();
+    HandleClick();
     wasPressed = Input.IsPressed;
   }
 
-  private void HandleScroll()
-  {
-    Input.HandleZoom();
-  }
-
-  private void CheckDoubleClick()
+  private void HandleClick()
   {
     if (timer.IsRunning && timer.ElapsedMilliseconds >= doubleClickTreshold)
     {
@@ -92,63 +85,47 @@ public class BuildControllerState : MenuState
       return;
     }
     var playerWithBufferClicked = selectionCircle.Contains(Input.PositionGameCoords);
-    if (playerWithBufferClicked)
+    if (!playerWithBufferClicked)
     {
-      CheckIfEntityClicked();
+      ReturnToPreviousState();
+      return;
     }
-    if (timer.IsRunning)
+    if (CheckIfEntityClicked())
     {
-      if (playerLastClicked)
-      {
-        if (playerWithBufferClicked)
-        {
-          controllerEdited.Entities.Add(EntityFactory.GetEntity(Input.PositionGameCoords, ID_ENTITY.DEFAULT, false));
-        }
-        else
-        {
-          timer.Restart();
-          playerLastClicked = false;
-        }
-      }
-      else
-      {
-        if (playerWithBufferClicked)
-        {
-          timer.Restart();
-          playerLastClicked = true;
-        }
-        else
-        {
-          ReturnToPreviousState();
-        }
-      }
+      return;
     }
-    else
+    if (!timer.IsRunning)
     {
-      playerLastClicked = controllerEdited
-          .GetModule<BCCollisionDetectionModule>()
-          .BoundingCircle
-          .Contains(Input.PositionGameCoords);
       timer.Reset();
       timer.Start();
+      playerLastClicked = true;
+      return;
+    }
+    if (playerLastClicked)
+    {
+      controllerEdited.Entities.Add(EntityFactory.GetEntity(Input.PositionGameCoords, ID_ENTITY.DEFAULT, false));
+      timer.Stop();
+      timer.Reset();
     }
   }
 
-  private void CheckIfEntityClicked()
+  private bool CheckIfEntityClicked()
   {
-    foreach(IEntity entity in controllerEdited.Entities)
+    foreach (IEntity entity in controllerEdited.Entities)
     {
-      if (entity.Contains(Input.PositionGameCoords))
+      if (entity.Contains(Input.PositionGameCoords) && entity is CompositeController)
       {
-        game.ChangeState(new EditEntityState(game, graphicsDevice, content, this, input, entity));
+        game.ChangeState(new EditEntityState(game, graphicsDevice, content, this, previousState, input, controllerEdited, entity));
+        return true;
       }
     }
+    return false;
   }
 
   private void ReturnToPreviousState()
   {
     game.ChangeState(previousState);
-    originalController.Entities.Set(controllerEdited.Entities);//or clone?
+    originalController.Entities.Set(controllerEdited.Entities);
     originalController.GetModule<SteeringModule>().actionsLocked = false;
     Input.Camera.Controller = originalController;
     Input.Camera.InBuildScreen = false;

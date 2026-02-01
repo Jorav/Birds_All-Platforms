@@ -1,10 +1,12 @@
-﻿using Birds.src.containers.entity;
+﻿using Birds.src.containers.controller;
+using Birds.src.containers.entity;
 using Birds.src.events;
 using Birds.src.factories;
 using Birds.src.menu.controls;
 using Birds.src.modules.composite;
 using Birds.src.modules.entity;
 using Birds.src.utility;
+using Birds.src.visual;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,23 +18,44 @@ namespace Birds.src.menu;
 public class EditEntityState : MenuState
 {
   State previousState;
-  IEntity entityEdited;
+  State backgroundState;
+  IEntity editedEntity;
+  IEntity originalEntity;
+  Controller editedController;
+  Controller originalController;
   ID_ENTITY idToBeAddded;
   EntityButton clicked;
   EntityButton previouslyClicked;
+  private bool wasPressed = true;
+  private readonly Sprite overlay;
 
-  public EditEntityState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, State previousState, Input input, IEntity entityEdited) : base(game, graphicsDevice, content, input)
+  public EditEntityState(
+    Game1 game,
+    GraphicsDevice graphicsDevice,
+    ContentManager content,
+    State stateToReturnTo,
+    State stateToDraw,
+    Input input,
+    Controller originalController,
+    IEntity editedEntity) : base(game, graphicsDevice, content, input)
   {
-    this.previousState = previousState;
+    this.originalController = originalController;
+    this.previousState = stateToReturnTo;
+    this.backgroundState = stateToDraw;
     components = new List<IComponent>();
-    this.entityEdited = entityEdited;
-    Input.Camera.Controller = this.entityEdited;
+    this.editedEntity = (IEntity)editedEntity.Clone();
+    originalEntity = editedEntity;
+    editedController = ControllerFactory.Create(editedEntity.Position, numberOfEntities: 0);
+    editedController.Entities.Add(this.editedEntity);
+    Input.Camera.Controller = this.editedController;
     Input.Camera.Zoom = Input.Camera.BuildMenuZoom;
     Input.Camera.InBuildScreen = true;
     idToBeAddded = ID_ENTITY.DEFAULT;
     float scale = 3f;
     float xOffset = 50f;
     float buttonDistance = 5f;
+    overlay = SpriteFactory.GetSprite(ID_SPRITE.BACKGROUND_WHITE, new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2), SpriteFactory.textures[(int)ID_SPRITE.BACKGROUND_WHITE].Height / Game1.ScreenHeight);
+
     #region AddingButtons
     EntityButton addRectangularHullButton =
       new EntityButton(
@@ -153,7 +176,8 @@ public class EditEntityState : MenuState
   public override void Update(GameTime gameTime)
   {
     base.Update(gameTime);
-    entityEdited.Update(gameTime);
+    Input.HandleZoom();
+    editedController.Update(gameTime);
     if (clicked != previouslyClicked)
     {
       if (previouslyClicked != null)
@@ -161,48 +185,61 @@ public class EditEntityState : MenuState
       previouslyClicked = clicked;
       clicked.IsClicked = true;
     }
-    bool interactWithMenuController = true;
+    bool mouseAboveButton = false;
     foreach (IComponent c in components)
       if (c is Button b && b.IsHovering())
-        interactWithMenuController = false;
-    if (interactWithMenuController)
-    {/*
-      if (menuController.clickedOnControllable)
-      {
-        IControllable clickedC = menuController.controllableClicked;
-        if (clickedC is WorldEntity clickedE && clickedE.IsFiller)
-        {
-          menuController.ReplaceEntity(clickedE, EntityFactory.Create(menuController.Position, idToBeAddded));
-        }
-        menuController.clickedOnControllable = false;
-      }
-      if (menuController.removeEntity)
-      {
-        IControllable clickedC = menuController.controllableClicked;
-        if (clickedC is WorldEntity clickedE && !clickedE.IsFiller)
-        {
-          menuController.RemoveEntity(clickedE);
-        }
-        menuController.removeEntity = false;
-        //menuController.requireNewClick = true;
-        //menuController.clickedOutside = true;
-      }
-      if (menuController.clickedOutside)
-      {
-        menuController.DeFocus();
-        previousState.previousScrollValue = previousScrollValue;
-        previousState.currentScrollValue = currentScrollValue;
-        game.ChangeState(previousState);
-        menuController.clickedOutside = false;
-      }*/
-    }
-    else
-    {/*
+        mouseAboveButton = true;
+    if (mouseAboveButton)
+    {
+      /**
       menuController.newClickRequired = true;
       menuController.clickedOutside = false;
       menuController.removeEntity = false;
-      menuController.clickedOnControllable = false;*/
+      menuController.clickedOnControllable = false;
+      */
     }
+    else if (Input.IsPressed && !wasPressed)
+    {
+      if (originalController.Contains(Input.PositionGameCoords))
+      {
+        //do things
+      }
+      else
+      {
+        ReturnToPreviousState();
+      }
+      //var managementModule = entityEdited.GetModule<LinkManagementModule>();
+      //managementModule.AddFillerEntities();
+    }
+    /*
+    if (menuController.clickedOnControllable)
+    {
+      IControllable clickedC = menuController.controllableClicked;
+      if (clickedC is WorldEntity clickedE && clickedE.IsFiller)
+      {
+        menuController.ReplaceEntity(clickedE, EntityFactory.Create(menuController.Position, idToBeAddded));
+      }
+      menuController.clickedOnControllable = false;
+    }
+    if (menuController.removeEntity)
+    {
+      IControllable clickedC = menuController.controllableClicked;
+      if (clickedC is WorldEntity clickedE && !clickedE.IsFiller)
+      {
+        menuController.RemoveEntity(clickedE);
+      }
+      menuController.removeEntity = false;
+      //menuController.requireNewClick = true;
+      //menuController.clickedOutside = true;
+    }
+    if (menuController.clickedOutside)
+    {
+      menuController.DeFocus();
+      previousState.previousScrollValue = previousScrollValue;
+      previousState.currentScrollValue = currentScrollValue;
+      game.ChangeState(previousState);
+      menuController.clickedOutside = false;
+    }*/
     if (input.BuildClicked)
     {
       /*menuController.ClearOpenLinks();
@@ -216,20 +253,34 @@ public class EditEntityState : MenuState
       menuController.DeFocus();
       previousState.BuildClicked();*/
     }
+    wasPressed = Input.IsPressed;
   }
 
   private void AddOpenLinks()
   {
-    var managementModule = entityEdited.GetModule<LinkManagementModule>();
+    var managementModule = editedEntity.GetModule<LinkManagementModule>();
     managementModule.AddFillerEntities();
+  }
+
+  private void ReturnToPreviousState()
+  {
+    game.ChangeState(previousState);
+    originalController.Entities.Remove(originalEntity);
+    originalEntity.Dispose();
+    var managementModule = editedEntity.GetModule<LinkManagementModule>();
+    managementModule.ClearFillerEntities();
+    originalController.Entities.Add(editedEntity);
+    Input.Camera.Controller = originalController;
   }
 
   public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
   {
-    previousState.Draw(gameTime, spriteBatch);
-
+    backgroundState.Draw(gameTime, spriteBatch);
+    spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.AnisotropicClamp);
+    overlay.Draw(spriteBatch);
+    spriteBatch.End();
     spriteBatch.Begin(transformMatrix: Input.Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.AnisotropicClamp);
-    entityEdited.Draw(spriteBatch);
+    editedController.Draw(spriteBatch);
     DrawAvailableLinks(spriteBatch);
     spriteBatch.End();
 
@@ -240,7 +291,7 @@ public class EditEntityState : MenuState
   {
     var pixelTexture = new Texture2D(graphicsDevice, 1, 1);
     pixelTexture.SetData(new[] { Color.Green });
-    foreach (IEntity entity in entityEdited.Entities)
+    foreach (IEntity entity in editedEntity.Entities)
     {
       var linkModule = entity.GetModule<LinkModule>();
       foreach (var link in linkModule.Links)

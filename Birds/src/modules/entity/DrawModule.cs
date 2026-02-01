@@ -13,10 +13,50 @@ using Birds.src.menu;
 public class DrawModule : ModuleBase, IDrawModule
 {
   public Sprite Sprite { get; private set; }
-  public Vector2 Position { get; set; }
-  public float Rotation { get; set; }
-  public Color Color { get; set; }
-  public float Scale { get; set; }
+  private Vector2 _position;
+  public Vector2 Position
+  {
+    get => _position;
+    set
+    {
+      _position = value;
+      if (Sprite != null)
+        Sprite.Position = value;
+    }
+  }
+  private float _rotation;
+  public float Rotation
+  {
+    get => _rotation;
+    set
+    {
+      _rotation = value;
+      if (Sprite != null)
+        Sprite.Rotation = value;
+    }
+  }
+  private Color _color;
+  public Color Color
+  {
+    get => _color;
+    set
+    {
+      _color = value;
+      if (Sprite != null)
+        Sprite.Color = value;
+    }
+  }
+  private float _scale;
+  public float Scale
+  {
+    get => _scale;
+    set
+    {
+      _scale = value;
+      if (Sprite != null)
+        Sprite.Scale = value;
+    }
+  }
   public float Width { get; set; }
   public float Height { get; set; }
 
@@ -53,23 +93,10 @@ public class DrawModule : ModuleBase, IDrawModule
     Color = Sprite.Color;
     Width = Sprite.Width;
     Height = Sprite.Height;
-    UpdateSpriteFromContainer();
   }
 
   protected override void Update(GameTime gameTime)
   {
-    UpdateSpriteFromContainer();
-  }
-
-  private void UpdateSpriteFromContainer()
-  {
-    if (Sprite != null)
-    {
-      Sprite.Position = Position;
-      Sprite.Rotation = Rotation;
-      Sprite.Color = Color;
-      Sprite.Scale = Scale;
-    }
   }
 
   public static void DrawCircleOutline(SpriteBatch sb, Vector2 center, float radius, Color color, int segments = 32, int thickness = 1)

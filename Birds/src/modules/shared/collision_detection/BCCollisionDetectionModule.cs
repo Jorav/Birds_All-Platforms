@@ -6,8 +6,30 @@ namespace Birds.src.modules.shared.bounding_area;
 
 public class BCCollisionDetectionModule : ModuleBase
 {
-  public Vector2 Position { get; set; }
-  public float Radius { get; set; }
+  private Vector2 _position;
+  public Vector2 Position
+  {
+    get => _position;
+    set
+    {
+      _position = value;
+      if (BoundingCircle != null)
+        BoundingCircle.Position = value;
+    }
+  }
+
+  private float _radius;
+  public float Radius
+  {
+    get => _radius;
+    set
+    {
+      _radius = value;
+      if (BoundingCircle != null)
+        BoundingCircle.Radius = value;
+    }
+  }
+
   public BoundingCircle BoundingCircle { get; private set; }
 
   protected override void ConfigurePropertySync()
@@ -24,11 +46,6 @@ public class BCCollisionDetectionModule : ModuleBase
 
   protected override void Update(GameTime gameTime)
   {
-    if (BoundingCircle != null)
-    {
-      BoundingCircle.Position = Position;
-      BoundingCircle.Radius = Radius;
-    }
   }
 
   public override object Clone()

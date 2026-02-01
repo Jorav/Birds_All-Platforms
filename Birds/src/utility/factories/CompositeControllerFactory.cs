@@ -88,7 +88,7 @@ namespace Birds.src.factories
           break;
 
         default:
-          throw new System.NotImplementedException();
+          throw new NotImplementedException();
       }
     }
 

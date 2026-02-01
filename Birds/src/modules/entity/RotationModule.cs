@@ -13,7 +13,7 @@ public class RotationModule : RotationModuleBase
 
   protected override void ConfigurePropertySync()
   {
-    WriteSync(() => Rotation, container.Rotation);
+    ReadWriteSync(() => Rotation, container.Rotation);
     ReadSync(() => Position, container.Position);
   }
 

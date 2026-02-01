@@ -143,7 +143,7 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
           }
         }
 
-        if (true)
+        if (!overlaps)
         {
           fillerEntities.Add(fillerEntity);
           container.Entities.Add(fillerEntity);
@@ -156,7 +156,6 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
       }
     }
   }
-
 
   public void ClearFillerEntities()
   {

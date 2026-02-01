@@ -48,6 +48,7 @@ public class LinkModule : ModuleBase
   public void ConnectAgainst(IEntity otherEntity, Link myLink, Link otherLink)
   {
     otherLink.SeverConnection();
+    myLink.SeverConnection();
     float otherLinkWorldAngle = otherLink.LinkRotation + otherEntity.Rotation.Value;
     float targetLinkWorldAngle = otherLinkWorldAngle + MathHelper.Pi;
     container.Rotation.Value = MathHelper.WrapAngle(targetLinkWorldAngle - myLink.LinkRotation);
@@ -90,5 +91,14 @@ public class LinkModule : ModuleBase
     var cloned = new LinkModule();
     cloned.InternalRotation = this.InternalRotation;
     return cloned;
+  }
+
+  public void Dispose()
+  {
+    base.Dispose();
+    foreach(Link l in Links)
+    {
+      l.SeverConnection();
+    }
   }
 }

@@ -3,13 +3,58 @@ using Birds.src.events;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.shared.bounding_area;
+
 public class OBBCollisionDetectionModule : ModuleBase
 {
-  public Vector2 Position { get; set; }
-  public float Rotation { get; set; }
+  private Vector2 _position;
+  public Vector2 Position
+  {
+    get => _position;
+    set
+    {
+      _position = value;
+      if (OBB != null)
+        OBB.Position = value;
+    }
+  }
+
+  private float _rotation;
+  public float Rotation
+  {
+    get => _rotation;
+    set
+    {
+      _rotation = value;
+      if (OBB != null)
+        OBB.Rotation = value;
+    }
+  }
+
+  private float _width;
+  public float Width
+  {
+    get => _width;
+    set
+    {
+      _width = value;
+      if (OBB != null)
+        OBB.Width = value;
+    }
+  }
+
+  private float _height;
+  public float Height
+  {
+    get => _height;
+    set
+    {
+      _height = value;
+      if (OBB != null)
+        OBB.Height = value;
+    }
+  }
+
   public OrientedBoundingBox OBB { get; private set; }
-  public float Width { get; set; }
-  public float Height { get; set; }
 
   protected override void ConfigurePropertySync()
   {
@@ -27,16 +72,12 @@ public class OBBCollisionDetectionModule : ModuleBase
 
   protected override void Update(GameTime gameTime)
   {
-    OBB.SetDimensions(Width, Height);
-    OBB.Rotation = Rotation;
-    OBB.Position = Position;
   }
 
   public override object Clone()
   {
     OBBCollisionDetectionModule cloned = (OBBCollisionDetectionModule)base.Clone();
+    cloned.OBB = BoundingAreaFactory.GetOBB(this.Position, this.Rotation, (int)this.Width, (int)this.Height);
     return cloned;
   }
-
 }
-

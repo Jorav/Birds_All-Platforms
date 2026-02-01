@@ -19,7 +19,7 @@ public class CompositeController : ModuleContainer, IEntity
 
   public void Dispose()
   {
-    throw new NotImplementedException();
+    base.Dispose();
   }
 
   public override object Clone()

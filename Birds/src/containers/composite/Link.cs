@@ -17,7 +17,7 @@ public class Link
         (float)Math.Sin(MathHelper.WrapAngle(LinkRotation + Entity.Rotation.Value))); 
     } 
   }
-  public Vector2 AbsolutePosition { get { return Entity.Position.Value + RelativePositionRotated; } }
+  public Vector2 AbsolutePositionOnEntity { get { return Entity.Position.Value + RelativePositionRotated; } }
   public Vector2 ConnectionPosition { 
     get
     { 

@@ -8,12 +8,14 @@ public class SubEntityCollisionExtractionModule : ModuleBase
 {
   protected override void Update(GameTime gameTime)
   {
-    foreach(IEntity entity in container.Entities)
+    foreach (IEntity entity in container.Entities)
     {
-      foreach (IModuleContainer collisionEntity in entity.Collisions)
+      int collisionCount = entity.Collisions.Count;
+      for (int i = 0; i < collisionCount; i++)
       {
+        var collisionEntity = entity.Collisions[i];
         container.Collisions.Add(collisionEntity);
-        collisionEntity.Collisions.Add(this.container);
+        collisionEntity.Collisions.Add(container);
       }
     }
   }

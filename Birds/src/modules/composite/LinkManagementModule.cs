@@ -12,7 +12,7 @@ namespace Birds.src.modules.composite;
 
 public class LinkManagementModule : ModuleBase, IEntityCollectionListener
 {
-  private HashSet<IEntity> fillerEntities = new HashSet<IEntity>();
+  public HashSet<IEntity> fillerEntities = new HashSet<IEntity>();
 
   public override void Initialize(IModuleContainer container)
   {
@@ -23,8 +23,22 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
   {
   }
 
-  public void OnEntityAdded(IEntity entity)
+  public void OnEntityAdded(IEntity newEntity)
   {
+    var newLinkModule = newEntity.GetModule<LinkModule>();
+    if (newLinkModule == null)
+    {
+      return;
+    }
+    var linkModules = container.Entities
+        .Where(e => e is WorldEntity we && !we.IsFiller)
+        .Select(e => e.GetModule<LinkModule>())
+        .Where(linkModule => linkModule != null)
+        .ToList();
+    foreach (LinkModule linkModule in linkModules)
+    {
+      linkModule.ConnectLinksIfOverlapping(newLinkModule);
+    }
   }
 
   public void OnEntityRemoved(IEntity entity)
@@ -131,7 +145,7 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
         var fillerLinkModule = fillerEntity.GetModule<LinkModule>();
         var backLink = fillerLinkModule.Links[2];
         if (backLink != null)
-          fillerLinkModule.ConnectAgainst(entity, backLink, link);
+          fillerLinkModule.ConnectEntityAgainstThis(entity, backLink, link);
 
         bool overlaps = false;
         foreach (var existingEntity in container.Entities)

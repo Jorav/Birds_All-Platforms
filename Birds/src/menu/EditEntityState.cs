@@ -5,6 +5,7 @@ using Birds.src.factories;
 using Birds.src.menu.controls;
 using Birds.src.modules.composite;
 using Birds.src.modules.entity;
+using Birds.src.modules.shared.bounding_area;
 using Birds.src.utility;
 using Birds.src.visual;
 using Microsoft.Xna.Framework;
@@ -12,6 +13,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Birds.src.menu;
 
@@ -202,9 +204,10 @@ public class EditEntityState : MenuState
     }
     else if (Input.IsPressed && !wasPressed)
     {
-      if (originalController.Contains(Input.PositionGameCoords))
+      var bc = editedEntity.GetModule<BCCollisionDetectionModule>().BoundingCircle;
+      if (bc.Contains(Input.PositionGameCoords))
       {
-        //do things
+        AddEntityIfFillerClicked();
       }
       else
       {
@@ -258,6 +261,23 @@ public class EditEntityState : MenuState
     wasPressed = Input.IsPressed;
   }
 
+  private void AddEntityIfFillerClicked()
+  {
+    var linkManagementModule = editedEntity.GetModule<LinkManagementModule>();
+    foreach (IEntity entity in linkManagementModule.fillerEntities)
+    {
+      if (entity.Contains(Input.PositionGameCoords))
+      {
+        bool succefullyReplaced = editedEntity.ReplaceEntity(entity, WorldEntityFactory.CreateEntities(entity.Position, 1, idToBeAddded, isComposite: true).First());
+        if (succefullyReplaced)
+        {
+          linkManagementModule.AddFillerEntities();
+        }
+        break;
+      }
+    }
+  }
+
   private void AddOpenLinks()
   {
     var managementModule = editedEntity.GetModule<LinkManagementModule>();
@@ -301,7 +321,7 @@ public class EditEntityState : MenuState
       {
         if (link.ConnectionAvailable)
         {
-          spriteBatch.Draw(pixelTexture, new Rectangle((int)link.AbsolutePosition.X - 2, (int)link.AbsolutePosition.Y - 2, 4, 4), Color.Yellow);
+          spriteBatch.Draw(pixelTexture, new Rectangle((int)link.AbsolutePositionOnEntity.X - 2, (int)link.AbsolutePositionOnEntity.Y - 2, 4, 4), Color.Yellow);
           spriteBatch.Draw(pixelTexture, new Rectangle((int)link.ConnectionPosition.X - 2, (int)link.ConnectionPosition.Y - 2, 4, 4), Color.Blue);
         }
       }

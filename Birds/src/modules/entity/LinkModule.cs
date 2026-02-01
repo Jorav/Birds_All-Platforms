@@ -45,7 +45,7 @@ public class LinkModule : ModuleBase
     }
   }
 
-  public void ConnectAgainst(IEntity otherEntity, Link myLink, Link otherLink)
+  public void ConnectEntityAgainstThis(IEntity otherEntity, Link myLink, Link otherLink)
   {
     otherLink.SeverConnection();
     myLink.SeverConnection();
@@ -54,6 +54,29 @@ public class LinkModule : ModuleBase
     container.Rotation.Value = MathHelper.WrapAngle(targetLinkWorldAngle - myLink.LinkRotation);
     container.Position.Value = otherLink.ConnectionPosition;
     myLink.ConnectTo(otherLink);
+  }
+
+  public void ConnectLinksIfOverlapping(LinkModule otherModule)
+  {
+    foreach (Link link in Links)
+    {
+      if (!link.ConnectionAvailable)
+      {
+        continue;
+      }
+      foreach (Link linkOther in otherModule.Links)
+      {
+        if (!linkOther.ConnectionAvailable)
+        {
+          continue;
+        }
+        if (container.Contains(linkOther.ConnectionPosition)
+          && otherModule.container.Contains(link.ConnectionPosition))
+        {
+          link.ConnectTo(linkOther);
+        }
+      }
+    }
   }
 
   public void SeverConnection(IEntity e)
@@ -96,7 +119,7 @@ public class LinkModule : ModuleBase
   public void Dispose()
   {
     base.Dispose();
-    foreach(Link l in Links)
+    foreach (Link l in Links)
     {
       l.SeverConnection();
     }

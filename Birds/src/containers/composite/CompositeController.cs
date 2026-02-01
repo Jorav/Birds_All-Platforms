@@ -20,6 +20,7 @@ public class CompositeController : ModuleContainer, IEntity
   public void Dispose()
   {
     base.Dispose();
+    CompositeControllerFactory.availableEntities.Push(this);
   }
 
   public override object Clone()

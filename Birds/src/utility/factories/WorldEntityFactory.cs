@@ -35,8 +35,8 @@ public static class WorldEntityFactory
     entity.ClearModules();
     switch (id)
     {
-      case ID_ENTITY.DEFAULT:
       case ID_ENTITY.FILLER:
+      case ID_ENTITY.DEFAULT:
         entity.AddModule(GetCollisionHandler(isPartOfComposite));
         if (!isPartOfComposite)
         {

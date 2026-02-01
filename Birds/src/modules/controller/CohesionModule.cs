@@ -8,7 +8,7 @@ namespace Birds.src.modules.controller;
 public class CohesionModule : ModuleBase
 {
   public Vector2 Position { get; set; }
-  public static float REPULSIONDISTANCE = 2f;
+  public static float REPULSIONDISTANCE = 0.5f;
   public static float OUTLIER_THRESHOLD = 1.5f;
   private float averageDistance;
   private Dictionary<IEntity, float> entityWeightedAverageDistances = new Dictionary<IEntity, float>();
@@ -23,7 +23,7 @@ public class CohesionModule : ModuleBase
     if (container.Entities.Count > 0)
     {
       averageDistance = AverageDistance();
-      ApplyInterParticleGravity();
+      //ApplyInterParticleGravity();
       ApplyInterParticleRepulsion();
       ApplyInternalGravity();
     }
@@ -128,11 +128,11 @@ public class CohesionModule : ModuleBase
         }
         repulsionDirection.Normalize();
 
-        float overlap = minDistance - distance;
+        float overlap = minDistance - distance;/*
         if (distance < entity1.Radius.Value + entity2.Radius.Value)
         {
           distance = entity1.Radius.Value + entity2.Radius.Value;
-        }
+        }*/
         float repulsionForce = 0.7f * overlap / distance;
 
         entity1.Accelerate(repulsionDirection, repulsionForce / entity1.Mass.Value);

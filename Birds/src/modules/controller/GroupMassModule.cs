@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.controller;
 
-public class GroupMassModule : ModuleBase
+public class GroupMassModule : ModuleBase, IEntityCollectionListener
 {
   public float Mass { get; set; }
 
@@ -21,6 +21,16 @@ public class GroupMassModule : ModuleBase
   protected override void Update(GameTime gameTime)
   {
     CalculateMass();
+  }
+
+  public void OnEntityAdded(IEntity newEntity)
+  {
+    Mass += newEntity.Mass;
+  }
+
+  public void OnEntityRemoved(IEntity entity)
+  {
+    Mass -= entity.Mass;
   }
 
   private void CalculateMass()

@@ -3,7 +3,8 @@ using Birds.src.events;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.controller;
-public class GroupWeightedPositionModule : ModuleBase
+
+public class GroupWeightedPositionModule : ModuleBase, IEntityCollectionListener
 {
   public Vector2 Position { get; set; }
   public float Mass { get; set; }
@@ -23,6 +24,16 @@ public class GroupWeightedPositionModule : ModuleBase
   protected override void Update(GameTime gameTime)
   {
     UpdatePosition();
+  }
+
+  public void OnEntityAdded(IEntity newEntity)
+  {
+    Position = (container.Position.Value * (container.Mass - newEntity.Mass) + newEntity.Position.Value * newEntity.Mass) / (newEntity.Mass + container.Mass);
+  }
+
+  public void OnEntityRemoved(IEntity entity)
+  {
+    Position = (container.Position.Value * container.Mass - entity.Position.Value * entity.Mass) / (entity.Mass + container.Mass);
   }
 
   private void UpdatePosition()

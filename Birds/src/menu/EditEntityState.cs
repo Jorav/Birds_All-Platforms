@@ -178,10 +178,33 @@ public class EditEntityState : MenuState
 
   public override void Update(GameTime gameTime)
   {
-
     base.Update(gameTime);
     Input.HandleZoom();
     editedController.Update(gameTime);
+
+    UpdateClickedState();
+    bool mouseAboveComponent = IsMouseAboveComponent();
+
+    if (Input.IsPressed && !mouseAboveComponent)
+    {
+      var bc = editedEntity.GetModule<BCCollisionDetectionModule>().BoundingCircle;
+      if (bc.Contains(Input.PositionGameCoords))
+      {
+        AddEntityIfFillerClicked();
+      }
+      else if(!wasPressed)
+      {
+        ReturnToPreviousState();
+      }
+    }
+    if (input.BuildClicked)
+    {
+    }
+    wasPressed = Input.IsPressed;
+  }
+
+  private void UpdateClickedState()
+  {
     if (clicked != previouslyClicked)
     {
       if (previouslyClicked != null)
@@ -189,76 +212,18 @@ public class EditEntityState : MenuState
       previouslyClicked = clicked;
       clicked.IsClicked = true;
     }
-    bool mouseAboveButton = false;
+  }
+
+  private bool IsMouseAboveComponent()
+  {
     foreach (IComponent c in components)
+    {
       if (c is Button b && b.IsHovering())
-        mouseAboveButton = true;
-    if (mouseAboveButton)
-    {
-      /**
-      menuController.newClickRequired = true;
-      menuController.clickedOutside = false;
-      menuController.removeEntity = false;
-      menuController.clickedOnControllable = false;
-      */
-    }
-    else if (Input.IsPressed && !wasPressed)
-    {
-      var bc = editedEntity.GetModule<BCCollisionDetectionModule>().BoundingCircle;
-      if (bc.Contains(Input.PositionGameCoords))
       {
-        AddEntityIfFillerClicked();
+        return true;
       }
-      else
-      {
-        ReturnToPreviousState();
-      }
-      //var managementModule = entityEdited.GetModule<LinkManagementModule>();
-      //managementModule.AddFillerEntities();
     }
-    /*
-    if (menuController.clickedOnControllable)
-    {
-      IControllable clickedC = menuController.controllableClicked;
-      if (clickedC is WorldEntity clickedE && clickedE.IsFiller)
-      {
-        menuController.ReplaceEntity(clickedE, WorldEntityFactory.Create(menuController.Position, idToBeAddded));
-      }
-      menuController.clickedOnControllable = false;
-    }
-    if (menuController.removeEntity)
-    {
-      IControllable clickedC = menuController.controllableClicked;
-      if (clickedC is WorldEntity clickedE && !clickedE.IsFiller)
-      {
-        menuController.RemoveEntity(clickedE);
-      }
-      menuController.removeEntity = false;
-      //menuController.requireNewClick = true;
-      //menuController.clickedOutside = true;
-    }
-    if (menuController.clickedOutside)
-    {
-      menuController.DeFocus();
-      previousState.previousScrollValue = previousScrollValue;
-      previousState.currentScrollValue = currentScrollValue;
-      game.ChangeState(previousState);
-      menuController.clickedOutside = false;
-    }*/
-    if (input.BuildClicked)
-    {
-      /*menuController.ClearOpenLinks();
-      buildOverviewState.menuController.Remove(entityEdited);
-      foreach (IControllable c in menuController.Controllables)
-      {
-
-          buildOverviewState.menuController.AddControllable(c);
-
-      }
-      menuController.DeFocus();
-      previousState.BuildClicked();*/
-    }
-    wasPressed = Input.IsPressed;
+    return false;
   }
 
   private void AddEntityIfFillerClicked()
@@ -287,13 +252,15 @@ public class EditEntityState : MenuState
   private void ReturnToPreviousState()
   {
     game.ChangeState(previousState);
-    originalController.Entities.Remove(originalEntity);
-    originalEntity.Dispose();
     var managementModule = editedEntity.GetModule<LinkManagementModule>();
     managementModule.ClearFillerEntities();
+    originalController.Entities.Remove(originalEntity);
+    originalEntity.Dispose();
     originalController.Entities.Add(editedEntity);
     Input.Camera.Controller = originalController;
     Input.Camera.InBuildScreen = true;
+    editedController.Entities.Clear();
+    editedController.Dispose();
   }
 
   public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

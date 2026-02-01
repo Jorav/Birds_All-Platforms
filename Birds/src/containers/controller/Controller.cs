@@ -9,4 +9,10 @@ public class Controller : ModuleContainer
   {
     Entities.AddRange(entities);
   }
+
+  public void Dispose()
+  {
+    base.Dispose();
+    //Add on stack
+  }
 }

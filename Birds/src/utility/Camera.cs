@@ -52,7 +52,16 @@ public class Camera
   public float BuildMenuZoom { get { if (Controller != null) return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (2 * Controller.Radius + 900 / 8); else return 1; } }
 
   private IModuleContainer controller;
-  public IModuleContainer Controller { get { return controller; } set { if (value != null) { Position = value.Position; PreviousPosition = value.Position; } controller = value; } }
+  public IModuleContainer Controller {
+    get { return controller; } 
+    set {
+      if (value != null) 
+      { 
+        Position = value.Position; 
+        PreviousPosition = value.Position; 
+      } controller = value; 
+    }
+  }
   private float zoomSpeed;
   private float maxZoom = 3;
   private float minZoom = 0.5f;

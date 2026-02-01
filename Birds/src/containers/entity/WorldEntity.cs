@@ -23,8 +23,6 @@ public class WorldEntity : ModuleContainer, IEntity
   public void Dispose()
   {
     base.Dispose();
-    Height.Value = 1f;
-
     WorldEntityFactory.availableEntities.Push(this);
   }
 }

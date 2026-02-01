@@ -23,7 +23,7 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
   {
   }
 
-  public void OnEntityAdded(IEntity newEntity)
+  public void OnEntityAdded(IEntity newEntity) 
   {
     var newLinkModule = newEntity.GetModule<LinkModule>();
     if (newLinkModule == null)
@@ -34,63 +34,16 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
         .Where(e => e is WorldEntity we && !we.IsFiller)
         .Select(e => e.GetModule<LinkModule>())
         .Where(linkModule => linkModule != null)
+        .Where(linkModule => linkModule != newLinkModule)
         .ToList();
     foreach (LinkModule linkModule in linkModules)
     {
-      linkModule.ConnectLinksIfOverlapping(newLinkModule);
+      linkModule.ConnectLinksIfOverlapping(newLinkModule);//THIS ISNT WORKING IT SEEMS
     }
   }
 
   public void OnEntityRemoved(IEntity entity)
   {
-  }
-
-  protected void ConnectToOthers(IEntity entity)
-  {
-    if (container.Entities.Count <= 0)
-    {
-      return;
-    }
-
-    var linkModule = entity.GetModule<LinkModule>();
-    if (linkModule == null) return;
-
-    foreach (IEntity entityOther in container.Entities)
-    {
-      if (entity == entityOther)
-      {
-        continue;
-      }
-
-      var otherLinkModule = entityOther.GetModule<LinkModule>();
-      if (otherLinkModule == null)
-      {
-        continue;
-      }
-      ConnectMatchingPositionLinks(linkModule, otherLinkModule);
-    }
-  }
-
-  private void ConnectMatchingPositionLinks(LinkModule module1, LinkModule module2)
-  {
-    const float positionTolerance = 5f;
-
-    foreach (var link1 in module1.Links)
-    {
-      if (!link1.ConnectionAvailable) continue;
-
-      foreach (var link2 in module2.Links)
-      {
-        if (!link2.ConnectionAvailable) continue;
-
-        float distance = Vector2.Distance(link1.ConnectionPosition, link2.ConnectionPosition);
-        if (distance <= positionTolerance)
-        {
-          link1.ConnectTo(link2);
-          return;
-        }
-      }
-    }
   }
 
   public List<HashSet<IEntity>> GetDisconnectedGroups()
@@ -142,6 +95,7 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
           continue;
 
         var fillerEntity = WorldEntityFactory.GetEntity(link.ConnectionPosition, ID_ENTITY.FILLER, false);
+        fillerEntity.Mass.Value = 0;
         var fillerLinkModule = fillerEntity.GetModule<LinkModule>();
         var backLink = fillerLinkModule.Links[2];
         if (backLink != null)

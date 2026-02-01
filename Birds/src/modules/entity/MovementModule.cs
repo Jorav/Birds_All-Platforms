@@ -58,6 +58,10 @@ public class MovementModule : ModuleBase, IMovementModule
 
   protected override void Update(GameTime gameTime)
   {
+    if(Mass == 0)
+    {
+      return;
+    }
     Vector2 FrictionForce = (Velocity * Mass + TotalExteriorForce) * Friction * (float)Game1.timeStep * 60;
     Velocity = Velocity + (TotalExteriorForce - FrictionForce) / Mass * (float)Game1.timeStep * 60;
     Move(Velocity * (float)Game1.timeStep * 60);

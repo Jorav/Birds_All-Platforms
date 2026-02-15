@@ -4,7 +4,6 @@ using Birds.src.collision.BVH;
 using Birds.src.containers.entity;
 using Birds.src.events;
 using Birds.src.modules.entity;
-using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
 using System;
@@ -15,7 +14,9 @@ namespace Birds.src.modules.collision;
 public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
 {
   public AABBTree CollisionManager { get; private set; }
-  public override IBoundingArea BoundingArea => container.GetModule<BCCollisionDetectionModule>()?.BoundingCircle;
+
+  public override IBoundingArea BoundingArea => BoundingCircle;
+
   private bool evaluateInternalCollisions;
 
   public GroupCollisionDetectionModule(bool evaluateInternalCollisions = true)
@@ -24,10 +25,7 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
     this.evaluateInternalCollisions = evaluateInternalCollisions;
   }
 
-  protected override void Update(GameTime gameTime)
-  {
-    UpdateTreeWithEntities();
-  }
+  protected override void Update(GameTime gameTime) => UpdateTreeWithEntities();
 
   private void UpdateTreeWithEntities()
   {
@@ -43,21 +41,13 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
     }
   }
 
-  public override bool CollidesWith(ICollidable otherCollidable)
-  {
-    if (!IsCollidable || !otherCollidable.IsCollidable)
-      return false;
-
-    return IBoundingArea.CollidesWith(BoundingArea, otherCollidable.BoundingArea);
-  }
-
   public override void AddCollisionsToEntities(ICollidable otherCollidable)
   {
     if (otherCollidable is GroupCollisionDetectionModule otherGroupHandler)
     {
       CollisionManager.AddCollisionsToEntities(otherGroupHandler.CollisionManager);
     }
-    else if(otherCollidable is CollisionDetectionModule otherHandler)
+    else if (otherCollidable is CollisionDetectionModule otherHandler)
     {
       CollisionManager.AddCollisionsToEntities(otherHandler);
     }
@@ -65,26 +55,22 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
       throw new NotImplementedException("EntityCollisionHandlerModule: Collision with non-EntityCollisionHandlerModule not implemented");
   }
 
+
+  public override void AddInternalCollisions()
+  {
+    if (evaluateInternalCollisions)
+    {
+      CollisionManager.AddInternalCollisionsToEntities();
+    }
+  }
+
   public override object Clone()
   {
-    GroupCollisionDetectionModule cloned = (GroupCollisionDetectionModule)base.Clone();
+    var cloned = (GroupCollisionDetectionModule)base.Clone();
     cloned.CollisionManager = new AABBTree();
     return cloned;
   }
 
-  public override void AddInternalCollisions()
-  {
-    if(evaluateInternalCollisions)
-      CollisionManager.AddInternalCollisionsToEntities();
-  }
-
   public override bool Contains(Vector2 position)
-  {
-    foreach(IEntity entity in container.Entities)
-    {
-      if (entity.Contains(position))
-        return true;
-    }
-    return false;
-  }
+      => container.Entities.Any(e => e.Contains(position));
 }

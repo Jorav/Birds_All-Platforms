@@ -90,7 +90,6 @@ namespace Birds.src.factories
           composite.AddModule(new CompositeMovementModule());
           composite.AddModule(new SubEntityVelocityReseter());
           composite.AddModule(new GroupThrustModule());
-          composite.AddModule(new BCCollisionDetectionModule());
           composite.AddModule(new GroupCollisionDetectionModule(false));
           composite.AddModule(new SubEntityCollisionExtractionModule());
           composite.AddModule(GetCollisionHandler());

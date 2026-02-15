@@ -9,6 +9,7 @@ using Birds.src.modules;
 using Birds.src.modules.shared.bounding_area;
 using Birds.src.factories;
 using Birds.src.menu;
+using Birds.src.modules.shared.collision_detection;
 
 public class DrawModule : ModuleBase, IDrawModule
 {
@@ -142,7 +143,7 @@ public class DrawModule : ModuleBase, IDrawModule
     }
     if (GameState.DRAW_BC_OUTLINE)
     {
-      var bcModule = container.GetModule<BCCollisionDetectionModule>();
+      var bcModule = container.GetModule<BaseCollisionDetectionModule>();
       if (bcModule?.BoundingCircle != null)
       {
         if (container.Collisions.Count > 0)

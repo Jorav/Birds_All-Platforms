@@ -26,7 +26,6 @@ namespace Birds.src.factories
           c.AddModule(new GroupMovementModule());
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
-          c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
           c.AddModule(new GroupDrawModule());
           return c;
@@ -41,7 +40,6 @@ namespace Birds.src.factories
           c.AddModule(new GroupRadiusModule());
           c.AddModule(new PlayerSteeringModule());
           c.AddModule(new CohesionModule());
-          c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
           c.AddModule(new GroupDrawModule());
           return c;
@@ -55,7 +53,6 @@ namespace Birds.src.factories
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
           c.AddModule(new ChaserSteeringModule());
-          c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
           c.AddModule(new GroupDrawModule());
           return c;
@@ -91,7 +88,6 @@ namespace Birds.src.factories
           c.AddModule(new GroupMovementModule());
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
-          c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
           c.AddModule(new GroupDrawModule());
           c.Position.Value = position;
@@ -107,7 +103,6 @@ namespace Birds.src.factories
           c.AddModule(new GroupRadiusModule());
           c.AddModule(new PlayerSteeringModule());
           c.AddModule(new CohesionModule());
-          c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
           c.AddModule(new GroupDrawModule());
           c.Position.Value = position;
@@ -122,7 +117,6 @@ namespace Birds.src.factories
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
           c.AddModule(new ChaserSteeringModule());
-          c.AddModule(new BCCollisionDetectionModule());
           c.AddModule(new GroupCollisionDetectionModule());
           c.AddModule(new GroupDrawModule());
           c.Position.Value = position;

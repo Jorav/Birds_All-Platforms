@@ -43,7 +43,6 @@ public static class WorldEntityFactory
           entity.AddModule(new MovementModule());
           entity.AddModule(new RotationModule());
         }
-        entity.AddModule(new BCCollisionDetectionModule());
         entity.AddModule(new OBBCollisionDetectionModule());
         entity.AddModule(new CollisionDetectionModule());
         entity.AddModule(new DrawModule(id));

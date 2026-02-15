@@ -10,6 +10,7 @@ using Birds.src.modules.shared.bounding_area;
 using Birds.src.events;
 using Birds.src.containers.controller;
 using Birds.src.containers.entity;
+using Birds.src.modules.shared.collision_detection;
 
 namespace Birds.src.menu;
 
@@ -28,7 +29,7 @@ public class GameState : State
   private int doubleClickTreshold = 400;
 
   public static bool DRAW_OBB_OUTLINE = false;
-  public static bool DRAW_BC_OUTLINE = false;
+  public static bool DRAW_BC_OUTLINE = true;
   public static bool DRAW_AABB_OUTLINE = false;
 
   public GameState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, Input input, [OptionalAttribute] State previousState) : base(game, graphicsDevice, content, input)
@@ -98,7 +99,7 @@ public class GameState : State
 
   private void CheckClickOnPlayer()
   {
-    if (!wasPressed && Input.IsPressed && Player.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
+    if (!wasPressed && Input.IsPressed && Player.GetModule<BaseCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
     {
     }
   }
@@ -109,13 +110,13 @@ public class GameState : State
     {
       if (timer.IsRunning)
       {
-        if (timer.ElapsedMilliseconds < doubleClickTreshold && Player.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
+        if (timer.ElapsedMilliseconds < doubleClickTreshold && Player.GetModule<BaseCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
           HandleDoubleClick();
         timer.Reset();
       }
       else
       {
-        if (Player.GetModule<BCCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
+        if (Player.GetModule<BaseCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
         {
           timer.Start();
         }

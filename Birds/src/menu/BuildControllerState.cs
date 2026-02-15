@@ -14,6 +14,7 @@ using Birds.src.modules.collision;
 using Birds.src.collision.bounding_areas;
 using Birds.src.containers.entity;
 using Birds.src.containers.composite;
+using Birds.src.modules.shared.collision_detection;
 
 namespace Birds.src.menu;
 public class BuildControllerState : MenuState
@@ -52,7 +53,7 @@ public class BuildControllerState : MenuState
       GameState.Player.GetModule<SteeringModule>().actionsLocked = true;
     overlay = SpriteFactory.GetSprite(ID_SPRITE.BACKGROUND_WHITE, new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2), SpriteFactory.textures[(int)ID_SPRITE.BACKGROUND_WHITE].Height / Game1.ScreenHeight);
     components = new();
-    var boundingCircle = controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle;
+    var boundingCircle = controllerEdited.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
     selectionCircle = BoundingAreaFactory.GetCircle(boundingCircle.Position, boundingCircle.Radius * selectionBuffer);
   }
 
@@ -72,7 +73,7 @@ public class BuildControllerState : MenuState
     var collisionDetector = controllerEdited.GetModule<GroupCollisionDetectionModule>();
     collisionDetector.CollisionManager.AddInternalCollisionsToEntities();
 
-    var boundingCircle = controllerEdited.GetModule<BCCollisionDetectionModule>().BoundingCircle;
+    var boundingCircle = controllerEdited.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
     selectionCircle.Radius = boundingCircle.Radius * selectionBuffer;
     selectionCircle.Position = boundingCircle.Position;
     HandleClick();

@@ -3,6 +3,7 @@ using Birds.src.events;
 using Birds.src.menu;
 using Birds.src.modules.collision;
 using Birds.src.modules.shared.bounding_area;
+using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -22,17 +23,11 @@ public class GroupDrawModule : ModuleBase, IDrawModule
     }
     if (GameState.DRAW_BC_OUTLINE)
     {
-      var bcModule = container.GetModule<BCCollisionDetectionModule>();
-      if (bcModule?.BoundingCircle != null)
+      var cdModule = container.GetModule<BaseCollisionDetectionModule>();
+      if (cdModule?.BoundingCircle != null)
       {
-        if (container.Collisions.Count > 0)
-        {
-          DrawModule.DrawCircleOutline(sb, bcModule.BoundingCircle.Position, bcModule.BoundingCircle.Radius, Color.Red, 32, 3);
-        }
-        else
-        {
-          DrawModule.DrawCircleOutline(sb, bcModule.BoundingCircle.Position, bcModule.BoundingCircle.Radius, Color.Blue);
-        }
+        var color = container.Collisions.Count > 0 ? Color.Red : Color.Blue;
+        DrawModule.DrawCircleOutline(sb, cdModule.BoundingCircle.Position, cdModule.BoundingCircle.Radius, color, 32, 3);
       }
     }
     if (GameState.DRAW_AABB_OUTLINE)

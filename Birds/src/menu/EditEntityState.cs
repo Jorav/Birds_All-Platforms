@@ -6,6 +6,7 @@ using Birds.src.menu.controls;
 using Birds.src.modules.composite;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.bounding_area;
+using Birds.src.modules.shared.collision_detection;
 using Birds.src.utility;
 using Birds.src.visual;
 using Microsoft.Xna.Framework;
@@ -187,7 +188,7 @@ public class EditEntityState : MenuState
 
     if (Input.IsPressed && !mouseAboveComponent)
     {
-      var bc = editedEntity.GetModule<BCCollisionDetectionModule>().BoundingCircle;
+      var bc = editedEntity.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
       if (bc.Contains(Input.PositionGameCoords))
       {
         AddEntityIfFillerClicked();

@@ -1,5 +1,6 @@
 ﻿using Birds.src.events;
 using Birds.src.modules.shared.bounding_area;
+using Birds.src.modules.shared.collision_detection;
 
 namespace Birds.src.modules.entity.collision_handling;
 public class OverlapRepulsion : CollisionResponse
@@ -8,8 +9,8 @@ public class OverlapRepulsion : CollisionResponse
   {
     var movementModule = self.GetModule<MovementModule>();
     var otherMovementModule = other.GetModule<MovementModule>();
-    var bcCollisionDetectionModule = self.GetModule<BCCollisionDetectionModule>();
-    var otherBcCollisionDetectionModule = other.GetModule<BCCollisionDetectionModule>();
+    var bcCollisionDetectionModule = self.GetModule<BaseCollisionDetectionModule>();
+    var otherBcCollisionDetectionModule = other.GetModule<BaseCollisionDetectionModule>();
 
     if (movementModule == null || otherMovementModule == null)
     {

@@ -28,12 +28,26 @@ public class GroupWeightedPositionModule : ModuleBase, IEntityCollectionListener
 
   public void OnEntityAdded(IEntity newEntity)
   {
-    Position = (container.Position.Value * (container.Mass - newEntity.Mass) + newEntity.Position.Value * newEntity.Mass) / (newEntity.Mass + container.Mass);
+    if (container.Entities.Count == 1)
+    {
+      Position = newEntity.Position.Value;
+      return;
+    }
+    Position = (container.Position.Value * (container.Mass - newEntity.Mass)
+                + newEntity.Position.Value * newEntity.Mass)
+               / container.Mass;
   }
 
   public void OnEntityRemoved(IEntity entity)
   {
-    Position = (container.Position.Value * container.Mass - entity.Position.Value * entity.Mass) / (entity.Mass + container.Mass);
+    if (container.Entities.Count == 0)
+    {
+      Position = Vector2.Zero;
+      return;
+    }
+    Position = (container.Position.Value * (container.Mass + entity.Mass)
+                - entity.Position.Value * entity.Mass)
+               / container.Mass;
   }
 
   private void UpdatePosition()

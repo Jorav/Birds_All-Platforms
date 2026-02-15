@@ -258,6 +258,7 @@ public class EditEntityState : MenuState
     originalEntity.Dispose();
     originalController.Entities.Add(editedEntity);
     Input.Camera.Controller = originalController;
+    Input.Camera.Position = originalController.Position;
     Input.Camera.InBuildScreen = true;
     editedController.Entities.Clear();
     editedController.Dispose();

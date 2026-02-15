@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.controller;
 
-public class GroupRadiusModule : ModuleBase
+public class GroupRadiusModule : ModuleBase, IEntityCollectionListener
 {
   public float Radius { get; set; }
   public Vector2 Position { get; set; }
@@ -19,6 +19,18 @@ public class GroupRadiusModule : ModuleBase
   {
     WriteSync(() => Radius, container.Radius);
     ReadSync(() => Position, container.Position);
+  }
+
+  public void OnEntityAdded(IEntity newEntity)
+  {
+    float distance = Vector2.Distance(newEntity.Position, Position) + newEntity.Radius;
+    if (distance > Radius)
+      Radius = distance;
+  }
+
+  public void OnEntityRemoved(IEntity entity)
+  {
+    UpdateRadius();
   }
 
   protected override void Update(GameTime gameTime)

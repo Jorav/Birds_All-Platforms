@@ -88,14 +88,14 @@ public class Game1 : Game
 
   protected override void Update(GameTime gameTime)
   {
+    Input.Update(gameTime);
+    currentState.Update(gameTime);
+    currentState.PostUpdate();
     if (nextState != null)
     {
       currentState = nextState;
       nextState = null;
     }
-    Input.Update(gameTime);
-    currentState.Update(gameTime);
-    currentState.PostUpdate();
     base.Update(gameTime);
   }
 

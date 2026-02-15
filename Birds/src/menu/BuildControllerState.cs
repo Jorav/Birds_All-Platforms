@@ -6,7 +6,6 @@ using Birds.src.utility;
 using Birds.src.factories;
 using System.Diagnostics;
 using Birds.src.modules.controller.steering;
-using Birds.src.modules.shared.bounding_area;
 using Birds.src.events;
 using Birds.src.containers.controller;
 using Birds.src.visual;

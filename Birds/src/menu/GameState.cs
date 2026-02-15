@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Birds.src.factories;
-using Birds.src.modules.shared.bounding_area;
 using Birds.src.events;
 using Birds.src.containers.controller;
 using Birds.src.containers.entity;

@@ -1,5 +1,4 @@
 ﻿using Birds.src.events;
-using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.shared.collision_detection;
 
 namespace Birds.src.modules.entity.collision_handling;

@@ -83,5 +83,10 @@ public class BoundingCircle : IBoundingArea
   {
     BoundingAreaFactory.circles.Append(this);
   }
+
+  public object Clone()
+  {
+    return BoundingAreaFactory.GetCircle(Position, Radius);
+  }
 }
 

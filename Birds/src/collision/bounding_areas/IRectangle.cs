@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Birds.src.collision.bounding_areas;
 
@@ -12,6 +9,9 @@ public interface IRectangle
   Vector2 DL { get; set; }
   Vector2 DR { get; set; }
   Vector2 UR { get; set; }
+  float Width { get; }
+  float Height { get; }
+  float Rotation { get; set; }
   public Vector2[] Axes { get; set; }
   public Vector2[] GenerateAxes()
   {

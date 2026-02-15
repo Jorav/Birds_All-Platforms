@@ -21,6 +21,8 @@ public abstract class BaseCollisionDetectionModule : ModuleBase, ICollidable
       _position = value;
       if (BoundingCircle != null)
         BoundingCircle.Position = value;
+      if (BoundingArea != null)
+        BoundingArea.Position = value;
     }
   }
 

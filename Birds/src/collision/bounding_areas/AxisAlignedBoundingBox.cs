@@ -13,6 +13,7 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
   public float Area { get { return Width * Height; } }
   public float Width { get { return (int)(Math.Round((UR - UL).Length())); } }
   public float Height { get { return (int)(Math.Round((UR - DR).Length())); } }
+  public float Rotation { get => 0f; set { return; } }
   public (float, float) MaxXY { get; set; }
   public (float, float) MinXY { get; set; }
   private Vector2 position;
@@ -160,5 +161,10 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
   {
     return position.X >= UL.X && position.X <= UR.X &&
            position.Y >= DL.Y && position.Y <= UL.Y;
+  }
+
+  public object Clone()
+  {
+    return BoundingAreaFactory.GetAABB(position, (int)Width, (int)Height);
   }
 }

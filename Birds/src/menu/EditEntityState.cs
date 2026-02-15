@@ -5,7 +5,6 @@ using Birds.src.factories;
 using Birds.src.menu.controls;
 using Birds.src.modules.composite;
 using Birds.src.modules.entity;
-using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.shared.collision_detection;
 using Birds.src.utility;
 using Birds.src.visual;

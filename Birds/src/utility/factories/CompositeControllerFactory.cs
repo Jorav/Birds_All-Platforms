@@ -11,7 +11,6 @@ using Birds.src.containers.composite.blueprints.parts;
 using Birds.src.containers.entity;
 using Birds.src.containers.composite;
 using Birds.src.modules.controller;
-using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.composite;
 using Birds.src.modules.entity.collision_handling;
 using Birds.src.events;

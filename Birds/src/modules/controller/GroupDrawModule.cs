@@ -2,7 +2,6 @@
 using Birds.src.events;
 using Birds.src.menu;
 using Birds.src.modules.collision;
-using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

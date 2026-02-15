@@ -170,4 +170,9 @@ public class OrientedBoundingBox : IBoundingArea, IRectangle
   {
     BoundingAreaFactory.OBBs.Push(this);
   }
+
+  public object Clone()
+  {
+    return BoundingAreaFactory.GetOBB(position, rotation, (int)width, (int)height);
+  }
 }

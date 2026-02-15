@@ -1,15 +1,15 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System.ComponentModel;
 using System;
 using Birds.src.visual;
 using Birds.src.utility;
 using Birds.src.events;
 using Birds.src.modules;
-using Birds.src.modules.shared.bounding_area;
 using Birds.src.factories;
 using Birds.src.menu;
 using Birds.src.modules.shared.collision_detection;
+using Birds.src.collision.bounding_areas;
+using Birds.src.modules.entity;
 
 public class DrawModule : ModuleBase, IDrawModule
 {
@@ -126,34 +126,25 @@ public class DrawModule : ModuleBase, IDrawModule
   public void Draw(SpriteBatch sb)
   {
     Sprite?.Draw(sb);
+
     if (GameState.DRAW_OBB_OUTLINE)
     {
-      var obbModule = container.GetModule<OBBCollisionDetectionModule>();
-      if (obbModule?.OBB != null)
+      var cdModule = container.GetModule<CollisionDetectionModule>();
+      if (cdModule?.BoundingArea is IRectangle rect)
       {
-        if (container.Collisions.Count > 0)
-        {
-          DrawRectangleOutline(sb, obbModule.OBB.UL, obbModule.OBB.UR, obbModule.OBB.DR, obbModule.OBB.DL, Color.Red, 3);
-        }
-        else
-        {
-          DrawRectangleOutline(sb, obbModule.OBB.UL, obbModule.OBB.UR, obbModule.OBB.DR, obbModule.OBB.DL, Color.Blue, 1);
-        }
+        var color = container.Collisions.Count > 0 ? Color.Red : Color.Blue;
+        var thickness = container.Collisions.Count > 0 ? 3 : 1;
+        DrawRectangleOutline(sb, rect.UL, rect.UR, rect.DR, rect.DL, color, thickness);
       }
     }
+
     if (GameState.DRAW_BC_OUTLINE)
     {
-      var bcModule = container.GetModule<BaseCollisionDetectionModule>();
-      if (bcModule?.BoundingCircle != null)
+      var cdModule = container.GetModule<BaseCollisionDetectionModule>();
+      if (cdModule?.BoundingCircle != null)
       {
-        if (container.Collisions.Count > 0)
-        {
-          DrawCircleOutline(sb, bcModule.BoundingCircle.Position, bcModule.BoundingCircle.Radius, Color.Red, 32, 3);
-        }
-        else
-        {
-          DrawCircleOutline(sb, bcModule.BoundingCircle.Position, bcModule.BoundingCircle.Radius, Color.Blue);
-        }
+        var color = container.Collisions.Count > 0 ? Color.Red : Color.Blue;
+        DrawCircleOutline(sb, cdModule.BoundingCircle.Position, cdModule.BoundingCircle.Radius, color, 32, 3);
       }
     }
   }

@@ -3,10 +3,10 @@ using Birds.src.utility;
 using System;
 using System.Collections.Generic;
 using Birds.src.menu;
-using Birds.src.modules.shared.bounding_area;
 using Birds.src.modules.entity;
 using Birds.src.containers.entity;
 using Birds.src.modules.entity.collision_handling;
+using Birds.src.collision.bounding_areas;
 
 namespace Birds.src.factories;
 public static class WorldEntityFactory
@@ -43,10 +43,11 @@ public static class WorldEntityFactory
           entity.AddModule(new MovementModule());
           entity.AddModule(new RotationModule());
         }
-        entity.AddModule(new OBBCollisionDetectionModule());
-        entity.AddModule(new CollisionDetectionModule());
         entity.AddModule(new DrawModule(id));
         entity.AddModule(new RadiusModule());
+        entity.AddModule(new CollisionDetectionModule(
+            BoundingAreaFactory.GetOBB(entity.Position.Value, entity.Rotation.Value, (int)entity.Width.Value, (int)entity.Height.Value)
+        ));
         entity.AddModule(new LinkModule());
         break;
 

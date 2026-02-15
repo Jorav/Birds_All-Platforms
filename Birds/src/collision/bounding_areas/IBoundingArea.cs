@@ -69,5 +69,5 @@ public interface IBoundingArea
   {
     return bc1.CollidesWith(bc2);
   }
-
+  public object Clone();
 }

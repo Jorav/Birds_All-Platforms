@@ -7,13 +7,15 @@ using Birds.src.modules.entity;
 using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Birds.src.modules.collision;
 
-public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
+public class GroupCollisionDetectionModule : BaseCollisionDetectionModule, IEntityCollectionListener
 {
   public AABBTree CollisionManager { get; private set; }
+  private List<ICollidable> entityCollisionHandlers = new List<ICollidable>(32);
 
   public override IBoundingArea BoundingArea => BoundingCircle;
 
@@ -29,12 +31,6 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
 
   private void UpdateTreeWithEntities()
   {
-    var entityCollisionHandlers = container.Entities
-        .Select(e => e.GetModule<BaseCollisionDetectionModule>())
-        .Where(CDModule => CDModule != null && CDModule.IsCollidable)
-        .Cast<ICollidable>()
-        .ToList();
-
     if (entityCollisionHandlers.Count > 0)
     {
       CollisionManager.BuildTree(entityCollisionHandlers);
@@ -55,6 +51,21 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
       throw new NotImplementedException("EntityCollisionHandlerModule: Collision with non-EntityCollisionHandlerModule not implemented");
   }
 
+  public override void Initialize(IModuleContainer container)
+  {
+    base.Initialize(container);
+
+    entityCollisionHandlers.Clear();
+
+    foreach (var entity in container.Entities)
+    {
+      var cdModule = entity.GetModule<BaseCollisionDetectionModule>();
+      if (cdModule != null && cdModule.IsCollidable)
+      {
+        entityCollisionHandlers.Add(cdModule);
+      }
+    }
+  }
 
   public override void AddInternalCollisions()
   {
@@ -72,5 +83,30 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule
   }
 
   public override bool Contains(Vector2 position)
-      => container.Entities.Any(e => e.Contains(position));
+  {
+    if (!BoundingCircle.Contains(position))
+    {
+      return false;
+    }
+
+    return container.Entities.Any(e => e.Contains(position));
+  }
+
+  public void OnEntityAdded(IEntity entity)
+  {
+    var cdModule = entity.GetModule<BaseCollisionDetectionModule>();
+    if (cdModule != null && cdModule.IsCollidable)
+    {
+      entityCollisionHandlers.Add(cdModule);
+    }
+  }
+
+  public void OnEntityRemoved(IEntity entity)
+  {
+    var cdModule = entity.GetModule<BaseCollisionDetectionModule>();
+    if (cdModule != null)
+    {
+      entityCollisionHandlers.Remove(cdModule);
+    }
+  }
 }

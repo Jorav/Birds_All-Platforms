@@ -83,6 +83,27 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
     return BoundingAreaFactory.GetAABB(new Vector2(xMin + width / 2, yMin + height / 2), (int)Math.Round(width), (int)Math.Round(height));
   }
 
+  public static AxisAlignedBoundingBox SurroundingAABB(List<ICollidable> entities, int start, int count)
+  {
+    var firstBounds = entities[start].BoundingArea;
+    (float, float) minXY = firstBounds.MinXY;
+    (float, float) maxXY = firstBounds.MaxXY;
+
+    for (int i = start + 1; i < start + count; i++)
+    {
+      var bounds = entities[i].BoundingArea;
+      (float, float) currentMin = bounds.MinXY;
+      (float, float) currentMax = bounds.MaxXY;
+
+      minXY = (Math.Min(minXY.Item1, currentMin.Item1), Math.Min(minXY.Item2, currentMin.Item2));
+      maxXY = (Math.Max(maxXY.Item1, currentMax.Item1), Math.Max(maxXY.Item2, currentMax.Item2));
+    }
+
+    float width = maxXY.Item1 - minXY.Item1;
+    float height = maxXY.Item2 - minXY.Item2;
+    return BoundingAreaFactory.GetAABB(new Vector2(minXY.Item1 + width / 2, minXY.Item2 + height / 2), (int)Math.Round(width), (int)Math.Round(height));
+  }
+
   public static AxisAlignedBoundingBox SurroundingAABB(IBoundingArea AABB)
   {
     (float, float) minXY = AABB.MinXY;

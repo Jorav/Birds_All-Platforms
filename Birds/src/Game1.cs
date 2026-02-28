@@ -1,12 +1,17 @@
-﻿using Birds.src.factories;
+﻿using Birds.src.containers.composite;
+using Birds.src.containers.controller;
+using Birds.src.containers.entity;
+using Birds.src.factories;
 using Birds.src.menu;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Birds.src;
+
 public class Game1 : Game
 {
   private GraphicsDeviceManager _graphics;
@@ -20,6 +25,8 @@ public class Game1 : Game
   public static float timeStep = (1f / 60f);
   private State currentState;
   private State nextState;
+  public static bool LOG_MODULE_PERFORMANCE = true;
+
   public Game1()
   {
     _graphics = new GraphicsDeviceManager(this);
@@ -74,7 +81,24 @@ public class Game1 : Game
 
 
     currentState = new MainMenu(this, GraphicsDevice, Content, input);
+    WarmupPropertyCache();
   }
+
+  //Im not sure i like this but it does improve things significantly since we are compiling syncing
+  private void WarmupPropertyCache()
+  {
+    var dummyEntity = WorldEntityFactory.GetEntity(Vector2.Zero, ID_ENTITY.DEFAULT, false);
+    dummyEntity.Update(new GameTime());
+    dummyEntity.Dispose();
+
+    var dummyComposite = CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, ID_COMPOSITE.DEFAULT_SINGLE)[0] as CompositeController;
+    dummyComposite?.Update(new GameTime());
+    dummyComposite?.Dispose();
+
+    var dummyController = ControllerFactory.Create(Vector2.Zero, ID_CONTROLLER.DEFAULT, 1);
+    dummyController.Update(new GameTime());
+  }
+
   public void ChangeState(State state)
   {
     nextState = state;
@@ -91,6 +115,10 @@ public class Game1 : Game
     Input.Update(gameTime);
     currentState.Update(gameTime);
     currentState.PostUpdate();
+    if (LOG_MODULE_PERFORMANCE)
+    {
+      ModuleProfiler.Summary();
+    }
     if (nextState != null)
     {
       currentState = nextState;

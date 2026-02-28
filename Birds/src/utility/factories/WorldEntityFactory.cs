@@ -11,7 +11,7 @@ using Birds.src.collision.bounding_areas;
 namespace Birds.src.factories;
 public static class WorldEntityFactory
 {
-  public static Stack<WorldEntity> availableEntities = new();
+  public static Stack<WorldEntity> availableEntities = new(100);
 
   public static WorldEntity GetEntity(Vector2 position, ID_ENTITY id, bool isComposite = false)
   {

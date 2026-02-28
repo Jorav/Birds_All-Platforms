@@ -51,6 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\collision-handling\CollisionHandlerModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\collision-handling\MomentumTransfer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\collision-handling\OverlapRepulsion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\ModuleProfiler.cs" />
     <Compile Include="..\Birds\src\modules\entity\collision-handling\BaseCollisionResponseModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\CollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\entity\LinkModule.cs" />

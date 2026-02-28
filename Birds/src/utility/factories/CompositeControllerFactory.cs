@@ -19,7 +19,7 @@ namespace Birds.src.factories
 {
   public static class CompositeControllerFactory
   {
-    public static Stack<CompositeController> availableEntities = new();
+    public static Stack<CompositeController> availableEntities = new(100);
     private static IBlueprintStorage _storage = new JsonBlueprintStorage();
 
     public static CompositeController GetComposite(Vector2 position, string blueprintName)
@@ -81,13 +81,13 @@ namespace Birds.src.factories
       {
         case ID_COMPOSITE.DEFAULT_SINGLE:
         case ID_COMPOSITE.DEFAULT_COMBINED:
+          composite.AddModule(new SubEntityVelocityReseter());
           composite.AddModule(new LinkManagementModule());
           composite.AddModule(new GroupMassModule());
           composite.AddModule(new GroupWeightedPositionModule());
           composite.AddModule(new GroupRadiusModule());
           composite.AddModule(new CohesiveGroupRotationModule());
           composite.AddModule(new CompositeMovementModule());
-          composite.AddModule(new SubEntityVelocityReseter());
           composite.AddModule(new GroupThrustModule());
           composite.AddModule(new GroupCollisionDetectionModule(false));
           composite.AddModule(new SubEntityCollisionExtractionModule());

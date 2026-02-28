@@ -11,7 +11,7 @@ public class AABBTree
 {
   public Vector2 Position { get { return root.Position; } }
   public AABBNode root;
-  private Stack<AABBNode> freeNodes = new();
+  private Stack<AABBNode> freeNodes = new(32);
 
   public AABBTree()
   {
@@ -59,38 +59,38 @@ public class AABBTree
 
   public void BuildTree(List<ICollidable> newEntities)
   {
-    root = CreateTreeTopDown_Median(null, newEntities);
-    //RebuildTree();
+    root = CreateTreeTopDown_Median(null, newEntities, 0, newEntities.Count);
   }
-  //for root: parent = null, newEntities is worldEntities
-  public AABBNode CreateTreeTopDown_Median(AABBNode parent, List<ICollidable> newEntities)
+
+  public AABBNode CreateTreeTopDown_Median(AABBNode parent, List<ICollidable> newEntities, int start, int count)
   {
     //step 0: HANDLE EDGE-CASES
     if (parent == null)
       UnravelTree();
 
-    if (newEntities.Count == 0)
+    if (count == 0)
       throw new Exception("Cant build tree from 0 objects");
 
-    if (newEntities.Count == 1)
+    if (count == 1)
     {
-      return AllocateLeafNode(newEntities[0]);
+      return AllocateLeafNode(newEntities[start]);
     }
-    //TODO: if node==root, remove current tree if it exists and add worldEntities to newEntities
 
     //step 1: DECIDE WHAT AXIS TO SPLIT
-    AxisAlignedBoundingBox AABB = AxisAlignedBoundingBox.SurroundingAABB(newEntities);
+    AxisAlignedBoundingBox AABB = AxisAlignedBoundingBox.SurroundingAABB(newEntities, start, count);
     int axis = AxisAlignedBoundingBox.MajorAxis(AABB);
     BoundingAreaFactory.AABBs.Append(AABB);
 
     //step 2: SPLIT ON CHOSEN AXIS
     if (axis == 0)
-      newEntities.Sort((we1, we2) => we1.Position.X.CompareTo(we2.Position.X));
+      newEntities.Sort(start, count, Comparer<ICollidable>.Create((a, b) => a.Position.X.CompareTo(b.Position.X)));
     else
-      newEntities.Sort((we1, we2) => we1.Position.Y.CompareTo(we2.Position.Y));
+      newEntities.Sort(start, count, Comparer<ICollidable>.Create((a, b) => a.Position.Y.CompareTo(b.Position.Y)));
+
     AABBNode node = AllocateNode();
-    node.Add(CreateTreeTopDown_Median(node, newEntities.GetRange(0, newEntities.Count / 2)));
-    node.Add(CreateTreeTopDown_Median(node, newEntities.GetRange(newEntities.Count / 2, newEntities.Count / 2 + newEntities.Count % 2)));
+    int mid = count / 2;
+    node.Add(CreateTreeTopDown_Median(node, newEntities, start, mid));
+    node.Add(CreateTreeTopDown_Median(node, newEntities, start + mid, count - mid));
     node.RefitBoundingBox();
     return node;
   }
@@ -146,8 +146,8 @@ public class AABBTree
     if (minCostAxis == 0)
       newEntities.Sort((we1, we2) => we1.Position.X.CompareTo(we2.Position.X));
     AABBNode node = AllocateNode();
-    node.Add(CreateTreeTopDown_Median(node, newEntities.GetRange(0, minCostSplitIndex + 1)));
-    node.Add(CreateTreeTopDown_Median(node, newEntities.GetRange(minCostSplitIndex + 1, newEntities.Count - minCostSplitIndex - 1)));
+    node.Add(CreateTreeTopDown_SAH(node, newEntities.GetRange(0, minCostSplitIndex + 1)));
+    node.Add(CreateTreeTopDown_SAH(node, newEntities.GetRange(minCostSplitIndex + 1, newEntities.Count - minCostSplitIndex - 1)));
     node.RefitBoundingBox();
     return node;
   }

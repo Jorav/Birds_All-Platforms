@@ -16,6 +16,7 @@ using Birds.src.containers.composite;
 using Birds.src.modules.shared.collision_detection;
 
 namespace Birds.src.menu;
+
 public class BuildControllerState : MenuState
 {
   public State previousState;

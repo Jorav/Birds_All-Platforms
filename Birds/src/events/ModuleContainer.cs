@@ -11,7 +11,6 @@ namespace Birds.src.events;
 
 public abstract class ModuleContainer : IModuleContainer
 {
-  const bool LOW_SLOW_MODULES = false;
   private SyncedProperty<Vector2> _position;
   private SyncedProperty<float> _rotation;
   private SyncedProperty<float> _mass;
@@ -135,17 +134,19 @@ public abstract class ModuleContainer : IModuleContainer
     {
       entity.Update(gameTime);
     }
-    if (LOW_SLOW_MODULES)
+
+    if (Game1.LOG_MODULE_PERFORMANCE)
     {
       foreach (var module in modules.Values)
       {
         var sw = System.Diagnostics.Stopwatch.StartNew();
-        module.UpdateModule(gameTime);
-        sw.Stop();
-        if (sw.ElapsedMilliseconds > 1)
-          System.Diagnostics.Debug.WriteLine($"{module.GetType().Name}: {sw.ElapsedMilliseconds}ms");
-      }
 
+        module.UpdateModule(gameTime);
+
+        sw.Stop();
+
+        ModuleProfiler.Record(module.GetType(), sw.ElapsedTicks);
+      }
     }
     else
     {

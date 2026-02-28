@@ -20,7 +20,7 @@ public class GroupDrawModule : ModuleBase, IDrawModule
     {
       entity.Draw(sb);
     }
-    if (GameState.DRAW_BC_OUTLINE)
+    if (Game1.DRAW_BC_OUTLINE)
     {
       var cdModule = container.GetModule<BaseCollisionDetectionModule>();
       if (cdModule?.BoundingCircle != null)
@@ -29,7 +29,7 @@ public class GroupDrawModule : ModuleBase, IDrawModule
         DrawModule.DrawCircleOutline(sb, cdModule.BoundingCircle.Position, cdModule.BoundingCircle.Radius, color, 32, 3);
       }
     }
-    if (GameState.DRAW_AABB_OUTLINE)
+    if (Game1.DRAW_AABB_OUTLINE)
     {
       var groupCDModule = container.GetModule<GroupCollisionDetectionModule>();
       if (groupCDModule?.CollisionManager != null)

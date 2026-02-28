@@ -10,6 +10,7 @@ using Birds.src.menu;
 using Birds.src.modules.shared.collision_detection;
 using Birds.src.collision.bounding_areas;
 using Birds.src.modules.entity;
+using Birds.src;
 
 public class DrawModule : ModuleBase, IDrawModule
 {
@@ -63,9 +64,9 @@ public class DrawModule : ModuleBase, IDrawModule
 
   private static Texture2D _pixel;
 
-  public DrawModule(ID_ENTITY entityId, float scale = 1f)
+  public DrawModule(Sprite sprite)
   {
-    Sprite = SpriteFactory.GetSprite(entityId, Vector2.Zero, scale);
+    Sprite = sprite;
   }
 
   public static void InitializePixel(GraphicsDevice graphicsDevice)
@@ -115,19 +116,28 @@ public class DrawModule : ModuleBase, IDrawModule
     }
   }
 
-  public static void DrawLine(SpriteBatch sb, Vector2 start, Vector2 end, Color color, int thickness)
+  public static void DrawLine(SpriteBatch sb, Vector2 start, Vector2 end, Color color, float thickness)
   {
     Vector2 edge = end - start;
     float angle = (float)Math.Atan2(edge.Y, edge.X);
-    sb.Draw(_pixel, new Rectangle((int)start.X, (int)start.Y, (int)edge.Length(), thickness),
-            null, color, angle, Vector2.Zero, SpriteEffects.None, 0);
+
+    sb.Draw(
+        _pixel,
+        start,
+        null,
+        color,
+        angle,
+        Vector2.Zero,
+        new Vector2(edge.Length(), thickness),
+        SpriteEffects.None,
+        0f);
   }
 
   public void Draw(SpriteBatch sb)
   {
     Sprite?.Draw(sb);
 
-    if (GameState.DRAW_OBB_OUTLINE)
+    if (Game1.DRAW_OBB_OUTLINE)
     {
       var cdModule = container.GetModule<CollisionDetectionModule>();
       if (cdModule?.BoundingArea is IRectangle rect)
@@ -138,13 +148,13 @@ public class DrawModule : ModuleBase, IDrawModule
       }
     }
 
-    if (GameState.DRAW_BC_OUTLINE)
+    if (Game1.DRAW_BC_OUTLINE)
     {
       var cdModule = container.GetModule<BaseCollisionDetectionModule>();
       if (cdModule?.BoundingCircle != null)
       {
         var color = container.Collisions.Count > 0 ? Color.Red : Color.Blue;
-        DrawCircleOutline(sb, cdModule.BoundingCircle.Position, cdModule.BoundingCircle.Radius, color, 32, 3);
+        DrawCircleOutline(sb, container.Position.Value, cdModule.Radius, color, 32, 3);
       }
     }
   }

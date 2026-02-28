@@ -177,15 +177,15 @@ public abstract class ModuleContainer : IModuleContainer
     if (_thrust != null) cloned._thrust = new SyncedProperty<float>(_thrust.Value);
     if (_resolveInternalCollisions != null) cloned._resolveInternalCollisions = new SyncedProperty<bool>(_resolveInternalCollisions.Value);
 
+    cloned.Entities.Set(_entities.Select(e => (IEntity)e.Clone()));
+
     foreach (var kvp in modules)
     {
       var clonedModule = (ModuleBase)kvp.Value.Clone();
       clonedModule.Initialize(cloned);
       cloned.modules[clonedModule.GetType()] = clonedModule;
     }
-    cloned.Entities.Set(_entities.Select(e => (IEntity)e.Clone()));
     SyncWriteProperties();
-
     return cloned;
   }
 

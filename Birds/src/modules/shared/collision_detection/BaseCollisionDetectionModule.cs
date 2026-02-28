@@ -56,6 +56,10 @@ public abstract class BaseCollisionDetectionModule : ModuleBase, ICollidable
     {
       return false;
     }
+    if (BoundingArea == null)
+    {
+      return true;
+    }
     return IBoundingArea.CollidesWith(BoundingArea, otherCollidable.BoundingArea);
   }
 

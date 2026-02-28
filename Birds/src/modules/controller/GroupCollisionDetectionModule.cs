@@ -27,7 +27,10 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule, IEnti
     this.evaluateInternalCollisions = evaluateInternalCollisions;
   }
 
-  protected override void Update(GameTime gameTime) => UpdateTreeWithEntities();
+  protected override void Update(GameTime gameTime)
+  {
+    UpdateTreeWithEntities();
+  }
 
   private void UpdateTreeWithEntities()
   {
@@ -54,7 +57,11 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule, IEnti
   public override void Initialize(IModuleContainer container)
   {
     base.Initialize(container);
+    LoadCollisionHandlers();
+  }
 
+  private void LoadCollisionHandlers()
+  {
     entityCollisionHandlers.Clear();
 
     foreach (var entity in container.Entities)
@@ -79,6 +86,7 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule, IEnti
   {
     var cloned = (GroupCollisionDetectionModule)base.Clone();
     cloned.CollisionManager = new AABBTree();
+    cloned.entityCollisionHandlers = new List<ICollidable>(32);
     return cloned;
   }
 

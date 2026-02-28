@@ -32,16 +32,10 @@ public class LinkModule : ModuleBase
 
     if (container is IEntity entity)
     {
-      var spriteModule = entity.GetModule<DrawModule>();
-      if (spriteModule != null)
-      {
-        float width = spriteModule.Sprite.Width;
-
-        Links.Add(new Link(new Vector2(width / 2, 0), entity));   // Right (0)
-        Links.Add(new Link(new Vector2(0, width / 2), entity));   // Down (1)
-        Links.Add(new Link(new Vector2(-width / 2, 0), entity));  // Left (2)
-        Links.Add(new Link(new Vector2(0, -width / 2), entity));  // Up (3)
-      }
+      Links.Add(new Link(new Vector2(container.Width / 2, 0), entity));   // Right (0)
+      Links.Add(new Link(new Vector2(0, container.Width / 2), entity));   // Down (1)
+      Links.Add(new Link(new Vector2(-container.Width / 2, 0), entity));  // Left (2)
+      Links.Add(new Link(new Vector2(0, -container.Width / 2), entity));  // Up (3)
     }
   }
 

@@ -251,6 +251,8 @@ public class EditEntityState : MenuState
 
   private void ReturnToPreviousState()
   {
+    editedController.Entities.Clear();
+    editedController.Dispose();
     game.ChangeState(previousState);
     var managementModule = editedEntity.GetModule<LinkManagementModule>();
     managementModule.ClearFillerEntities();
@@ -260,8 +262,6 @@ public class EditEntityState : MenuState
     Input.Camera.Controller = originalController;
     Input.Camera.Position = originalController.Position;
     Input.Camera.InBuildScreen = true;
-    editedController.Entities.Clear();
-    editedController.Dispose();
   }
 
   public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

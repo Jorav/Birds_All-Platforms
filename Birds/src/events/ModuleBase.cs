@@ -110,7 +110,7 @@ public abstract class ModuleBase
   {
     var cloned = (ModuleBase)this.MemberwiseClone();
     cloned.container = null;
-    cloned._propertySyncs = new List<IPropertySync>(8);
+    cloned._propertySyncs = new List<IPropertySync>(32);
     return cloned;
   }
 

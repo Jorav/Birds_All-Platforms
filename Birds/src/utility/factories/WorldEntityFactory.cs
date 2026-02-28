@@ -32,6 +32,9 @@ public static class WorldEntityFactory
 
   public static void SetModules(IEntity entity, ID_ENTITY id, bool isPartOfComposite = false)
   {
+    var sprite = SpriteFactory.GetSprite(id, entity.Position.Value, entity.Scale.Value);
+    entity.Width.Value = sprite.Width;
+    entity.Height.Value = sprite.Height;
     entity.ClearModules();
     switch (id)
     {
@@ -43,12 +46,12 @@ public static class WorldEntityFactory
           entity.AddModule(new MovementModule());
           entity.AddModule(new RotationModule());
         }
-        entity.AddModule(new DrawModule(id));
         entity.AddModule(new RadiusModule());
         entity.AddModule(new CollisionDetectionModule(
             BoundingAreaFactory.GetOBB(entity.Position.Value, entity.Rotation.Value, (int)entity.Width.Value, (int)entity.Height.Value)
         ));
         entity.AddModule(new LinkModule());
+        entity.AddModule(new DrawModule(sprite));
         break;
 
       /*
@@ -67,14 +70,14 @@ public static class WorldEntityFactory
       //case (int)IDs.COMPOSITE: return new Composite(new Sprite(hull), position);*/
       #region background
       case ID_ENTITY.CLOUD:
-        entity.AddModule(new DrawModule(id));
         entity.AddModule(new MovementModule());
+        entity.AddModule(new DrawModule(sprite));
         entity.Scale.Value = 3;
         break;
 
       case ID_ENTITY.SUN:
-        entity.AddModule(new DrawModule(id));
         entity.AddModule(new MovementModule());
+        entity.AddModule(new DrawModule(sprite));
         entity.Scale.Value = 5;
         break;
       #endregion

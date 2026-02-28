@@ -13,17 +13,6 @@ public class CollisionDetectionModule : BaseCollisionDetectionModule
 
   public override IBoundingArea BoundingArea => _preciseBoundingArea ?? BoundingCircle;
 
-  public new Vector2 Position
-  {
-    get => base.Position;
-    set
-    {
-      base.Position = value;
-      if (_preciseBoundingArea != null)
-        _preciseBoundingArea.Position = value;
-    }
-  }
-
   public float Rotation
   {
     get => _rotation;

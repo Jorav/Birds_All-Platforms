@@ -17,7 +17,10 @@ public static class ObservableCollectionExtensions
 
   public static void Set<T>(this ObservableCollection<T> collection, IEnumerable<T> newItems)
   {
-    collection.Clear();
+    while (collection.Count > 0)
+    {
+      collection.RemoveAt(collection.Count - 1);
+    }
 
     foreach (var item in newItems)
     {

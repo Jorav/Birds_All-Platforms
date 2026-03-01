@@ -3,6 +3,7 @@ using Birds.src.collision.bounding_areas;
 using Birds.src.collision.BVH;
 using Birds.src.containers.entity;
 using Birds.src.events;
+using Birds.src.modules.composite;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
@@ -42,16 +43,26 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule, IEnti
 
   public override void AddCollisionsToEntities(ICollidable otherCollidable)
   {
-    if (otherCollidable is GroupCollisionDetectionModule otherGroupHandler)
+    if (otherCollidable is GroupCollisionDetectionModule otherGroupCollisionModule)
     {
-      CollisionManager.AddCollisionsToEntities(otherGroupHandler.CollisionManager);
+      CollisionManager.AddCollisionsToEntities(otherGroupCollisionModule.CollisionManager);
     }
-    else if (otherCollidable is CollisionDetectionModule otherHandler)
+    else if (otherCollidable is CollisionDetectionModule otherCollisionModule)
     {
-      CollisionManager.AddCollisionsToEntities(otherHandler);
+      CollisionManager.AddCollisionsToEntities(otherCollisionModule);
+    }
+    else if (otherCollidable is SimpleGroupCollisionDetectionModule otherSimpleGroupCollisionModule)
+    {
+      foreach(ICollidable subEntityHandler in otherSimpleGroupCollisionModule.entityCollisionHandlers)
+      {
+        CollisionManager.AddCollisionsToEntities(subEntityHandler);
+
+      }
     }
     else
+    {
       throw new NotImplementedException("EntityCollisionHandlerModule: Collision with non-EntityCollisionHandlerModule not implemented");
+    }
   }
 
   public override void Initialize(IModuleContainer container)

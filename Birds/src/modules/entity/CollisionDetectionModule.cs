@@ -1,6 +1,7 @@
 ﻿using Birds.src.collision;
 using Birds.src.collision.bounding_areas;
 using Birds.src.modules.collision;
+using Birds.src.modules.composite;
 using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
 using System;
@@ -51,6 +52,13 @@ public class CollisionDetectionModule : BaseCollisionDetectionModule
     else if (otherCollidable is GroupCollisionDetectionModule otherGroupHandler)
     {
       otherGroupHandler.AddCollisionsToEntities(this);
+    }
+    else if (otherCollidable is SimpleGroupCollisionDetectionModule otherSimpleGroupCollisionModule)
+    {
+      foreach (ICollidable subEntityHandler in otherSimpleGroupCollisionModule.entityCollisionHandlers)
+      {
+        AddCollisionsToEntities(subEntityHandler);
+      }
     }
     else
     {

@@ -59,4 +59,10 @@ public class SeparationDetectionModule : ModuleBase
     cloned.SeparatedGroups = new List<IModuleContainer>();
     return cloned;
   }
+
+  public override void Dispose()
+  {
+    SeparatedGroups.Clear();
+    base.Dispose();
+  }
 }

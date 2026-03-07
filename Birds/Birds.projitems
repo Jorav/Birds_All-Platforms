@@ -28,7 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\CompositeMovementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\GroupPositionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\LinkManagementModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SeperatedEntitiesDetectionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SeparationDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SimpleGroupCollisionDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SubEntityCollisionExtractionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SubEntityVelocityReseter.cs" />

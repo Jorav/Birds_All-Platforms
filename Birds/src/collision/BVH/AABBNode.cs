@@ -171,7 +171,7 @@ public class AABBNode
   {
     if (AABB != null)
     {
-      DrawModule.DrawRectangleOutline(sb, AABB.UL, AABB.UR, AABB.DR, AABB.DL, color, 1);
+      DrawModule.DrawRectangleOutline(sb, AABB.UL, AABB.UR, AABB.DR, AABB.DL, color, 2);
     }
 
     if (children[0] != null)

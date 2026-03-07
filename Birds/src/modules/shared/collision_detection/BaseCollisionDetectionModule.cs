@@ -87,4 +87,17 @@ public abstract class BaseCollisionDetectionModule : ModuleBase, ICollidable
   public abstract void AddCollisionsToEntities(ICollidable otherCollidable);
   public abstract void AddInternalCollisions();
   public abstract bool Contains(Vector2 position);
+  public override void Dispose()
+  {
+    if (BoundingCircle != null)
+    {
+      BoundingCircle.Dispose();
+      BoundingCircle = null;
+    }
+    if (BoundingArea != null)
+    {
+      BoundingArea.Dispose();
+    }
+    base.Dispose();
+  }
 }

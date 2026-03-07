@@ -6,9 +6,7 @@ namespace Birds.src.containers.entity;
 
 public interface IEntity : IModuleContainer
 {
-  public Controller Manager { get; set; }
   public void Update(GameTime gameTime);
-  public void Dispose();
   public bool ReplaceEntity(IEntity oldEntity, IEntity newEntity)
   {
     newEntity.Position.Value = oldEntity.Position;

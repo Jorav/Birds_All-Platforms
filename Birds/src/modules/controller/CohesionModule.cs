@@ -8,7 +8,7 @@ namespace Birds.src.modules.controller;
 public class CohesionModule : ModuleBase
 {
   public Vector2 Position { get; set; }
-  public static float REPULSIONDISTANCE = 2f;
+  public static float REPULSIONDISTANCE = 32f;
   public static float OUTLIER_THRESHOLD = 1.5f;
   private float averageDistance;
   private Dictionary<IEntity, float> entityWeightedAverageDistances = new Dictionary<IEntity, float>();
@@ -115,7 +115,7 @@ public class CohesionModule : ModuleBase
           continue;
         }
         float distance = Vector2.Distance(entity1.Position.Value, entity2.Position.Value);
-        float minDistance = (entity1.Radius.Value + entity2.Radius.Value) * REPULSIONDISTANCE;
+        float minDistance = (entity1.Radius.Value + entity2.Radius.Value) + REPULSIONDISTANCE;
 
         if (distance >= minDistance)
         {
@@ -133,7 +133,7 @@ public class CohesionModule : ModuleBase
         {
           distance = entity1.Radius.Value + entity2.Radius.Value;
         }
-        float repulsionForce = 0.7f * overlap / distance;
+        float repulsionForce = 0.5f * overlap / distance;
 
         entity1.Accelerate(repulsionDirection, repulsionForce / entity1.Mass.Value);
         entity2.Accelerate(-repulsionDirection, repulsionForce / entity2.Mass.Value);
@@ -162,5 +162,10 @@ public class CohesionModule : ModuleBase
   {
     CohesionModule cNew = (CohesionModule)this.MemberwiseClone();
     return cNew;
+  }
+  public override void Dispose()
+  {
+    entityWeightedAverageDistances.Clear();
+    base.Dispose();
   }
 }

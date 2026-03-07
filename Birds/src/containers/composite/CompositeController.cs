@@ -10,14 +10,12 @@ namespace Birds.src.containers.composite;
 
 public class CompositeController : ModuleContainer, IEntity
 {
-  public Controller Manager { get; set; }
-
   public override void Update(GameTime gameTime)
   {
     base.Update(gameTime);
   }
 
-  public void Dispose()
+  public override void Dispose()
   {
     base.Dispose();
     CompositeControllerFactory.availableEntities.Push(this);
@@ -26,10 +24,8 @@ public class CompositeController : ModuleContainer, IEntity
   public override object Clone()
   {
     var cloned = (CompositeController)base.Clone();
-    cloned.Manager = this.Manager;
     BlueprintFactory.RestoreConnections(this.Entities.ToList(), cloned.Entities.ToList());
 
     return cloned;
   }
-
 }

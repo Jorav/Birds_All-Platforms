@@ -30,6 +30,7 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule, IEnti
 
   protected override void Update(GameTime gameTime)
   {
+    LoadCollisionHandlers();
     UpdateTreeWithEntities();
   }
 
@@ -123,9 +124,16 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule, IEnti
   public void OnEntityRemoved(IEntity entity)
   {
     var cdModule = entity.GetModule<BaseCollisionDetectionModule>();
+
     if (cdModule != null)
     {
-      entityCollisionHandlers.Remove(cdModule);
+      bool removed = entityCollisionHandlers.Remove(cdModule);
     }
+  }
+
+  public override void Dispose()
+  {
+    entityCollisionHandlers.Clear();
+    base.Dispose();
   }
 }

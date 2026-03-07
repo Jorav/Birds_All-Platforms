@@ -1,6 +1,7 @@
 ﻿using Birds.src.containers.composite;
 using Birds.src.containers.entity;
 using Birds.src.events;
+using Birds.src.modules.composite;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
@@ -10,6 +11,7 @@ public class LinkModule : ModuleBase
 {
   public List<Link> Links { get; private set; } = new List<Link>();
   public float InternalRotation { get; set; } = 0f;
+  public LinkManagementModule Manager { get; set; }
 
   protected override void ConfigurePropertySync()
   {
@@ -110,12 +112,14 @@ public class LinkModule : ModuleBase
     return cloned;
   }
 
-  public void Dispose()
+  public override void Dispose()
   {
     base.Dispose();
     foreach (Link l in Links)
     {
-      l.SeverConnection();
+      l.Dispose();
     }
+    Links.Clear();
+    Manager = null;
   }
 }

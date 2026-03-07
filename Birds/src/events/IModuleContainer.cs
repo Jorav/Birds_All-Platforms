@@ -14,6 +14,7 @@ public interface IModuleContainer
   bool HasModule<T>() where T : ModuleBase;
   void ClearModules();
   object Clone();
+  void Dispose();
 
   ObservableCollection<IEntity> Entities { get; }
   List<IModuleContainer> Collisions { get; }

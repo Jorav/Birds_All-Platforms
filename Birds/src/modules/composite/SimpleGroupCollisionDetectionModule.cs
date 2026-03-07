@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Birds.src.modules.composite;
+
 public class SimpleGroupCollisionDetectionModule : BaseCollisionDetectionModule, IEntityCollectionListener
 {
   public List<BaseCollisionDetectionModule> entityCollisionHandlers = new List<BaseCollisionDetectionModule>(32);
@@ -26,6 +26,7 @@ public class SimpleGroupCollisionDetectionModule : BaseCollisionDetectionModule,
 
   protected override void Update(GameTime gameTime)
   {
+    LoadCollisionHandlers();
   }
 
   public override void AddCollisionsToEntities(ICollidable otherCollidable)
@@ -116,9 +117,15 @@ public class SimpleGroupCollisionDetectionModule : BaseCollisionDetectionModule,
   public void OnEntityRemoved(IEntity entity)
   {
     var cdModule = entity.GetModule<BaseCollisionDetectionModule>();
+
     if (cdModule != null)
     {
-      entityCollisionHandlers.Remove(cdModule);
+      bool removed = entityCollisionHandlers.Remove(cdModule);
     }
+  }
+  public override void Dispose()
+  {
+    base.Dispose();
+    entityCollisionHandlers.Clear();
   }
 }

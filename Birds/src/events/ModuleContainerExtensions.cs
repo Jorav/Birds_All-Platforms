@@ -53,5 +53,10 @@ public static class ModuleContainerExtensions
                       container.GetModule<GroupDrawModule>() as IDrawModule;
     renderModule?.Draw(sb);
   }
+
+  public static IModuleContainer GetManager(this IModuleContainer container)
+  {
+    return container.GetModule<LinkModule>()?.Manager?.container;
+  }
 }
 

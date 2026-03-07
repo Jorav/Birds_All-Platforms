@@ -119,6 +119,7 @@ public abstract class ModuleContainer : IModuleContainer
   {
     return modules.ContainsKey(typeof(T));
   }
+
   public void ClearModules()
   {
     foreach (ModuleBase module in modules.Values.ToList())
@@ -170,7 +171,7 @@ public abstract class ModuleContainer : IModuleContainer
     if (_radius != null) cloned._radius = new SyncedProperty<float>(_radius.Value);
     if (_color != null) cloned._color = new SyncedProperty<Color>(_color.Value);
     if (_team != null) cloned._team = new SyncedProperty<ID_OTHER>(_team.Value);
-    if (_velocity != null) cloned._velocity = new SyncedProperty<Vector2>(_velocity.Value);
+    if (_velocity != null) cloned._velocity = new SyncedProperty<Vector2>(Vector2.Zero);
     if (_scale != null) cloned._scale = new SyncedProperty<float>(_scale.Value);
     if (_width != null) cloned._width = new SyncedProperty<float>(_width.Value);
     if (_height != null) cloned._height = new SyncedProperty<float>(_height.Value);
@@ -201,5 +202,6 @@ public abstract class ModuleContainer : IModuleContainer
     {
       entity.Dispose();
     }
+    Collisions.Clear();
   }
 }

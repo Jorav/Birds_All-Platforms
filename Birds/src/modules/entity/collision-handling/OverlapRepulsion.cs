@@ -2,10 +2,16 @@
 using Birds.src.modules.shared.collision_detection;
 
 namespace Birds.src.modules.entity.collision_handling;
+
 public class OverlapRepulsion : CollisionResponse
 {
   public override void HandleCollision(IModuleContainer self, IModuleContainer other)
   {
+    if (self.GetManager() != null || other.GetManager() != null)
+    {
+      return;
+    }
+
     var movementModule = self.GetModule<MovementModule>();
     var otherMovementModule = other.GetModule<MovementModule>();
     var bcCollisionDetectionModule = self.GetModule<BaseCollisionDetectionModule>();

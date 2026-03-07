@@ -251,7 +251,7 @@ public class EditEntityState : MenuState
 
   private void ReturnToPreviousState()
   {
-    editedController.Entities.Clear();
+    editedController.Entities.Set(Enumerable.Empty<IEntity>());
     editedController.Dispose();
     game.ChangeState(previousState);
     var managementModule = editedEntity.GetModule<LinkManagementModule>();

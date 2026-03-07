@@ -8,7 +8,7 @@ namespace Birds.src.events;
 
 public abstract class ModuleBase
 {
-  protected IModuleContainer container;
+  public IModuleContainer container;
   private List<IPropertySync> _propertySyncs = new List<IPropertySync>(32);
 
   private static readonly Dictionary<PropertyInfo, Delegate> _getterCache = new Dictionary<PropertyInfo, Delegate>();

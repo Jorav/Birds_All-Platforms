@@ -39,6 +39,7 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
     foreach (LinkModule linkModule in linkModules)
     {
       linkModule.ConnectLinksIfOverlapping(newLinkModule);//THIS ISNT WORKING IT SEEMS
+      linkModule.Manager = this;
     }
   }
 
@@ -141,5 +142,11 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
       fillerEntity.Dispose();
     }
     fillerEntities.Clear();
+  }
+
+  public override void Dispose()
+  {
+    fillerEntities.Clear();
+    base.Dispose();
   }
 }

@@ -74,4 +74,10 @@ public Link(Vector2 relativePosition, IEntity entity, Link connection = null)
       connection = null;
     }
   }
+
+  //TODO: Add to reuse
+  public void Dispose()
+  {
+    SeverConnection();
+  }
 }

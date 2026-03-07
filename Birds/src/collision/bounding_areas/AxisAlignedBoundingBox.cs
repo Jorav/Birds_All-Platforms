@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.collision.bounding_areas;
@@ -187,5 +188,10 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
   public object Clone()
   {
     return BoundingAreaFactory.GetAABB(position, (int)Width, (int)Height);
+  }
+
+  public void Dispose()
+  {
+    BoundingAreaFactory.AABBs.Append(this);
   }
 }

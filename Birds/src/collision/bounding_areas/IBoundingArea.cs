@@ -16,6 +16,8 @@ public interface IBoundingArea
 
   public bool Contains(Vector2 position);
 
+  public void Dispose();
+
   public static bool CollidesWith(IBoundingArea a, IBoundingArea b)
   {
     if (a is BoundingCircle bc1 && b is BoundingCircle bc2)

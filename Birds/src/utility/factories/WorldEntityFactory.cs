@@ -9,6 +9,7 @@ using Birds.src.modules.entity.collision_handling;
 using Birds.src.collision.bounding_areas;
 
 namespace Birds.src.factories;
+
 public static class WorldEntityFactory
 {
   public static Stack<WorldEntity> availableEntities = new(100);

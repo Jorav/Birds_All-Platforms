@@ -76,7 +76,7 @@ public class BoundingCircle : IBoundingArea
       return Vector2.Zero;
     if (overlap > 32f)
       overlap = 32f;
-    return distanceVector/distance * overlap/c.Radius * 8;
+    return distanceVector/distance * overlap/c.Radius * 3;
   }
 
   public void Dispose()

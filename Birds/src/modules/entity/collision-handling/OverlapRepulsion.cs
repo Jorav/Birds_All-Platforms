@@ -7,7 +7,7 @@ public class OverlapRepulsion : CollisionResponse
 {
   public override void HandleCollision(IModuleContainer self, IModuleContainer other)
   {
-    if (self.GetManager() != null || other.GetManager() != null)
+    if (self.GetManager() != null)
     {
       return;
     }
@@ -22,7 +22,9 @@ public class OverlapRepulsion : CollisionResponse
       return;
     }
 
+    var multiplier = other.GetManager() == null ? (other.Entities.Count > 0 ? 0.3f : 1f) : 0.7f;
+
     movementModule.TotalExteriorForce += bcCollisionDetectionModule.BoundingCircle.CalculateOverlapRepulsion(
-      otherBcCollisionDetectionModule.BoundingCircle);
+      otherBcCollisionDetectionModule.BoundingCircle) * multiplier;
   }
 }

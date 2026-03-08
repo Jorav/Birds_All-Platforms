@@ -62,23 +62,6 @@ public class BoundingCircle : IBoundingArea
     return Vector2.DistanceSquared(position, Position) <= Radius * Radius;
   }
 
-  public Vector2 CalculateOverlapRepulsion(BoundingCircle c)
-  {
-    Vector2 distanceVector = Position - c.Position;
-    float distance = distanceVector.Length();
-    if (distance < 1f)
-    {
-      distance = 1f;
-      distanceVector = new Vector2(1f, 0.5f);
-    }
-    float overlap = Radius + c.Radius - distance;
-    if (overlap <= 0)
-      return Vector2.Zero;
-    if (overlap > 32f)
-      overlap = 32f;
-    return distanceVector/distance * overlap/c.Radius * 3;
-  }
-
   public void Dispose()
   {
     BoundingAreaFactory.circles.Append(this);

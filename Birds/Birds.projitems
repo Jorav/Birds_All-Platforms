@@ -18,6 +18,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\OrientedBoundingBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\AABBNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\AABBTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\ICollisionStructure.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\ListCollisionStructure.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\controller\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\Link.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\IEntityCollectionListener.cs" />
@@ -29,8 +31,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\GroupPositionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\LinkManagementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SeparationDetectionModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SimpleGroupCollisionDetectionModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SubEntityCollisionExtractionModule.cs" />
+    <Compile Include="..\Birds\src\modules\composite\SubEntityCollisionExtractionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SubEntityVelocityReseter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupCollisionClearer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\GroupMassModule.cs" />

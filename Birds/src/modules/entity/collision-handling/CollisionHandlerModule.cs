@@ -25,7 +25,7 @@ public class CollisionHandlerModule : ModuleBase
   {
     if (container.Collisions.Count > 0)
     {
-      foreach (IEntity entity in container.Collisions)
+      foreach (IModuleContainer entity in container.Collisions)
       {
         foreach (CollisionResponse response in _responses)
           response.HandleCollision(this.container, entity);

@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Birds.src.collision.BVH;
-using Birds.src.modules.collision;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Birds.src.events;
 using Birds.src.collision;
+using Birds.src.modules.shared.collision_detection;
 
 namespace Birds.src.containers.controller;
 
@@ -26,7 +26,7 @@ public class GameController
       c.Update(gameTime);
     }
     UpdateGlobalCollisionTree();
-    collisionManager.AddInternalCollisionsToEntities();
+    collisionManager.AddInternalCollisions();
   }
 
   private void UpdateGlobalCollisionTree()

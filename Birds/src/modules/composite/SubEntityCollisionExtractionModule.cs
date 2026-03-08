@@ -1,5 +1,4 @@
-﻿using Birds.src.containers.entity;
-using Birds.src.events;
+﻿using Birds.src.events;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.composite;
@@ -8,16 +7,22 @@ public class SubEntityCollisionExtractionModule : ModuleBase
 {
   protected override void Update(GameTime gameTime)
   {
-    foreach (IEntity entity in container.Entities)
+    container.Collisions.Clear();
+
+    foreach (var child in container.Entities)
     {
-      int collisionCount = entity.Collisions.Count;
-      for (int i = 0; i < collisionCount; i++)
+      foreach (var collision in child.Collisions)
       {
-        var collisionEntity = entity.Collisions[i];
-        container.Collisions.Add(collisionEntity);
-        collisionEntity.Collisions.Add(container);
+        if (!container.Collisions.Contains(collision))
+        {
+          container.Collisions.Add(collision);
+        }
+        if (!collision.Collisions.Contains(container))
+        {
+          collision.Collisions.Add(container);
+        }
       }
+      child.Collisions.Clear();
     }
   }
 }
-

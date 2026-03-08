@@ -1,6 +1,5 @@
 ﻿using Birds.src.collision;
 using Birds.src.collision.bounding_areas;
-using Birds.src.modules.collision;
 using Birds.src.modules.composite;
 using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
@@ -48,29 +47,18 @@ public class CollisionDetectionModule : BaseCollisionDetectionModule
         return;
       }
     }
-    if (otherCollidable is CollisionDetectionModule otherHandler)
+
+    if (otherCollidable is CollisionDetectionModule otherLeaf)
     {
-      if (CollidesWith(otherHandler))
+      if (CollidesWith(otherLeaf))
       {
-        container.Collisions.Add(otherHandler.container);
-        otherHandler.container.Collisions.Add(container);
-      }
-    }
-    else if (otherCollidable is GroupCollisionDetectionModule otherGroupHandler)
-    {
-      otherGroupHandler.AddCollisionsToEntities(this);
-    }
-    else if (otherCollidable is SimpleGroupCollisionDetectionModule otherSimpleGroupCollisionModule)
-    {
-      foreach (ICollidable subEntityHandler in otherSimpleGroupCollisionModule.entityCollisionHandlers)
-      {
-        AddCollisionsToEntities(subEntityHandler);
+        container.Collisions.Add(otherLeaf.container);
+        otherLeaf.container.Collisions.Add(container);
       }
     }
     else
     {
-      throw new NotImplementedException(
-          "CollisionDetectionModule: Collision with unknown ICollidable type not implemented");
+      otherCollidable.AddCollisionsToEntities(this);
     }
   }
 

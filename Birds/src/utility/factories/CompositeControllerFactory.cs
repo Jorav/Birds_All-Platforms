@@ -13,6 +13,8 @@ using Birds.src.modules.controller;
 using Birds.src.modules.composite;
 using Birds.src.modules.entity.collision_handling;
 using Birds.src.events;
+using Birds.src.modules.shared.collision_detection;
+using Birds.src.collision.BVH;
 
 namespace Birds.src.factories
 {
@@ -88,10 +90,12 @@ namespace Birds.src.factories
           composite.AddModule(new GroupWeightedPositionModule());
           composite.AddModule(new GroupRadiusModule());
           composite.AddModule(new GroupThrustModule());
-          composite.AddModule(new SimpleGroupCollisionDetectionModule(false));
+          composite.AddModule(new GroupCollisionDetectionModule(
+              new ListCollisionStructure(),
+              evaluateInternalCollisions: false
+          ));
           composite.AddModule(new SubEntityCollisionExtractionModule());
           composite.AddModule(GetCollisionHandler());
-          composite.AddModule(new GroupCollisionClearer());
           composite.AddModule(new GroupDrawModule());
           //(probably) mass?
           break;

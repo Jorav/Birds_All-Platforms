@@ -1,7 +1,6 @@
-﻿using Birds.src.containers.entity;
+﻿using Birds.src.collision.BVH;
+using Birds.src.containers.entity;
 using Birds.src.events;
-using Birds.src.menu;
-using Birds.src.modules.collision;
 using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,9 +31,9 @@ public class GroupDrawModule : ModuleBase, IDrawModule
     if (Game1.DRAW_AABB_OUTLINE)
     {
       var groupCDModule = container.GetModule<GroupCollisionDetectionModule>();
-      if (groupCDModule?.CollisionManager != null)
+      if (groupCDModule?.CollisionStructure is AABBTree tree)
       {
-        groupCDModule.CollisionManager.DrawTree(sb, Color.Green);
+        tree.Draw(sb, Color.Green);
       }
     }
   }

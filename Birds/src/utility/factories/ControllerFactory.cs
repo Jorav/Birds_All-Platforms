@@ -3,10 +3,11 @@ using Birds.src.utility;
 using System;
 using Birds.src.modules.controller.steering;
 using Birds.src.modules.controller;
-using Birds.src.modules.collision;
 using Birds.src.containers.controller;
 using System.Collections.Generic;
 using Birds.src.containers.entity;
+using Birds.src.collision.BVH;
+using Birds.src.modules.shared.collision_detection;
 
 namespace Birds.src.factories
 {
@@ -25,7 +26,10 @@ namespace Birds.src.factories
           c.AddModule(new GroupMovementModule());
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
-          c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionDetectionModule(
+              new AABBTree(),
+              evaluateInternalCollisions: true
+          ));
           c.AddModule(new GroupDrawModule());
           return c;
 
@@ -39,7 +43,10 @@ namespace Birds.src.factories
           c.AddModule(new GroupRadiusModule());
           c.AddModule(new PlayerSteeringModule());
           c.AddModule(new CohesionModule());
-          c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionDetectionModule(
+              new AABBTree(),
+              evaluateInternalCollisions: true
+          ));
           c.AddModule(new GroupDrawModule());
           return c;
 
@@ -52,7 +59,10 @@ namespace Birds.src.factories
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
           c.AddModule(new ChaserSteeringModule());
-          c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionDetectionModule(
+              new AABBTree(),
+              evaluateInternalCollisions: true
+          ));
           c.AddModule(new GroupDrawModule());
           return c;
 
@@ -87,7 +97,10 @@ namespace Birds.src.factories
           c.AddModule(new GroupMovementModule());
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
-          c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionDetectionModule(
+              new AABBTree(),
+              evaluateInternalCollisions: true
+          ));
           c.AddModule(new GroupDrawModule());
           c.Position.Value = position;
           return c;
@@ -102,7 +115,10 @@ namespace Birds.src.factories
           c.AddModule(new GroupRadiusModule());
           c.AddModule(new PlayerSteeringModule());
           c.AddModule(new CohesionModule());
-          c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionDetectionModule(
+              new AABBTree(),
+              evaluateInternalCollisions: true
+          ));
           c.AddModule(new GroupDrawModule());
           c.Position.Value = position;
           return c;
@@ -116,7 +132,10 @@ namespace Birds.src.factories
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
           c.AddModule(new ChaserSteeringModule());
-          c.AddModule(new GroupCollisionDetectionModule());
+          c.AddModule(new GroupCollisionDetectionModule(
+              new AABBTree(),
+              evaluateInternalCollisions: true
+          ));
           c.AddModule(new GroupDrawModule());
           c.Position.Value = position;
           return c;

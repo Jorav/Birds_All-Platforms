@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Birds.src.collision.BVH;
 
-public class AABBTree
+public class AABBTree : ICollisionStructure
 {
   public Vector2 Position { get { return root.Position; } }
   public AABBNode root;
@@ -243,12 +243,7 @@ public class AABBTree
     }
   }
 
-  public void AddInternalCollisionsToEntities()
-  {
-    root.AddInternalCollissionsToEntities();
-  }
-
-  public void DrawTree(SpriteBatch sb, Color color)
+  public void Draw(SpriteBatch sb, Color color)
   {
     if (root != null)
     {
@@ -266,5 +261,15 @@ public class AABBTree
         freeNode.Dispose();
       }
     }
+  }
+
+  public void Build(List<ICollidable> entities)
+  {
+    BuildTree(entities);
+  }
+
+  public void AddInternalCollisions()
+  {
+    root.AddInternalCollissionsToEntities();
   }
 }

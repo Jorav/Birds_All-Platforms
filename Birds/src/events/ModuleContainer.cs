@@ -39,7 +39,7 @@ public abstract class ModuleContainer : IModuleContainer
 
   private ObservableCollection<IEntity> _entities = new();
   public ObservableCollection<IEntity> Entities => _entities;
-  public List<IModuleContainer> Collisions { get; } = new();
+  public List<IModuleContainer> Collisions { get; set;  } = new(8);
 
   private Dictionary<Type, ModuleBase> modules = new Dictionary<Type, ModuleBase>();
 
@@ -177,6 +177,7 @@ public abstract class ModuleContainer : IModuleContainer
     cloned.modules = new Dictionary<Type, ModuleBase>();
     cloned._entities = new ObservableCollection<IEntity>();
     cloned._entities.CollectionChanged += cloned.OnEntitiesCollectionChanged;
+    cloned.Collisions = new List<IModuleContainer>(8);
 
     if (_position != null) cloned._position = new SyncedProperty<Vector2>(_position.Value);
     if (_rotation != null) cloned._rotation = new SyncedProperty<float>(_rotation.Value);

@@ -9,7 +9,6 @@ using Birds.src.modules.controller.steering;
 using Birds.src.events;
 using Birds.src.containers.controller;
 using Birds.src.visual;
-using Birds.src.modules.collision;
 using Birds.src.collision.bounding_areas;
 using Birds.src.containers.entity;
 using Birds.src.containers.composite;
@@ -71,7 +70,7 @@ public class BuildControllerState : MenuState
     Input.HandleZoom();
     controllerEdited.Update(gameTime);
     var collisionDetector = controllerEdited.GetModule<GroupCollisionDetectionModule>();
-    collisionDetector.CollisionManager.AddInternalCollisionsToEntities();
+    collisionDetector.AddInternalCollisions();
 
     var boundingCircle = controllerEdited.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
     selectionCircle.Radius = boundingCircle.Radius * selectionBuffer;

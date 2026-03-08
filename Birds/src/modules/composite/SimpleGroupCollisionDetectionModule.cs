@@ -31,6 +31,13 @@ public class SimpleGroupCollisionDetectionModule : BaseCollisionDetectionModule,
 
   public override void AddCollisionsToEntities(ICollidable otherCollidable)
   {
+    if(otherCollidable is BaseCollisionDetectionModule baseHandler)
+    {
+      if (!BoundingCircle.CollidesWith(baseHandler.BoundingCircle))
+      {
+        return;
+      }
+    }
     if (otherCollidable is SimpleGroupCollisionDetectionModule otherGroupHandler)
     {
       foreach (var myModule in entityCollisionHandlers)

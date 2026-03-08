@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using Birds.src.storage;
 using Birds.src.storage.implementations;
 using System.Linq;
-using Birds.src.modules.collision;
 using Birds.src.containers.composite.blueprints;
 using Birds.src.containers.composite.blueprints.parts;
 using Birds.src.containers.entity;

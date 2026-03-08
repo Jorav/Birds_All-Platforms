@@ -41,6 +41,13 @@ public class CollisionDetectionModule : BaseCollisionDetectionModule
 
   public override void AddCollisionsToEntities(ICollidable otherCollidable)
   {
+    if (otherCollidable is BaseCollisionDetectionModule baseHandler)
+    {
+      if (!BoundingCircle.CollidesWith(baseHandler.BoundingCircle))
+      {
+        return;
+      }
+    }
     if (otherCollidable is CollisionDetectionModule otherHandler)
     {
       if (CollidesWith(otherHandler))
@@ -77,4 +84,14 @@ public class CollisionDetectionModule : BaseCollisionDetectionModule
   }
 
   public override bool Contains(Vector2 position) => BoundingArea.Contains(position);
+
+  public override void Dispose()
+  {
+    base.Dispose();
+    if(_preciseBoundingArea != null)
+    {
+      _preciseBoundingArea.Dispose();
+      _preciseBoundingArea = null;
+    }
+  }
 }

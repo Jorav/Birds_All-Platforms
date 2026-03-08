@@ -23,28 +23,38 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
   {
   }
 
-  public void OnEntityAdded(IEntity newEntity) 
+  public void OnEntityAdded(IEntity newEntity)
   {
+    if(newEntity is WorldEntity we && we.EntityID == ID_ENTITY.FILLER)
+    {
+      fillerEntities.Add(newEntity);
+    }
     var newLinkModule = newEntity.GetModule<LinkModule>();
     if (newLinkModule == null)
     {
       return;
     }
     var linkModules = container.Entities
-        .Where(e => e is WorldEntity we && !we.IsFiller)
+        .Where(e => e is WorldEntity we && we.EntityID != ID_ENTITY.FILLER)
         .Select(e => e.GetModule<LinkModule>())
         .Where(linkModule => linkModule != null)
         .Where(linkModule => linkModule != newLinkModule)
         .ToList();
     foreach (LinkModule linkModule in linkModules)
     {
-      linkModule.ConnectLinksIfOverlapping(newLinkModule);//THIS ISNT WORKING IT SEEMS
+      linkModule.ConnectLinksIfOverlapping(newLinkModule);
       linkModule.Manager = this;
     }
   }
 
   public void OnEntityRemoved(IEntity entity)
   {
+    var linkModule = entity.GetModule<LinkModule>();
+    linkModule?.SeverConnections();
+    if(entity is WorldEntity we && we.EntityID == ID_ENTITY.FILLER)
+    {
+      fillerEntities.Remove(we);
+    }
   }
 
   public List<HashSet<IEntity>> GetDisconnectedGroups()
@@ -67,6 +77,7 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
 
   private HashSet<IEntity> GetConnectedEntities(IEntity e, HashSet<IEntity> foundEntities)
   {
+    foundEntities.Add(e);
     var linkModule = e.GetModule<LinkModule>();
     if (linkModule == null) return foundEntities;
 
@@ -114,7 +125,6 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
 
         if (!overlaps)
         {
-          fillerEntities.Add(fillerEntity);
           container.Entities.Add(fillerEntity);
         }
         else
@@ -146,7 +156,7 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
 
   public override void Dispose()
   {
-    fillerEntities.Clear();
+    ClearFillerEntities();
     base.Dispose();
   }
 }

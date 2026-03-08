@@ -255,4 +255,16 @@ public class AABBTree
       root.DrawNode(sb, color);
     }
   }
+
+  public void Dispose()
+  {
+    UnravelTree();
+    foreach (AABBNode freeNode in freeNodes)
+    {
+      if (freeNode != null)
+      {
+        freeNode.Dispose();
+      }
+    }
+  }
 }

@@ -20,6 +20,11 @@ public class SyncedProperty<T>
       }
     }
   }
+  public void Reset(T value = default)
+  {
+    _value = value;
+    ValueChanged = null;
+  }
 
   public SyncedProperty(T initialValue = default)
   {

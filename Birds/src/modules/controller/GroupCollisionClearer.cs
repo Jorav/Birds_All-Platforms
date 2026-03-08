@@ -1,6 +1,5 @@
 ﻿using Birds.src.events;
 using Microsoft.Xna.Framework;
-using System.Linq;
 
 namespace Birds.src.modules.controller;
 

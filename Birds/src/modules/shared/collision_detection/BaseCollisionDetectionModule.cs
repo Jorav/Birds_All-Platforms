@@ -58,7 +58,7 @@ public abstract class BaseCollisionDetectionModule : ModuleBase, ICollidable
     }
     if (BoundingArea == null)
     {
-      return true;
+      return false;
     }
     return IBoundingArea.CollidesWith(BoundingArea, otherCollidable.BoundingArea);
   }
@@ -89,15 +89,11 @@ public abstract class BaseCollisionDetectionModule : ModuleBase, ICollidable
   public abstract bool Contains(Vector2 position);
   public override void Dispose()
   {
+    base.Dispose();
     if (BoundingCircle != null)
     {
       BoundingCircle.Dispose();
       BoundingCircle = null;
     }
-    if (BoundingArea != null)
-    {
-      BoundingArea.Dispose();
-    }
-    base.Dispose();
   }
 }

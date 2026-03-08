@@ -139,13 +139,14 @@ public class AABBNode
 
   public void AddCollisionsToEntities(ICollidable collidable)
   {
-    if (!IBoundingArea.CollidesWith(AABB, collidable.BoundingArea))//AABB.CollidesWith(collidable.BoundingArea))
-    {
-      return;
-    }
     if (Entity != null)
     {
       Entity.AddCollisionsToEntities(collidable);
+      return;
+    }
+    if (!IBoundingArea.CollidesWith(AABB, collidable.BoundingArea))//AABB.CollidesWith(collidable.BoundingArea))
+    {
+      return;
     }
     else
     {
@@ -178,5 +179,18 @@ public class AABBNode
       children[0].DrawNode(sb, color);
     if (children[1] != null)
       children[1].DrawNode(sb, color);
+  }
+
+  public void Dispose()
+  {
+    AABB.Dispose();
+    entity = null;
+    foreach (AABBNode child in children)
+    {
+      if (child != null)
+      {
+        child.Dispose();
+      }
+    }
   }
 }

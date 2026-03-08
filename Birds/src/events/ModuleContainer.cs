@@ -48,6 +48,22 @@ public abstract class ModuleContainer : IModuleContainer
     _entities.CollectionChanged += OnEntitiesCollectionChanged;
   }
 
+  private void ResetProperties()
+  {
+    _position?.Reset();
+    _velocity?.Reset();
+    _rotation?.Reset(0);
+    _mass?.Reset(1);
+    _radius?.Reset(1);
+    _color?.Reset(Microsoft.Xna.Framework.Color.White);
+    _team?.Reset();
+    _scale?.Reset(1);
+    _width?.Reset(1);
+    _height?.Reset(1);
+    _thrust?.Reset(1);
+    _resolveInternalCollisions?.Reset(true);
+  }
+
   private void OnEntitiesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
   {
     if (e.NewItems != null)
@@ -141,11 +157,8 @@ public abstract class ModuleContainer : IModuleContainer
       foreach (var module in modules.Values)
       {
         var sw = System.Diagnostics.Stopwatch.StartNew();
-
         module.UpdateModule(gameTime);
-
         sw.Stop();
-
         ModuleProfiler.Record(module.GetType(), sw.ElapsedTicks);
       }
     }
@@ -193,15 +206,17 @@ public abstract class ModuleContainer : IModuleContainer
   public virtual void Dispose()
   {
     _entities.CollectionChanged -= OnEntitiesCollectionChanged;
-    foreach (var module in modules.Values)
-    {
-      module.Dispose();
-    }
+
+    foreach (var module in modules.Values) module.Dispose();
     modules.Clear();
-    foreach (IEntity entity in Entities)
-    {
-      entity.Dispose();
-    }
+
+    foreach (IEntity entity in _entities) entity.Dispose();
+    _entities.Clear();
+
     Collisions.Clear();
+
+    ResetProperties();
+
+    _entities.CollectionChanged += OnEntitiesCollectionChanged;
   }
 }

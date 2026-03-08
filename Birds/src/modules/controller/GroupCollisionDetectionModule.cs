@@ -44,6 +44,13 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule, IEnti
 
   public override void AddCollisionsToEntities(ICollidable otherCollidable)
   {
+    if (otherCollidable is BaseCollisionDetectionModule baseHandler)
+    {
+      if (!BoundingCircle.CollidesWith(baseHandler.BoundingCircle))
+      {
+        return;
+      }
+    }
     if (otherCollidable is GroupCollisionDetectionModule otherGroupCollisionModule)
     {
       CollisionManager.AddCollisionsToEntities(otherGroupCollisionModule.CollisionManager);
@@ -133,7 +140,8 @@ public class GroupCollisionDetectionModule : BaseCollisionDetectionModule, IEnti
 
   public override void Dispose()
   {
-    entityCollisionHandlers.Clear();
     base.Dispose();
+    entityCollisionHandlers.Clear();
+    CollisionManager.Dispose();
   }
 }

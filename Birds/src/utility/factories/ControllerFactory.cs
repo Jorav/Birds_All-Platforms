@@ -42,11 +42,11 @@ namespace Birds.src.factories
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
           c.AddModule(new PlayerSteeringModule());
-          c.AddModule(new CohesionModule());
           c.AddModule(new GroupCollisionDetectionModule(
               new AABBTree(),
               evaluateInternalCollisions: true
           ));
+          c.AddModule(new FlockingCohesionModule());
           c.AddModule(new GroupDrawModule());
           return c;
 

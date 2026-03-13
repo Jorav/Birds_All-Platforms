@@ -77,7 +77,14 @@ public class CohesionModule : ModuleBase
 
         Vector2 direction = entity2.Position.Value - entity1.Position.Value;
         float distance = direction.Length();
-
+        if (distance > 2 * (entity1.Radius + entity2.Radius + REPULSIONDISTANCE))
+          continue;
+        if (distance < 0.1f)
+        {
+          var random = new Random();
+          float angle = (float)(random.NextDouble() * Math.PI * 2);
+          direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+        }
         if (distance < (entity1.Radius.Value + entity2.Radius.Value) / 2)
         {
           distance = (entity1.Radius.Value + entity2.Radius.Value) / 2;
@@ -100,7 +107,8 @@ public class CohesionModule : ModuleBase
         if (entity1 == entity2) continue;
 
         float distance = Vector2.Distance(entity1.Position.Value, entity2.Position.Value);
-
+        if (distance > 2 * (entity1.Radius + entity2.Radius + REPULSIONDISTANCE))
+          continue;
         Vector2 repulsionDirection = entity1.Position.Value - entity2.Position.Value;
         if (distance < 0.1f)
         {
@@ -113,7 +121,7 @@ public class CohesionModule : ModuleBase
         {
           distance = (entity1.Radius.Value + entity2.Radius.Value)/2;
         }
-        float repulsionForce = 500f * entity1.Mass.Value * entity2.Mass.Value / distance / distance;
+        float repulsionForce = 16*16f * entity1.Mass.Value * entity2.Mass.Value / distance / distance;
 
         entity1.Accelerate(repulsionDirection, repulsionForce / entity1.Mass.Value);
         entity2.Accelerate(-repulsionDirection, repulsionForce / entity2.Mass.Value);

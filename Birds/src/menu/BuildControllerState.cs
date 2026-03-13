@@ -13,6 +13,9 @@ using Birds.src.collision.bounding_areas;
 using Birds.src.containers.entity;
 using Birds.src.containers.composite;
 using Birds.src.modules.shared.collision_detection;
+using static System.Formats.Asn1.AsnWriter;
+using System.Collections.Generic;
+using Birds.src.menu.controls;
 
 namespace Birds.src.menu;
 
@@ -54,6 +57,26 @@ public class BuildControllerState : MenuState
     components = new();
     var boundingCircle = controllerEdited.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
     selectionCircle = BoundingAreaFactory.GetCircle(boundingCircle.Position, boundingCircle.Radius * selectionBuffer);
+    float scale = 3f;
+    float xOffset = 50f;
+    float buttonDistance = 5f;
+    #region AddingButtons
+    EntityButton addRectangularHullButton =
+    new EntityButton(
+    SpriteFactory.GetSprite(ID_SPRITE.HULL_RECTANGULAR, Vector2.Zero, scale),
+        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale),
+    true)
+    {
+      Scale = scale,
+        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - xOffset, 20),
+      };
+    addRectangularHullButton.Click += AddRectangularHullButton_Click;
+    #endregion
+
+    components = new List<IComponent>()
+    {
+      addRectangularHullButton,
+    };
   }
 
   /*protected List<IEntity> CopyEntitiesFromController(Controller controller)
@@ -91,6 +114,10 @@ public class BuildControllerState : MenuState
       return;
     }
     var playerWithBufferClicked = selectionCircle.Contains(Input.PositionGameCoords);
+    if (IsMouseAboveComponent())
+    {
+      return;
+    }
     if (!playerWithBufferClicked)
     {
       ReturnToPreviousState();
@@ -113,6 +140,23 @@ public class BuildControllerState : MenuState
       timer.Stop();
       timer.Reset();
     }
+  }
+  private void AddRectangularHullButton_Click(object sender, EventArgs e)
+  {
+    //if(!wasPressed)
+    controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(controllerEdited.Position, 1, ID_COMPOSITE.DEFAULT_SINGLE));
+  }
+
+  private bool IsMouseAboveComponent()
+  {
+    foreach (IComponent c in components)
+    {
+      if (c is Button b && b.IsHovering())
+      {
+        return true;
+      }
+    }
+    return false;
   }
 
   private bool CheckIfEntityClicked()

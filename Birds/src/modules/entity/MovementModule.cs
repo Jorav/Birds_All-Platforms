@@ -12,8 +12,21 @@ public class MovementModule : ModuleBase, IMovementModule
   protected Vector2 position;
   public virtual Vector2 Velocity { get; set; }
   public virtual float Friction { get; set; } = 0.1f;
-  public Vector2 TotalExteriorForce;
+  private Vector2 totalExteriorForce;
 
+  public Vector2 TotalExteriorForce
+  {
+    get => totalExteriorForce;
+    set
+    {
+      if (IsInvalid(value))
+      {
+          throw new Exception();
+      }
+
+      totalExteriorForce = value;
+    }
+  }
   public MovementModule() : base()
   {
   }
@@ -111,5 +124,11 @@ public class MovementModule : ModuleBase, IMovementModule
     cloned.Position = this.Position;
     cloned.TotalExteriorForce = Vector2.Zero;
     return cloned;
+  }
+
+  private static bool IsInvalid(Vector2 v)
+  {
+    return float.IsNaN(v.X) || float.IsNaN(v.Y) ||
+           float.IsInfinity(v.X) || float.IsInfinity(v.Y);
   }
 }

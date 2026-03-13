@@ -26,9 +26,9 @@ public class Game1 : Game
   private State currentState;
   private State nextState;
   public static bool LOG_MODULE_PERFORMANCE = true;
-  public static bool DRAW_OBB_OUTLINE = true;
-  public static bool DRAW_BC_OUTLINE = true;
-  public static bool DRAW_AABB_OUTLINE = true;
+  public static bool DRAW_OBB_OUTLINE = false;
+  public static bool DRAW_BC_OUTLINE = false;
+  public static bool DRAW_AABB_OUTLINE = false;
 
   public Game1()
   {

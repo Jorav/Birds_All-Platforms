@@ -1,91 +1,91 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Linq;
-using Birds.src.containers.composite.blueprints;
+﻿  using System.Collections.Generic;
+  using System.IO;
+  using System;
+  using System.Text.Json;
+  using System.Threading.Tasks;
+  using System.Linq;
+  using Birds.src.containers.composite.blueprints;
 
-namespace Birds.src.storage.implementations
-{
-  public class JsonBlueprintStorage : IBlueprintStorage
+  namespace Birds.src.storage.implementations
   {
-    private readonly string _storagePath;
-
-    public JsonBlueprintStorage()
+    public class JsonBlueprintStorage : IBlueprintStorage
     {
-      _storagePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Birds", "blueprints");
-      Directory.CreateDirectory(_storagePath);
-    }
+      private readonly string _storagePath;
 
-    public async Task SaveBlueprintAsync(CompositeBlueprint blueprint)
-    {
-      var fileName = GetSafeFileName(blueprint.Name) + ".json";
-      var filePath = Path.Combine(_storagePath, fileName);
-
-      var json = JsonSerializer.Serialize(blueprint, new JsonSerializerOptions
+      public JsonBlueprintStorage()
       {
-        WriteIndented = true
-      });
+        _storagePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Birds", "blueprints");
+        Directory.CreateDirectory(_storagePath);
+      }
 
-      await File.WriteAllTextAsync(filePath, json);
-    }
-
-    public async Task<CompositeBlueprint> LoadBlueprintAsync(string name)
-    {
-      var fileName = GetSafeFileName(name) + ".json";
-      var filePath = Path.Combine(_storagePath, fileName);
-
-      if (!File.Exists(filePath))
-        throw new FileNotFoundException($"Blueprint '{name}' not found");
-
-      var json = await File.ReadAllTextAsync(filePath);
-      return JsonSerializer.Deserialize<CompositeBlueprint>(json);
-    }
-
-    public async Task<List<string>> GetBlueprintNamesAsync()
-    {
-      return await Task.Run(() =>
+      public async Task SaveBlueprintAsync(CompositeBlueprint blueprint)
       {
-        if (!Directory.Exists(_storagePath))
-          return new List<string>();
+        var fileName = GetSafeFileName(blueprint.Name) + ".json";
+        var filePath = Path.Combine(_storagePath, fileName);
 
-        return Directory.GetFiles(_storagePath, "*.json")
-            .Select(f => Path.GetFileNameWithoutExtension(f))
-            .Select(RestoreOriginalName)
-            .OrderBy(name => name)
-            .ToList();
-      });
-    }
+        var json = JsonSerializer.Serialize(blueprint, new JsonSerializerOptions
+        {
+          WriteIndented = true
+        });
 
-    public async Task DeleteBlueprintAsync(string name)
-    {
-      var fileName = GetSafeFileName(name) + ".json";
-      var filePath = Path.Combine(_storagePath, fileName);
+        await File.WriteAllTextAsync(filePath, json);
+      }
 
-      await Task.Run(() =>
+      public async Task<CompositeBlueprint> LoadBlueprintAsync(string name)
       {
-        if (File.Exists(filePath))
-          File.Delete(filePath);
-      });
-    }
+        var fileName = GetSafeFileName(name) + ".json";
+        var filePath = Path.Combine(_storagePath, fileName);
 
-    public async Task<bool> BlueprintExistsAsync(string name)
-    {
-      var fileName = GetSafeFileName(name) + ".json";
-      var filePath = Path.Combine(_storagePath, fileName);
-      return await Task.Run(() => File.Exists(filePath));
-    }
+        if (!File.Exists(filePath))
+          throw new FileNotFoundException($"Blueprint '{name}' not found");
 
-    private string GetSafeFileName(string name)
-    {
-      var invalid = Path.GetInvalidFileNameChars();
-      return invalid.Aggregate(name, (current, c) => current.Replace(c, '_'));
-    }
+        var json = await File.ReadAllTextAsync(filePath);
+        return JsonSerializer.Deserialize<CompositeBlueprint>(json);
+      }
 
-    private string RestoreOriginalName(string safeFileName)
-    {
-      return safeFileName.Replace('_', ' ');
+      public async Task<List<string>> GetBlueprintNamesAsync()
+      {
+        return await Task.Run(() =>
+        {
+          if (!Directory.Exists(_storagePath))
+            return new List<string>();
+
+          return Directory.GetFiles(_storagePath, "*.json")
+              .Select(f => Path.GetFileNameWithoutExtension(f))
+              .Select(RestoreOriginalName)
+              .OrderBy(name => name)
+              .ToList();
+        });
+      }
+
+      public async Task DeleteBlueprintAsync(string name)
+      {
+        var fileName = GetSafeFileName(name) + ".json";
+        var filePath = Path.Combine(_storagePath, fileName);
+
+        await Task.Run(() =>
+        {
+          if (File.Exists(filePath))
+            File.Delete(filePath);
+        });
+      }
+
+      public async Task<bool> BlueprintExistsAsync(string name)
+      {
+        var fileName = GetSafeFileName(name) + ".json";
+        var filePath = Path.Combine(_storagePath, fileName);
+        return await Task.Run(() => File.Exists(filePath));
+      }
+
+      private string GetSafeFileName(string name)
+      {
+        var invalid = Path.GetInvalidFileNameChars();
+        return invalid.Aggregate(name, (current, c) => current.Replace(c, '_'));
+      }
+
+      private string RestoreOriginalName(string safeFileName)
+      {
+        return safeFileName.Replace('_', ' ');
+      }
     }
   }
-}

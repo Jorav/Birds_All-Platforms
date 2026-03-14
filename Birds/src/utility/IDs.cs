@@ -19,8 +19,7 @@ public enum ID_ENTITY
 
 public enum ID_COMPOSITE
 {
-  DEFAULT_SINGLE,
-  DEFAULT_COMBINED,
+  DEFAULT
 }
 
 public enum ID_CONTROLLER

@@ -63,7 +63,7 @@ public class BuildControllerState : MenuState
     float spacing = 5f;
     #region AddingButtons
     EntityButton addDefaultSingleButton = new EntityButton(
-      CompositeControllerFactory.Previews[ID_COMPOSITE.DEFAULT_SINGLE],
+      CompositeControllerFactory.Previews[CompositeControllerFactory.DEFAULT_SINGLE],
       SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, 1f)
     )
     {
@@ -73,7 +73,7 @@ public class BuildControllerState : MenuState
     addDefaultSingleButton.Click += AddDefaultSingleButton_Click;
 
     EntityButton addDefaultCrossButton = new EntityButton(
-       CompositeControllerFactory.Previews[ID_COMPOSITE.DEFAULT_COMBINED],
+       CompositeControllerFactory.Previews[CompositeControllerFactory.DEFAULT_CROSS],
        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, 1f)
     )
     {
@@ -149,7 +149,7 @@ public class BuildControllerState : MenuState
     }
     if (playerLastClicked)
     {
-      controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(Input.PositionGameCoords, 1, ID_COMPOSITE.DEFAULT_SINGLE));
+      controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(Input.PositionGameCoords, 1, CompositeControllerFactory.DEFAULT_SINGLE));
       timer.Stop();
       timer.Reset();
     }
@@ -157,13 +157,13 @@ public class BuildControllerState : MenuState
   private void AddDefaultSingleButton_Click(object sender, EventArgs e)
   {
     //if(!wasPressed)
-    controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(controllerEdited.Position, 1, ID_COMPOSITE.DEFAULT_SINGLE));
+    controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(controllerEdited.Position, 1, CompositeControllerFactory.DEFAULT_SINGLE));
   }
 
   private void AddDefaultCrossButton_Click(object sender, EventArgs e)
   {
     //if(!wasPressed)
-    controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(controllerEdited.Position, 1, ID_COMPOSITE.DEFAULT_COMBINED));
+    controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(controllerEdited.Position, 1, CompositeControllerFactory.DEFAULT_CROSS));
   }
 
   private bool IsMouseAboveComponent()

@@ -95,7 +95,7 @@ public class Game1 : Game
     dummyEntity.Update(new GameTime());
     dummyEntity.Dispose();
 
-    var dummyComposite = CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, ID_COMPOSITE.DEFAULT_SINGLE)[0] as CompositeController;
+    var dummyComposite = CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, CompositeControllerFactory.DEFAULT_SINGLE)[0] as CompositeController;
     dummyComposite?.Update(new GameTime());
     dummyComposite?.Dispose();
 

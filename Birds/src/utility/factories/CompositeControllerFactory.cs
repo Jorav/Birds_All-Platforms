@@ -16,6 +16,7 @@ using Birds.src.events;
 using Birds.src.modules.shared.collision_detection;
 using Birds.src.collision.BVH;
 using Birds.src.visual;
+using System.Diagnostics;
 
 namespace Birds.src.factories;
 
@@ -23,7 +24,10 @@ public static class CompositeControllerFactory
 {
   public static Stack<CompositeController> availableEntities = new(100);
   private static IBlueprintStorage _storage = new JsonBlueprintStorage();
-  public static Dictionary<ID_COMPOSITE, CompositeSprite> Previews { get; set; } = new();
+  public const string DEFAULT_SINGLE = "Single Entity";
+  public const string DEFAULT_CROSS = "Cross Shape";
+
+  public static Dictionary<string, CompositeSprite> Previews { get; set; } = new();
 
   public static CompositeController GetComposite(Vector2 position, string blueprintName)
   {
@@ -49,13 +53,7 @@ public static class CompositeControllerFactory
     return compositeController;
   }
 
-  private static CompositeController GetComposite(Vector2 position, ID_COMPOSITE id)
-  {
-    string blueprintName = GetBlueprintNameFromId(id);
-    return GetComposite(position, blueprintName);
-  }
-
-  public static List<IEntity> CreateComposites(Vector2 position, int numberOfComposites, ID_COMPOSITE id)
+  public static List<IEntity> CreateComposites(Vector2 position, int numberOfComposites, string id)
   {
     List<IEntity> returnedList = new List<IEntity>();
 
@@ -82,8 +80,7 @@ public static class CompositeControllerFactory
     composite.ClearModules();
     switch (id)
     {
-      case ID_COMPOSITE.DEFAULT_SINGLE:
-      case ID_COMPOSITE.DEFAULT_COMBINED:
+      default:
         composite.AddModule(new SubEntityVelocityReseter());
         composite.AddModule(new CohesiveGroupRotationModule());
         composite.AddModule(new CompositeMovementModule());
@@ -99,11 +96,7 @@ public static class CompositeControllerFactory
         composite.AddModule(new SubEntityCollisionExtractionModule());
         composite.AddModule(GetCollisionHandler());
         composite.AddModule(new GroupDrawModule());
-        //(probably) mass?
         break;
-
-      default:
-        throw new NotImplementedException();
     }
   }
 
@@ -120,12 +113,12 @@ public static class CompositeControllerFactory
   {
     switch (blueprintName)
     {
-      case "Single Entity":
-        return ID_COMPOSITE.DEFAULT_SINGLE;
-      case "Cross Shape":
-        return ID_COMPOSITE.DEFAULT_COMBINED;
+      case CompositeControllerFactory.DEFAULT_SINGLE:
+        return ID_COMPOSITE.DEFAULT;
+      case CompositeControllerFactory.DEFAULT_CROSS:
+        return ID_COMPOSITE.DEFAULT;
       default:
-        return ID_COMPOSITE.DEFAULT_SINGLE;
+        return ID_COMPOSITE.DEFAULT;
     }
   }
 
@@ -145,26 +138,13 @@ public static class CompositeControllerFactory
     }
   }
 
-  private static string GetBlueprintNameFromId(ID_COMPOSITE id)
-  {
-    switch (id)
-    {
-      case ID_COMPOSITE.DEFAULT_SINGLE:
-        return "Single Entity";
-      case ID_COMPOSITE.DEFAULT_COMBINED:
-        return "Cross Shape";
-      default:
-        throw new NotImplementedException($"Blueprint name not mapped for {id}");
-    }
-  }
-
   private static CompositeBlueprint TryGetPremadeBlueprint(string blueprintName)
   {
     switch (blueprintName)
     {
-      case "Single Entity":
+      case DEFAULT_SINGLE:
         return CreateSingleEntityBlueprint();
-      case "Cross Shape":
+      case DEFAULT_CROSS:
         return CreateCrossShapeBlueprint();
       default:
         return null;
@@ -173,14 +153,21 @@ public static class CompositeControllerFactory
 
   public static void InitializePreviews()
   {
-    var idsToLoad = new[] { ID_COMPOSITE.DEFAULT_SINGLE, ID_COMPOSITE.DEFAULT_COMBINED };
+    var savedNames = _storage.GetBlueprintNamesAsync().GetAwaiter().GetResult();
+    var blueprintNames = new List<string> { DEFAULT_SINGLE, DEFAULT_CROSS };
+    foreach (var name in savedNames)
+    {
+      if (!blueprintNames.Contains(name))
+        blueprintNames.Add(name);
+    }
+
     Vector2 spawnPos = Vector2.Zero;
 
-    foreach (var id in idsToLoad)
+    foreach (var name in blueprintNames)
     {
-      var tempComposite = GetComposite(spawnPos, id);
+      var tempComposite = GetComposite(spawnPos, name);
       var preview = new CompositeSprite(spawnPos, tempComposite.Entities);
-      Previews[id] = preview;
+      Previews[name] = preview;
       tempComposite.Dispose();
     }
   }
@@ -189,7 +176,7 @@ public static class CompositeControllerFactory
   {
     return new CompositeBlueprint
     {
-      Name = "Single Entity",
+      Name = DEFAULT_SINGLE,
       Entities = new List<EntityPlacement>
               {
                   new EntityPlacement { Id = 0, EntityType = ID_ENTITY.DEFAULT }
@@ -202,7 +189,7 @@ public static class CompositeControllerFactory
   {
     return new CompositeBlueprint
     {
-      Name = "Cross Shape",
+      Name = DEFAULT_CROSS,
       Entities = new List<EntityPlacement>
       {
           new EntityPlacement { Id = 0, EntityType = ID_ENTITY.DEFAULT }, // Center

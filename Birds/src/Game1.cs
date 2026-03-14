@@ -85,6 +85,7 @@ public class Game1 : Game
 
     currentState = new MainMenu(this, GraphicsDevice, Content, input);
     WarmupPropertyCache();
+    CompositeControllerFactory.InitializePreviews();
   }
 
   //Im not sure i like this but it does improve things significantly since we are compiling syncing

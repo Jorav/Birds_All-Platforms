@@ -16,6 +16,7 @@ using Birds.src.modules.shared.collision_detection;
 using static System.Formats.Asn1.AsnWriter;
 using System.Collections.Generic;
 using Birds.src.menu.controls;
+using Microsoft.Xna.Framework.Input;
 
 namespace Birds.src.menu;
 
@@ -37,11 +38,11 @@ public class BuildControllerState : MenuState
   private BoundingCircle selectionCircle;
 
   public BuildControllerState(
-    Game1 game, 
-    GraphicsDevice graphicsDevice, 
-    ContentManager content, 
-    State previousState, 
-    Input input, 
+    Game1 game,
+    GraphicsDevice graphicsDevice,
+    ContentManager content,
+    State previousState,
+    Input input,
     Controller originalController) : base(game, graphicsDevice, content, input)
   {
     controllerEdited = (Controller)originalController.Clone();
@@ -57,25 +58,37 @@ public class BuildControllerState : MenuState
     components = new();
     var boundingCircle = controllerEdited.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
     selectionCircle = BoundingAreaFactory.GetCircle(boundingCircle.Position, boundingCircle.Radius * selectionBuffer);
-    float scale = 3f;
+    float buttonScale = 3f;
     float xOffset = 50f;
-    float buttonDistance = 5f;
+    float spacing = 5f;
     #region AddingButtons
-    EntityButton addRectangularHullButton =
-    new EntityButton(
-    SpriteFactory.GetSprite(ID_SPRITE.HULL_RECTANGULAR, Vector2.Zero, scale),
-        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale),
-    true)
+    EntityButton addDefaultSingleButton = new EntityButton(
+      CompositeControllerFactory.Previews[ID_COMPOSITE.DEFAULT_SINGLE],
+      SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, 1f)
+    )
     {
-      Scale = scale,
-        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - xOffset, 20),
-      };
-    addRectangularHullButton.Click += AddRectangularHullButton_Click;
+      Scale = buttonScale,
+      Position = new Vector2(Game1.ScreenWidth - (SpriteFactory.textures[(int)ID_SPRITE.BUTTON_ENTITY].Width * buttonScale) - xOffset, 20),
+    };
+    addDefaultSingleButton.Click += AddDefaultSingleButton_Click;
+
+    EntityButton addDefaultCrossButton = new EntityButton(
+       CompositeControllerFactory.Previews[ID_COMPOSITE.DEFAULT_COMBINED],
+       SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, 1f)
+    )
+    {
+      Scale = buttonScale,
+      Position = new Vector2(
+            addDefaultSingleButton.Position.X,
+            addDefaultSingleButton.Position.Y + addDefaultSingleButton.Rectangle.Height + spacing)
+    };
+    addDefaultCrossButton.Click += AddDefaultCrossButton_Click;
     #endregion
 
     components = new List<IComponent>()
     {
-      addRectangularHullButton,
+      addDefaultSingleButton,
+      addDefaultCrossButton
     };
   }
 
@@ -141,10 +154,16 @@ public class BuildControllerState : MenuState
       timer.Reset();
     }
   }
-  private void AddRectangularHullButton_Click(object sender, EventArgs e)
+  private void AddDefaultSingleButton_Click(object sender, EventArgs e)
   {
     //if(!wasPressed)
     controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(controllerEdited.Position, 1, ID_COMPOSITE.DEFAULT_SINGLE));
+  }
+
+  private void AddDefaultCrossButton_Click(object sender, EventArgs e)
+  {
+    //if(!wasPressed)
+    controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(controllerEdited.Position, 1, ID_COMPOSITE.DEFAULT_COMBINED));
   }
 
   private bool IsMouseAboveComponent()

@@ -11,7 +11,7 @@ namespace Birds.src.menu.controls
     #region Fields
     //protected SpriteFont font;
     protected internal bool isHovering;
-    protected Sprite sprite;
+    protected ISprite sprite;
     #endregion
 
     #region Properties
@@ -30,7 +30,7 @@ namespace Birds.src.menu.controls
       set 
       { 
         sprite.Scale = value;
-        scale = value; 
+        scale = value;
       } 
     } //doesnt work with text
     public Vector2 Dimensions { get { return new Vector2(sprite.Width, sprite.Height); } }
@@ -46,7 +46,7 @@ namespace Birds.src.menu.controls
     #endregion
 
     #region Methods
-    public Button(Sprite sprite, SpriteFont font = null, String text = null)
+    public Button(ISprite sprite, SpriteFont font = null, String text = null)
     {
       this.sprite = sprite;
       position = sprite.Position;

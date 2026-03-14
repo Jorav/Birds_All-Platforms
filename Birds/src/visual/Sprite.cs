@@ -7,7 +7,7 @@ using Birds.src.utility;
 
 namespace Birds.src.visual;
 
-public class Sprite : IComponent
+public class Sprite : ISprite
 {
   private Texture2D texture;
   public Texture2D Texture { get { return texture; } set { texture = value; Origin = new Vector2(texture.Width / 2, texture.Height / 2); } }
@@ -42,6 +42,18 @@ public class Sprite : IComponent
     Color c = new Color(Color, alpha: Alpha);
     if (isVisible)
       sb.Draw(texture, Position, null, new Color(Color, alpha: Alpha), Rotation, Origin, Scale, SpriteEffects.None, 0f);
+  }
+
+  public Sprite Clone()
+  {
+    return new Sprite(this.texture, this.Scale, this.Alpha)
+    {
+      Color = this.Color,
+      Rotation = this.Rotation, // Keep original relative rotation
+      Origin = this.Origin,
+      Position = this.Position,
+      isVisible = this.isVisible
+    };
   }
 
   public void Dispose()

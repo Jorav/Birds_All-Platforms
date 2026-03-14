@@ -17,6 +17,7 @@ using Birds.src.modules.shared.collision_detection;
 using Birds.src.collision.BVH;
 using Birds.src.visual;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Birds.src.factories;
 
@@ -170,6 +171,21 @@ public static class CompositeControllerFactory
       Previews[name] = preview;
       tempComposite.Dispose();
     }
+  }
+
+  public static async Task SaveAndRegisterComposite(CompositeController composite, string blueprintName)
+  {
+    var entities = composite.Entities.Cast<WorldEntity>().ToList();
+    var blueprint = BlueprintFactory.CreateBlueprint(entities, blueprintName);
+    await _storage.SaveBlueprintAsync(blueprint);
+    var preview = new CompositeSprite(composite.Position.Value, composite.Entities);
+
+    if (Previews.ContainsKey(blueprintName))
+    {
+      // If your CompositeSprite has a Dispose or cleanup, call it here
+    }
+
+    Previews[blueprintName] = preview;
   }
 
   private static CompositeBlueprint CreateSingleEntityBlueprint()

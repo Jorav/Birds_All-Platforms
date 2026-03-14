@@ -17,6 +17,7 @@ using static System.Formats.Asn1.AsnWriter;
 using System.Collections.Generic;
 using Birds.src.menu.controls;
 using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 namespace Birds.src.menu;
 
@@ -36,6 +37,8 @@ public class BuildControllerState : MenuState
   private int doubleClickTreshold = 400;
   private const float selectionBuffer = 1.5f;
   private BoundingCircle selectionCircle;
+
+  private List<EntityButton> blueprintButtons = new List<EntityButton>();
 
   public BuildControllerState(
     Game1 game,
@@ -61,35 +64,50 @@ public class BuildControllerState : MenuState
     float buttonScale = 3f;
     float xOffset = 50f;
     float spacing = 5f;
-    #region AddingButtons
-    EntityButton addDefaultSingleButton = new EntityButton(
-      CompositeControllerFactory.Previews[CompositeControllerFactory.DEFAULT_SINGLE],
-      SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, 1f)
-    )
-    {
-      Scale = buttonScale,
-      Position = new Vector2(Game1.ScreenWidth - (SpriteFactory.textures[(int)ID_SPRITE.BUTTON_ENTITY].Width * buttonScale) - xOffset, 20),
-    };
-    addDefaultSingleButton.Click += AddDefaultSingleButton_Click;
+    LoadBlueprintButtons();
+  }
 
-    EntityButton addDefaultCrossButton = new EntityButton(
-       CompositeControllerFactory.Previews[CompositeControllerFactory.DEFAULT_CROSS],
-       SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, 1f)
-    )
+  public void LoadBlueprintButtons()
+  {
+    foreach (var btn in blueprintButtons)
     {
-      Scale = buttonScale,
-      Position = new Vector2(
-            addDefaultSingleButton.Position.X,
-            addDefaultSingleButton.Position.Y + addDefaultSingleButton.Rectangle.Height + spacing)
-    };
-    addDefaultCrossButton.Click += AddDefaultCrossButton_Click;
-    #endregion
+      components.Remove(btn);
+    }
+    blueprintButtons.Clear();
+    float scale = 2.5f;
+    float buttonHeight = SpriteFactory.textures[(int)ID_SPRITE.BUTTON_ENTITY].Height * scale;
+    float xOffset = SpriteFactory.textures[(int)ID_SPRITE.BUTTON_ENTITY].Width * scale + 20f;
+    float startY = 20f;
+    float padding = 10f;
+    int count = 0;
 
-    components = new List<IComponent>()
+    foreach (var kvp in CompositeControllerFactory.Previews.Take(10))
     {
-      addDefaultSingleButton,
-      addDefaultCrossButton
-    };
+      string blueprintName = kvp.Key;
+      CompositeSprite previewSprite = kvp.Value;
+
+      EntityButton btn = new EntityButton(
+          previewSprite,
+          SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale),
+          autoFit: true
+      )
+      {
+        Scale = scale,
+        Position = new Vector2(Game1.ScreenWidth - xOffset, startY + (count * (buttonHeight + padding)))
+      };
+
+      btn.Click += (sender, e) => OnBlueprintButtonClicked(blueprintName, sender as EntityButton);
+
+      blueprintButtons.Add(btn);
+      components.Add(btn);
+
+      count++;
+    }
+  }
+
+  private void OnBlueprintButtonClicked(string blueprintName, EntityButton clickedButton)
+  {
+    controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(controllerEdited.Position, 1, blueprintName));
   }
 
   /*protected List<IEntity> CopyEntitiesFromController(Controller controller)
@@ -153,17 +171,6 @@ public class BuildControllerState : MenuState
       timer.Stop();
       timer.Reset();
     }
-  }
-  private void AddDefaultSingleButton_Click(object sender, EventArgs e)
-  {
-    //if(!wasPressed)
-    controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(controllerEdited.Position, 1, CompositeControllerFactory.DEFAULT_SINGLE));
-  }
-
-  private void AddDefaultCrossButton_Click(object sender, EventArgs e)
-  {
-    //if(!wasPressed)
-    controllerEdited.Entities.AddRange(CompositeControllerFactory.CreateComposites(controllerEdited.Position, 1, CompositeControllerFactory.DEFAULT_CROSS));
   }
 
   private bool IsMouseAboveComponent()

@@ -266,8 +266,8 @@ public class EditEntityState : MenuState
     {
       if (entity.Contains(Input.PositionGameCoords))
       {
-        bool succefullyReplaced = editedEntity.ReplaceEntity(entity, WorldEntityFactory.CreateEntities(entity.Position, 1, idToBeAddded, isComposite: true).First());
-        if (succefullyReplaced)
+        bool successfullyReplaced = editedEntity.ReplaceAndAttach(entity, WorldEntityFactory.CreateEntities(Vector2.Zero, 1, idToBeAddded, isComposite: true).First());
+        if (successfullyReplaced)
         {
           linkManagementModule.AddFillerEntities();
         }
@@ -327,6 +327,11 @@ public class EditEntityState : MenuState
   {
     var pixelTexture = new Texture2D(graphicsDevice, 1, 1);
     pixelTexture.SetData(new[] { Color.Green });
+
+    var fillerEntity = WorldEntityFactory.GetEntity(Vector2.Zero, ID_ENTITY.FILLER, false);
+    var fillerLinkModule = fillerEntity.GetModule<LinkModule>();
+    var fillerLink = fillerLinkModule?.Links.Count > 0 ? fillerLinkModule.Links[0] : null;
+
     foreach (IEntity entity in editedEntity.Entities)
     {
       var linkModule = entity.GetModule<LinkModule>();
@@ -335,9 +340,16 @@ public class EditEntityState : MenuState
         if (link.ConnectionAvailable)
         {
           spriteBatch.Draw(pixelTexture, new Rectangle((int)link.AbsolutePositionOnEntity.X - 2, (int)link.AbsolutePositionOnEntity.Y - 2, 4, 4), Color.Yellow);
-          spriteBatch.Draw(pixelTexture, new Rectangle((int)link.ConnectionPosition.X - 2, (int)link.ConnectionPosition.Y - 2, 4, 4), Color.Blue);
+
+          if (fillerLink != null)
+          {
+            Vector2 connectionPos = link.GetConnectionPosition(fillerLink);
+            spriteBatch.Draw(pixelTexture, new Rectangle((int)connectionPos.X - 2, (int)connectionPos.Y - 2, 4, 4), Color.Blue);
+          }
         }
       }
     }
-  }
+
+    fillerEntity.Dispose();
+  } 
 }

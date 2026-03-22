@@ -60,7 +60,7 @@ public static class BlueprintFactory
 
       if (link1.ConnectionAvailable && link2.ConnectionAvailable)
       {
-        entity2LinkModule.ConnectEntityAgainstThis(entity1, link2, link1);
+        entity2LinkModule.ConnectAgainstEntity(entity1, link2, link1);
       }
     }
   }

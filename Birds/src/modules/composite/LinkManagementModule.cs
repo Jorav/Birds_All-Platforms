@@ -107,12 +107,13 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
         if (!link.ConnectionAvailable)
           continue;
 
-        var fillerEntity = WorldEntityFactory.GetEntity(link.ConnectionPosition, ID_ENTITY.FILLER, false);
+        var fillerEntity = WorldEntityFactory.GetEntity(link.AbsolutePositionOnEntity, ID_ENTITY.FILLER, false);
         fillerEntity.Mass.Value = 1f;
         var fillerLinkModule = fillerEntity.GetModule<LinkModule>();
-        var backLink = fillerLinkModule.Links[2];
-        if (backLink != null)
-          fillerLinkModule.ConnectEntityAgainstThis(entity, backLink, link);
+
+        var connectionLink = fillerLinkModule.Links.Count > 0 ? (fillerLinkModule.Links.Count == 4 ? fillerLinkModule.Links[2] : fillerLinkModule.Links[0]) : null;
+        if (connectionLink != null)
+          fillerLinkModule.ConnectAgainstEntity(entity, connectionLink, link);
 
         bool overlaps = false;
         foreach (var existingEntity in container.Entities)

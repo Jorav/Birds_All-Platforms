@@ -13,13 +13,7 @@ public class LinkModule : ModuleBase
   public float InternalRotation { get; set; } = 0f;
   public LinkManagementModule Manager { get; set; }
 
-  private List<LinkConfiguration> _linkConfigurations = new List<LinkConfiguration>
-  {
-    new LinkConfiguration { Angle = 0, Distance = 0.5f },
-    new LinkConfiguration { Angle = 90, Distance = 0.5f },
-    new LinkConfiguration { Angle = 180, Distance = 0.5f },
-    new LinkConfiguration { Angle = 270, Distance = 0.5f }
-  };
+  private List<LinkConfiguration> _linkConfigurations = new List<LinkConfiguration>();
 
   protected override void ConfigurePropertySync()
   {
@@ -49,7 +43,7 @@ public class LinkModule : ModuleBase
     {
       foreach (var config in _linkConfigurations)
       {
-        Vector2 offset = config.GetOffset(container.Width.Value);
+        Vector2 offset = config.GetOffset(container.Width.Value, container.Height.Value);
         Links.Add(new Link(offset, entity));
       }
     }
@@ -61,20 +55,23 @@ public class LinkModule : ModuleBase
     {
       for (int i = 0; i < Links.Count && i < _linkConfigurations.Count; i++)
       {
-        Vector2 newOffset = _linkConfigurations[i].GetOffset(container.Width.Value);
+        Vector2 newOffset = _linkConfigurations[i].GetOffset(container.Width.Value, container.Height.Value);
         Links[i].UpdateOffset(newOffset);
       }
     }
   }
 
-  public void ConnectEntityAgainstThis(IEntity otherEntity, Link myLink, Link otherLink)
+  public void ConnectAgainstEntity(IEntity otherEntity, Link myLink, Link otherLink)
   {
     otherLink.SeverConnection();
     myLink.SeverConnection();
+
     float otherLinkWorldAngle = otherLink.LinkRotation + otherEntity.Rotation.Value;
     float targetLinkWorldAngle = otherLinkWorldAngle + MathHelper.Pi;
+
     container.Rotation.Value = MathHelper.WrapAngle(targetLinkWorldAngle - myLink.LinkRotation);
-    container.Position.Value = otherLink.ConnectionPosition;
+    container.Position.Value = otherLink.GetConnectionPosition(myLink);
+
     myLink.ConnectTo(otherLink);
   }
 
@@ -83,17 +80,17 @@ public class LinkModule : ModuleBase
     foreach (Link link in Links)
     {
       if (!link.ConnectionAvailable)
-      {
         continue;
-      }
+
       foreach (Link linkOther in otherModule.Links)
       {
         if (!linkOther.ConnectionAvailable)
-        {
           continue;
-        }
-        if (container.Contains(linkOther.ConnectionPosition)
-          && otherModule.container.Contains(link.ConnectionPosition))
+
+        Vector2 myConnectionPos = link.GetConnectionPosition(linkOther);
+        Vector2 otherConnectionPos = linkOther.GetConnectionPosition(link);
+
+        if (container.Contains(otherConnectionPos) && otherModule.container.Contains(myConnectionPos))
         {
           link.ConnectTo(linkOther);
         }
@@ -122,7 +119,56 @@ public class LinkModule : ModuleBase
       }
     }
   }
+  public (Link myLink, Link otherLink)? GetFirstConnection()
+  {
+    foreach (var link in Links)
+    {
+      if (!link.ConnectionAvailable)
+      {
+        return (link, link.connection);
+      }
+    }
+    return null;
+  }
 
+  public bool ReplaceWithNewEntity(IEntity oldEntity, IEntity newEntity, IModuleContainer parentContainer)
+  {
+    var connection = GetFirstConnection();
+    if (connection == null)
+    {
+      return false;
+    }
+
+    var (oldLink, connectedLink) = connection.Value;
+
+    SeverConnections();
+    parentContainer.Entities.Remove(oldEntity);
+
+    var newLinkModule = newEntity.GetModule<LinkModule>();
+    if (newLinkModule == null || newLinkModule.Links.Count == 0)
+    {
+      parentContainer.Entities.Add(oldEntity);
+      oldLink.ConnectTo(connectedLink);
+      return false;
+    }
+
+    var newLink = newLinkModule.Links[0];
+    newLinkModule.ConnectAgainstEntity(connectedLink.Entity, newLink, connectedLink);
+
+    foreach (IEntity e in parentContainer.Entities)
+    {
+      if (e.CollidesWith(newEntity))
+      {
+        newLinkModule.SeverConnections();
+        parentContainer.Entities.Add(oldEntity);
+        oldLink.ConnectTo(connectedLink);
+        return false;
+      }
+    }
+
+    parentContainer.Entities.Add(newEntity);
+    return true;
+  }
   public override object Clone()
   {
     var cloned = new LinkModule();

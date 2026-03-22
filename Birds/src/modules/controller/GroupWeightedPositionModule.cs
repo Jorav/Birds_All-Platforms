@@ -1,6 +1,7 @@
 ﻿using Birds.src.containers.entity;
 using Birds.src.events;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Birds.src.modules.controller;
 
@@ -52,17 +53,18 @@ public class GroupWeightedPositionModule : ModuleBase, IEntityCollectionListener
 
   private void UpdatePosition()
   {
+    Position = CalculateCenterOfMass(container.Entities);
+  }
+
+  public static Vector2 CalculateCenterOfMass(IEnumerable<IEntity> entities)
+  {
     Vector2 sum = Vector2.Zero;
     float weight = 0;
-    foreach (IEntity entity in container.Entities)
+    foreach (IEntity entity in entities)
     {
-      weight += entity.Mass;
+      weight += entity.Mass.Value;
       sum += entity.Position.Value * entity.Mass.Value;
     }
-    if (weight > 0)
-    {
-      Position = sum / weight;
-    }
+    return weight > 0 ? sum / weight : Vector2.Zero;
   }
 }
-

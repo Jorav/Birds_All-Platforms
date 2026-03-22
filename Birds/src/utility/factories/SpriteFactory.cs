@@ -58,22 +58,4 @@ public static class SpriteFactory
     }
     return s;
   }
-
-  public static Sprite GetSprite(ID_ENTITY id, Vector2 position, float scale = 1)
-  {
-
-    Vector2 defaultPosition = Vector2.Zero;
-    switch (id)
-    {
-      case ID_ENTITY.DEFAULT: return GetSprite(ID_SPRITE.HULL_RECTANGULAR, position, scale);
-      case ID_ENTITY.FILLER: return GetSprite(ID_SPRITE.FILLER, position, scale);
-      #region background
-      case ID_ENTITY.CLOUD: return GetSprite(ID_SPRITE.CLOUD, position, scale);
-      case ID_ENTITY.SUN: return GetSprite(ID_SPRITE.SUN, position, scale);
-      #endregion
-
-      default:
-        throw new NotImplementedException();
-    }
-  }
 }

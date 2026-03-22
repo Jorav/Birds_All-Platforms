@@ -7,12 +7,44 @@ using Birds.src.modules.entity;
 using Birds.src.containers.entity;
 using Birds.src.modules.entity.collision_handling;
 using Birds.src.collision.bounding_areas;
+using Birds.src.visual;
+using Birds.src.utility.factories;
 
 namespace Birds.src.factories;
 
 public static class WorldEntityFactory
 {
   public static Stack<WorldEntity> availableEntities = new(100);
+
+  public static Dictionary<ID_ENTITY, ISprite> Previews { get; private set; } = new();
+
+  public static readonly Dictionary<ID_ENTITY, ID_SPRITE> EntityToSpriteMap = new()
+  {
+    { ID_ENTITY.DEFAULT, ID_SPRITE.HULL_RECTANGULAR },
+    { ID_ENTITY.CIRCULAR, ID_SPRITE.HULL_CIRCULAR },
+    { ID_ENTITY.LINK_COMPOSITE, ID_SPRITE.HULL_LINK },
+    { ID_ENTITY.ENGINE, ID_SPRITE.ENGINE },
+    { ID_ENTITY.SHOOTER, ID_SPRITE.GUN },
+    { ID_ENTITY.SPIKE, ID_SPRITE.SPIKE },
+    { ID_ENTITY.FILLER, ID_SPRITE.FILLER },
+    { ID_ENTITY.SUN, ID_SPRITE.SUN },
+    { ID_ENTITY.CLOUD, ID_SPRITE.CLOUD },
+  };
+
+  static WorldEntityFactory()
+  {
+    WorldEntityLoader.Initialize();
+  }
+
+  public static void InitializePreviews()
+  {
+    Previews.Clear();
+    foreach (var kvp in EntityToSpriteMap)
+    {
+      var sprite = SpriteFactory.GetSprite(kvp.Value, Vector2.Zero, 1f);
+      Previews[kvp.Key] = sprite;
+    }
+  }
 
   public static WorldEntity GetEntity(Vector2 position, ID_ENTITY id, bool isComposite = false)
   {
@@ -25,67 +57,11 @@ public static class WorldEntityFactory
     {
       we = new WorldEntity();
     }
+    
     we.EntityID = id;
     we.Position.Value = position;
-    SetModules(we, id, isComposite);
+    WorldEntityLoader.ApplyConfiguration(we, id, isComposite);
     return we;
-  }
-
-  public static void SetModules(IEntity entity, ID_ENTITY id, bool isPartOfComposite = false)
-  {
-    var sprite = SpriteFactory.GetSprite(id, entity.Position.Value, entity.Scale.Value);
-    entity.Width.Value = sprite.Width;
-    entity.Height.Value = sprite.Height;
-    entity.ClearModules();
-    switch (id)
-    {
-      case ID_ENTITY.FILLER:
-      case ID_ENTITY.DEFAULT:
-        entity.AddModule(GetCollisionHandler(isPartOfComposite));
-        if (!isPartOfComposite)
-        {
-          entity.AddModule(new MovementModule());
-          entity.AddModule(new RotationModule());
-        }
-        entity.AddModule(new RadiusModule());
-        entity.AddModule(new CollisionDetectionModule(
-            BoundingAreaFactory.GetOBB(entity.Position.Value, entity.Rotation.Value, (int)entity.Width.Value, (int)entity.Height.Value)
-        ));
-        entity.AddModule(new LinkModule());
-        entity.AddModule(new DrawModule(sprite));
-        break;
-
-      /*
-      case IDs.EMPTY_LINK: return new RectangularComposite(new Sprite(emptyLink), position);
-      case IDs.COMPOSITE: return new RectangularComposite(new Sprite(rectangularHull), position) { Mass = 2 };
-      case IDs.CIRCULAR_COMPOSITE: return new CircularComposite(new Sprite(circularHull), position) { Mass = 2, Scale = 2 };
-      case IDs.LINK_COMPOSITE: return new LinkComposite(new Sprite(linkHull), position) { Mass = 1f, Thrust = 0.5f };
-      case IDs.TRIANGULAR_EQUAL_COMPOSITE: return new TriangularEqualLeggedComposite(new Sprite(triangularEqualLeggedHull), position) { Mass = 2 };
-      case IDs.TRIANGULAR_90ANGLE_COMPOSITE: return new Triangular90AngleComposite(new Sprite(triangular90AngleHull), position) { Mass = 2 };
-      case IDs.SHOOTER: return new Shooter(new Sprite(gun), position, (Projectile)Create(position, IDs.PROJECTILE))
-      { Thrust = 0, FireRatePerSecond = 10f, FiringStrength = 14, Mass = 0.5f };
-      case IDs.PROJECTILE: return new Projectile(new Sprite(projectile), position)
-      { Mass = 0.4f, Friction = 0.03f, MaxLifeSpan = 3f, MinLifeSpan = 1f };
-      case IDs.SPIKE: return new Spike(new Sprite(spike), position) { Thrust = 0, Mass = 0.5f };
-      case IDs.ENGINE: return new WorldEntity(new Sprite(engine), position) {Mass = 0.5f, Thrust = 2f };
-      //case (int)IDs.COMPOSITE: return new Composite(new Sprite(hull), position);*/
-      #region background
-      case ID_ENTITY.CLOUD:
-        entity.AddModule(new MovementModule());
-        entity.AddModule(new DrawModule(sprite));
-        entity.Scale.Value = 3;
-        break;
-
-      case ID_ENTITY.SUN:
-        entity.AddModule(new MovementModule());
-        entity.AddModule(new DrawModule(sprite));
-        entity.Scale.Value = 5;
-        break;
-      #endregion
-
-      default:
-        throw new NotImplementedException();
-    }
   }
 
   public static CollisionHandlerModule GetCollisionHandler(bool isComposite)
@@ -110,7 +86,7 @@ public static class WorldEntityFactory
       Random rnd = new Random();
       if (!isBackground)
       {
-        for (int i = 0; i < numberOfEntities-1; i++)
+        for (int i = 0; i < numberOfEntities - 1; i++)
         {
           float rRadius = (float)(rnd.NextDouble() * we.Radius * 2 * Math.Sqrt(numberOfEntities));
           float rAngle = (float)(rnd.NextDouble() * 2 * Math.PI);
@@ -120,7 +96,7 @@ public static class WorldEntityFactory
       }
       else
       {
-        for (int i = 0; i < numberOfEntities-1; i++)
+        for (int i = 0; i < numberOfEntities - 1; i++)
         {
           float x = GameState.Player.Position.Value.X + (float)((rnd.NextDouble() * (Game1.ScreenWidth - 32 * 2) - Game1.ScreenWidth / 2) + 32);
           float y = GameState.Player.Position.Value.Y + (float)((rnd.NextDouble() * (Game1.ScreenHeight - 32 * 2) - Game1.ScreenHeight / 2) + 32);
@@ -130,16 +106,5 @@ public static class WorldEntityFactory
       }
     }
     return returnedList;
-  }
-
-  public static void ConvertToComposite(IEntity entity)
-  {
-    throw new NotImplementedException();
-    var entityID = (entity as WorldEntity)?.EntityID ?? ID_ENTITY.DEFAULT;
-    var childEntity = (IEntity)entity.Clone();
-    SetModules(childEntity, entityID, isPartOfComposite: true);
-    //set id of oldentity to composite
-    //convert to composite with compositefactory
-    entity.Entities.Add(childEntity);
   }
 }

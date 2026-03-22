@@ -30,7 +30,7 @@ public static class CompositeControllerFactory
 
   public static Dictionary<string, CompositeSprite> Previews { get; set; } = new();
 
-  public static CompositeController GetComposite(Vector2 position, string blueprintName)
+  public static CompositeController GetComposite(Vector2 position, string blueprintName, bool useGeometricCenter = false)
   {
     CompositeController compositeController;
     if (availableEntities.Count > 0)
@@ -43,7 +43,7 @@ public static class CompositeControllerFactory
     }
 
     var blueprint = GetBlueprintByName(blueprintName);
-    var entities = BlueprintFactory.CreateFromBlueprint(blueprint, position);
+    var entities = BlueprintFactory.CreateFromBlueprint(blueprint, position, useGeometricCenter);
     var iEntities = entities.Cast<IEntity>().ToList();
 
     compositeController.Position.Value = position;
@@ -166,7 +166,7 @@ public static class CompositeControllerFactory
 
     foreach (var name in blueprintNames)
     {
-      var tempComposite = GetComposite(spawnPos, name);
+      var tempComposite = GetComposite(spawnPos, name, true);
       var preview = new CompositeSprite(spawnPos, tempComposite.Entities);
       Previews[name] = preview;
       tempComposite.Dispose();

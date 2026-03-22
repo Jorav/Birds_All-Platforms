@@ -1,7 +1,10 @@
 ﻿using Birds.src.containers.composite.blueprints;
 using Birds.src.containers.composite.blueprints.parts;
 using Birds.src.containers.entity;
+using Birds.src.modules.composite;
+using Birds.src.modules.controller;
 using Birds.src.modules.entity;
+using Birds.src.modules.shared.position;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -10,9 +13,9 @@ namespace Birds.src.factories;
 
 public static class BlueprintFactory
 {
-  public static List<WorldEntity> CreateFromBlueprint(CompositeBlueprint blueprint, Vector2 spawnPosition)
+  public static List<WorldEntity> CreateFromBlueprint(CompositeBlueprint blueprint, Vector2 spawnPosition, bool useGeometricCenter = false)
   {
-    if (blueprint == null || blueprint?.Entities == null || blueprint?.Connections == null || blueprint.Entities.Count == 0)
+    if (blueprint == null || blueprint.Entities == null || blueprint.Connections == null || blueprint.Entities.Count == 0)
       throw new Exception("Faulty blueprint input");
 
     var entities = new List<WorldEntity>();
@@ -20,12 +23,22 @@ public static class BlueprintFactory
 
     foreach (var placement in blueprint.Entities)
     {
-      var entity = WorldEntityFactory.GetEntity(spawnPosition, placement.EntityType, true);
+      var entity = WorldEntityFactory.GetEntity(Vector2.Zero, placement.EntityType, true);
       entities.Add(entity);
       entityLookup[placement.Id] = entity;
     }
 
     ConnectEntities(blueprint.Connections, entityLookup);
+
+    Vector2 currentCenter = useGeometricCenter
+        ? GroupGeometricPositionModule.CalculateGeographicCenter(entities)
+        : GroupWeightedPositionModule.CalculateCenterOfMass(entities);
+
+    Vector2 alignmentOffset = spawnPosition - currentCenter;
+    foreach (var entity in entities)
+    {
+      entity.Position.Value += alignmentOffset;
+    }
 
     return entities;
   }

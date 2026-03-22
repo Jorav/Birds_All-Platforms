@@ -7,6 +7,7 @@ using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Birds.src.modules.composite;
 
@@ -152,6 +153,13 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
       fillerEntity.Dispose();
     }
     fillerEntities.Clear();
+  }
+
+  public override object Clone()
+  {
+    var clone = (LinkManagementModule)this.MemberwiseClone();
+    clone.fillerEntities = new();
+    return clone;
   }
 
   public override void Dispose()

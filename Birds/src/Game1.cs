@@ -85,6 +85,7 @@ public class Game1 : Game
 
     currentState = new MainMenu(this, GraphicsDevice, Content, input);
     WarmupPropertyCache();
+    WorldEntityFactory.InitializePreviews();
     CompositeControllerFactory.InitializePreviews();
   }
 

@@ -22,18 +22,26 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\AABBTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\ICollisionStructure.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\BVH\ListCollisionStructure.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\LinkConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\LinkModuleParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\controller\Background.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\containers\composite\Link.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\IEntityCollectionListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ObservableCollectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\SyncedProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\TextInputBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\EditEntityState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\CompositeMovementModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\GroupPositionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\position\GroupGeometricPositionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\shared\position\GroupAveragePositionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\LinkManagementModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\SeparationDetectionModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\FlockingCohesionModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\model\ModuleConfigurationEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\model\WorldEntityConfigurationFile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\model\WorldEntityConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\WorldEntityLoader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\visual\CompositeSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\visual\ISprite.cs" />
     <Compile Include="..\Birds\src\modules\composite\SubEntityCollisionExtractionModule.cs" />
@@ -148,7 +156,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\font\" />
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\RotatingHull\" />
     <Folder Include="$(MSBuildThisFileDirectory)Content\obj\DesktopGL\net6.0\solar\" />
-    <Folder Include="$(MSBuildThisFileDirectory)src\containers\composite\" />
     <Folder Include="$(MSBuildThisFileDirectory)src\containers\controller\" />
   </ItemGroup>
   <ItemGroup>
@@ -157,5 +164,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory).config\dotnet-tools.json" />
+    <Content Include="$(MSBuildThisFileDirectory)src\WorldEntities.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

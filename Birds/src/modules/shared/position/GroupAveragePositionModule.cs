@@ -1,9 +1,11 @@
 ﻿using Birds.src.containers.entity;
 using Birds.src.events;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Birds.src.modules.composite;
-public class GroupPositionModule : ModuleBase
+
+public class GroupAveragePositionModule : ModuleBase
 {
   public Vector2 Position { get; set; }
 
@@ -14,15 +16,18 @@ public class GroupPositionModule : ModuleBase
 
   protected override void Update(GameTime gameTime)
   {
+    Position = CalculateAverageCenter(container.Entities);
+  }
+
+  public static Vector2 CalculateAverageCenter(IEnumerable<IEntity> entities)
+  {
     Vector2 sum = Vector2.Zero;
-    foreach (IEntity entity in container.Entities)
+    int count = 0;
+    foreach (IEntity entity in entities)
     {
       sum += entity.Position.Value;
+      count++;
     }
-    if (container.Entities.Count > 0)
-    {
-      Position = sum / container.Entities.Count;
-    }
+    return count > 0 ? sum / count : Vector2.Zero;
   }
 }
-

@@ -33,6 +33,18 @@ public enum ID_CONTROLLER
   BACKGROUND_SUN,
   FOREGROUND_CLOUD,
 }
+
+public enum ID_MODULE
+{
+  CollisionHandlerModule,
+  MovementModule,
+  RotationModule,
+  RadiusModule,
+  CollisionDetectionModule,
+  LinkModule,
+  DrawModule
+}
+
 public enum ID_POSITION
 {
   POSITION_MIDDLE,

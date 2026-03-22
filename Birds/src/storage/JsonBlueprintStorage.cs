@@ -28,8 +28,13 @@
           WriteIndented = true
         });
 
-        await File.WriteAllTextAsync(filePath, json);
+      using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, useAsync: true))
+      using (var writer = new StreamWriter(stream))
+      {
+        await writer.WriteAsync(json);
+        await writer.FlushAsync();
       }
+    }
 
       public async Task<CompositeBlueprint> LoadBlueprintAsync(string name)
       {

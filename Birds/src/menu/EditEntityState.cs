@@ -7,6 +7,7 @@ using Birds.src.modules.composite;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.collision_detection;
 using Birds.src.utility;
+using Birds.src.utility.factories;
 using Birds.src.visual;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -30,6 +31,14 @@ public class EditEntityState : MenuState
   EntityButton previouslyClicked;
   private bool wasPressed = true;
   private readonly Sprite overlay;
+  private bool isSaveModalOpen = false;
+  private TextInputBox textInput;
+  private Button openSaveModalButton;
+  private Button confirmSaveButton;
+  private Button cancelSaveButton;
+  private SpriteFont font;
+  private bool saveAndExit;
+  private List<EntityButton> partButtons = new List<EntityButton>();
 
   public EditEntityState(
     Game1 game,
@@ -54,130 +63,157 @@ public class EditEntityState : MenuState
     Input.Camera.Controller = editedController;
     Input.Camera.InBuildScreen = true;
     idToBeAddded = ID_ENTITY.DEFAULT;
-    float scale = 3f;
-    float xOffset = 50f;
-    float buttonDistance = 5f;
+
     overlay = SpriteFactory.GetSprite(ID_SPRITE.BACKGROUND_WHITE, new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2), SpriteFactory.textures[(int)ID_SPRITE.BACKGROUND_WHITE].Height / Game1.ScreenHeight);
+    font = Game1.font;
 
-    #region AddingButtons
-    EntityButton addRectangularHullButton =
-      new EntityButton(
-        SpriteFactory.GetSprite(ID_SPRITE.HULL_RECTANGULAR, Vector2.Zero, scale),
-        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale),
-        true)
-      {
-        Scale = scale,
-        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - xOffset, 20),
-      };
-    addRectangularHullButton.Click += AddRectangularHullButton_Click;
-    addRectangularHullButton.IsClicked = true;
-    clicked = addRectangularHullButton;
+    // Load part buttons dynamically from WorldEntityFactory.Previews
+    LoadPartButtons();
 
-    EntityButton addCircularHullButton =
-      new EntityButton(
-        SpriteFactory.GetSprite(ID_SPRITE.HULL_CIRCULAR, Vector2.Zero, scale),
-        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale),
-        true)
-      {
-        Scale = scale,
-        Position = new Vector2(addRectangularHullButton.Position.X - addRectangularHullButton.entitySprite.Width * scale - buttonDistance, 20),
-      };
-    addCircularHullButton.Click += AddCircularHullButton_Click;
-
-    EntityButton addLinkHullButton =
-      new EntityButton(
-        SpriteFactory.GetSprite(ID_SPRITE.HULL_LINK, Vector2.Zero, scale),
-        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale),
-        true)
-      {
-        Scale = scale,
-        Position = new Vector2(addCircularHullButton.Position.X - addCircularHullButton.entitySprite.Width * scale - buttonDistance, 20),
-      };
-    addLinkHullButton.Click += AddLinkHullButton_Click;
-
-    EntityButton addEngineButton =
-      new EntityButton(
-        SpriteFactory.GetSprite(ID_SPRITE.ENGINE, Vector2.Zero, scale),
-        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale))
-      {
-        Scale = scale,
-        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - xOffset, buttonDistance + addRectangularHullButton.Position.Y + addRectangularHullButton.Rectangle.Height),
-      };
-    addEngineButton.Click += AddEngineButton_Click;
-
-    EntityButton addShooterButton =
-      new EntityButton(
-        SpriteFactory.GetSprite(ID_SPRITE.GUN, Vector2.Zero, scale),
-        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale))
-      {
-        Scale = scale,
-        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - xOffset, buttonDistance + addEngineButton.Position.Y + addEngineButton.Rectangle.Height),
-      };
-    addShooterButton.Click += AddShooterButton_Click;
-
-    EntityButton addSpikeButton =
-      new EntityButton(
-        SpriteFactory.GetSprite(ID_SPRITE.SPIKE, Vector2.Zero, scale),
-        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale))
-      {
-        Scale = scale,
-        Position = new Vector2(Game1.ScreenWidth - SpriteFactory.textures[(int)ID_SPRITE.HULL_RECTANGULAR].Width * scale - xOffset, buttonDistance + addShooterButton.Position.Y + addShooterButton.Rectangle.Height),
-      };
-    addSpikeButton.Click += AddSpikeButton_Click;
-    #endregion
-
-    components = new List<IComponent>()
+    // Save button
+    openSaveModalButton = new Button(SpriteFactory.GetSprite(ID_SPRITE.BUTTON, Vector2.Zero, 2f), font)
     {
-      addRectangularHullButton,
-      addCircularHullButton,
-      addLinkHullButton,
-      addEngineButton,
-      addShooterButton,
-      addSpikeButton,
+      Text = "Save",
+      Position = new Vector2(Game1.ScreenWidth - 200, Game1.ScreenHeight - 80),
     };
+    openSaveModalButton.Click += OpenSaveModalButton_Click;
+    components.Add(openSaveModalButton);
+
+    // Modal components
+    textInput = new TextInputBox(new Rectangle(Game1.ScreenWidth / 2 - 150, Game1.ScreenHeight / 2 - 20, 300, 40), font, graphicsDevice);
+
+    confirmSaveButton = new Button(SpriteFactory.GetSprite(ID_SPRITE.BUTTON, Vector2.Zero, 2f), font)
+    {
+      Text = "Confirm",
+      Position = new Vector2(Game1.ScreenWidth / 2 - 150, Game1.ScreenHeight / 2 + 30),
+    };
+    confirmSaveButton.Click += ConfirmSaveButton_Click;
+
+    cancelSaveButton = new Button(SpriteFactory.GetSprite(ID_SPRITE.BUTTON, Vector2.Zero, 2f), font)
+    {
+      Text = "Cancel",
+      Position = new Vector2(Game1.ScreenWidth / 2 + 10, Game1.ScreenHeight / 2 + 30),
+    };
+    cancelSaveButton.Click += CancelSaveButton_Click;
+
     AddOpenLinks();
   }
 
-  #region OnClicks
-  private void AddEngineButton_Click(object sender, EventArgs e)
+  private void LoadPartButtons()
   {
-    idToBeAddded = ID_ENTITY.ENGINE;
-    clicked = (EntityButton)sender;
+    foreach (var btn in partButtons)
+    {
+      components.Remove(btn);
+    }
+    partButtons.Clear();
+
+    float scale = 3f;
+    float xOffset = 50f;
+    float buttonDistance = 5f;
+    float currentY = 20f;
+    int buttonsPerRow = 3;
+    int buttonIndex = 0;
+
+    foreach (var kvp in WorldEntityFactory.Previews)
+    {
+      ID_ENTITY partID = kvp.Key;
+      ISprite previewSprite = kvp.Value;
+
+      if (!WorldEntityLoader.HasModule(partID, ID_MODULE.LinkModule)
+        || partID == ID_ENTITY.FILLER)
+        continue;
+
+      int row = buttonIndex / buttonsPerRow;
+      int col = buttonIndex % buttonsPerRow;
+
+      float xPos = Game1.ScreenWidth - xOffset - (SpriteFactory.textures[(int)ID_SPRITE.BUTTON_ENTITY].Width * scale + buttonDistance) * (buttonsPerRow - col);
+      float yPos = currentY + row * (SpriteFactory.textures[(int)ID_SPRITE.BUTTON_ENTITY].Height * scale + buttonDistance);
+
+      EntityButton btn = new EntityButton(
+        previewSprite,
+        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale),
+        autoFit: true
+      )
+      {
+        Scale = scale,
+        Position = new Vector2(xPos, yPos)
+      };
+
+      btn.Click += (sender, e) => OnPartButtonClicked(partID, sender as EntityButton);
+
+      if (buttonIndex == 0)
+      {
+        btn.IsClicked = true;
+        clicked = btn;
+        idToBeAddded = partID;
+      }
+
+      partButtons.Add(btn);
+      components.Add(btn);
+      buttonIndex++;
+    }
   }
 
-  private void AddLinkHullButton_Click(object sender, EventArgs e)
+  private void OnPartButtonClicked(ID_ENTITY partID, EntityButton clickedButton)
   {
-    idToBeAddded = ID_ENTITY.LINK_COMPOSITE;
-    clicked = (EntityButton)sender;
+    idToBeAddded = partID;
+    clicked = clickedButton;
   }
 
-  private void AddCircularHullButton_Click(object sender, EventArgs e)
+  private void OpenSaveModalButton_Click(object sender, EventArgs e)
   {
-    idToBeAddded = ID_ENTITY.CIRCULAR;
-    clicked = (EntityButton)sender;
+    isSaveModalOpen = true;
+    textInput.IsActive = true;
   }
 
-  private void AddSpikeButton_Click(object sender, EventArgs e)
+  private void CancelSaveButton_Click(object sender, EventArgs e)
   {
-    idToBeAddded = ID_ENTITY.SPIKE;
-    clicked = (EntityButton)sender;
+    isSaveModalOpen = false;
+    textInput.IsActive = false;
   }
 
-  private void AddRectangularHullButton_Click(object sender, EventArgs e)
+  private async void ConfirmSaveButton_Click(object sender, EventArgs e)
   {
-    idToBeAddded = ID_ENTITY.DEFAULT;
-    clicked = (EntityButton)sender;
+    if (string.IsNullOrWhiteSpace(textInput.Text))
+    {
+      return;
+    }
+    saveAndExit = true;
   }
 
-  private void AddShooterButton_Click(object sender, EventArgs e)
+  private async void SaveEntityAnUpdatePreviousState()
   {
-    idToBeAddded = ID_ENTITY.SHOOTER;
-    clicked = (EntityButton)sender;
+    var managementModule = editedEntity.GetModule<LinkManagementModule>();
+    managementModule.ClearFillerEntities();
+    var entitiesToSave = editedEntity.Entities.Cast<WorldEntity>().ToList();
+    var blueprint = BlueprintFactory.CreateBlueprint(entitiesToSave, textInput.Text);
+    await new Birds.src.storage.implementations.JsonBlueprintStorage().SaveBlueprintAsync(blueprint);
+    CompositeControllerFactory.InitializePreviews();
+    isSaveModalOpen = false;
+    textInput.IsActive = false;
+
+    if (previousState is BuildControllerState buildState)
+    {
+      buildState.LoadBlueprintButtons();
+    }
   }
-  #endregion
 
   public override void Update(GameTime gameTime)
   {
+    if (saveAndExit)
+    {
+      SaveEntityAnUpdatePreviousState();
+      ReturnToPreviousState();
+      return;
+    }
+    if (isSaveModalOpen)
+    {
+      textInput.Update(gameTime);
+      confirmSaveButton.Update(gameTime);
+      cancelSaveButton.Update(gameTime);
+      return;
+    }
+
     base.Update(gameTime);
     Input.HandleZoom();
     editedController.Update(gameTime);
@@ -192,13 +228,10 @@ public class EditEntityState : MenuState
       {
         AddEntityIfFillerClicked();
       }
-      else if(!wasPressed)
+      else if (!wasPressed)
       {
         ReturnToPreviousState();
       }
-    }
-    if (input.BuildClicked)
-    {
     }
     wasPressed = Input.IsPressed;
   }
@@ -274,8 +307,20 @@ public class EditEntityState : MenuState
     editedController.Draw(spriteBatch);
     DrawAvailableLinks(spriteBatch);
     spriteBatch.End();
-
     base.Draw(gameTime, spriteBatch);
+
+    if (isSaveModalOpen)
+    {
+      spriteBatch.Begin();
+      var darkOverlay = new Texture2D(graphicsDevice, 1, 1);
+      darkOverlay.SetData(new[] { new Color(0, 0, 0, 150) });
+      spriteBatch.Draw(darkOverlay, new Rectangle(0, 0, Game1.ScreenWidth, Game1.ScreenHeight), Color.White);
+      spriteBatch.DrawString(font, "Name the blueprint:", new Vector2(Game1.ScreenWidth / 2 - 150, Game1.ScreenHeight / 2 - 50), Color.White);
+      textInput.Draw(spriteBatch);
+      confirmSaveButton.Draw(spriteBatch);
+      cancelSaveButton.Draw(spriteBatch);
+      spriteBatch.End();
+    }
   }
 
   private void DrawAvailableLinks(SpriteBatch spriteBatch)

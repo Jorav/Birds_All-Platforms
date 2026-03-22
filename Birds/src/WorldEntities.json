@@ -1,0 +1,202 @@
+﻿{
+    "Default": {
+        "Properties": {
+            "Scale": 1.0,
+            "Mass": 1.0,
+            "Radius": 1.0,
+            "Thrust": 1.0,
+            "Width": 1.0,
+            "Height": 1.0,
+            "ResolveInternalCollisions": true
+        },
+        "Modules": [
+            {
+                "Type": "CollisionHandlerModule",
+                "Parameters": {}
+            },
+            {
+                "Type": "MovementModule",
+                "Parameters": {}
+            },
+            {
+                "Type": "RotationModule",
+                "Parameters": {}
+            },
+            {
+                "Type": "RadiusModule",
+                "Parameters": {}
+            },
+            {
+                "Type": "CollisionDetectionModule",
+                "Parameters": {}
+            },
+            {
+                "Type": "LinkModule",
+                "Parameters": {
+                    "Links": [
+                        {
+                            "Angle": 180,
+                            "Distance": 0.5
+                        }
+                    ]
+                }
+            },
+            {
+                "Type": "DrawModule",
+                "Parameters": {}
+            }
+        ]
+    },
+    "Entities": {
+        "DEFAULT": {
+            "Modules": [
+                {
+                    "Type": "CollisionHandlerModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "MovementModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "RotationModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "RadiusModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "CollisionDetectionModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "LinkModule",
+                    "Parameters": {
+                        "Links": [
+                            {
+                                "Angle": 0,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 90,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 180,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 270,
+                                "Distance": 0.5
+                            }
+                        ]
+                    }
+                },
+                {
+                    "Type": "DrawModule",
+                    "Parameters": {}
+                }
+            ]
+        },
+        "FILLER": {
+            "Modules": [
+                {
+                    "Type": "CollisionHandlerModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "MovementModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "RotationModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "RadiusModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "CollisionDetectionModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "LinkModule",
+                    "Parameters": {
+                        "Links": [
+                            {
+                                "Angle": 0,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 90,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 180,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 270,
+                                "Distance": 0.5
+                            }
+                        ]
+                    }
+                },
+                {
+                    "Type": "DrawModule",
+                    "Parameters": {}
+                }
+            ]
+        },
+        "SUN": {
+            "Properties": {
+                "Scale": 5.0
+            },
+            "Modules": [
+                {
+                    "Type": "MovementModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "DrawModule",
+                    "Parameters": {}
+                }
+            ]
+        },
+        "CLOUD": {
+            "Properties": {
+                "Scale": 3.0
+            },
+            "Modules": [
+                {
+                    "Type": "MovementModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "DrawModule",
+                    "Parameters": {}
+                }
+            ]
+        },
+        "ENGINE": {
+            "Properties": {
+                "Mass": 0.5,
+                "Thrust": 2.0
+            }
+        },
+        "SHOOTER": {
+            "Properties": {
+                "Thrust": 0.0,
+                "Mass": 0.5
+            }
+        },
+        "SPIKE": {
+            "Properties": {
+                "Thrust": 0.0,
+                "Mass": 0.5
+            }
+        }
+    }
+}

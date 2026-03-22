@@ -10,19 +10,21 @@ public class Link
   public IEntity Entity { get; private set; }
   public Link connection;
   public Vector2 RelativePosition { get; private set; }
-  public Vector2 RelativePositionRotated {
+  public Vector2 RelativePositionRotated
+  {
     get
-    { 
-      return RelativePosition.Length()* Scale * new Vector2((float)Math.Cos(MathHelper.WrapAngle(LinkRotation + Entity.Rotation.Value)),
-        (float)Math.Sin(MathHelper.WrapAngle(LinkRotation + Entity.Rotation.Value))); 
-    } 
+    {
+      return RelativePosition.Length() * Scale * new Vector2((float)Math.Cos(MathHelper.WrapAngle(LinkRotation + Entity.Rotation.Value)),
+        (float)Math.Sin(MathHelper.WrapAngle(LinkRotation + Entity.Rotation.Value)));
+    }
   }
   public Vector2 AbsolutePositionOnEntity { get { return Entity.Position.Value + RelativePositionRotated; } }
-  public Vector2 ConnectionPosition { 
+  public Vector2 ConnectionPosition
+  {
     get
-    { 
+    {
       Vector2 dir = new Vector2((float)Math.Cos(MathHelper.WrapAngle(LinkRotation + Entity.Rotation.Value)),
-        (float)Math.Sin(MathHelper.WrapAngle(LinkRotation + Entity.Rotation.Value))); 
+        (float)Math.Sin(MathHelper.WrapAngle(LinkRotation + Entity.Rotation.Value)));
       if (!ConnectionAvailable)
       {
         return Entity.Position.Value + DistanceFromConnection * dir;
@@ -35,9 +37,10 @@ public class Link
   }
   public float Scale { get; set; }
   public float LinkRotation { get; set; }
-  public float DistanceFromConnection {
+  public float DistanceFromConnection
+  {
     get
-    { 
+    {
       if (!ConnectionAvailable)
       {
         return RelativePosition.Length() * Scale + connection.RelativePosition.Length() * connection.Scale;
@@ -47,16 +50,22 @@ public class Link
   }
   public bool ConnectionAvailable { get { return connection == null; } }
 
-public Link(Vector2 relativePosition, IEntity entity, Link connection = null)
-{
+  public Link(Vector2 relativePosition, IEntity entity, Link connection = null)
+  {
     this.Entity = entity;
     this.RelativePosition = relativePosition;
     this.connection = connection;
-    
+
     LinkRotation = (float)Math.Atan2(relativePosition.Y, relativePosition.X);
-    
+
     Scale = 1;
-}
+  }
+
+  public void UpdateOffset(Vector2 newOffset)
+  {
+    this.RelativePosition = newOffset;
+    this.LinkRotation = (float)Math.Atan2(newOffset.Y, newOffset.X);
+  }
 
   public void ConnectTo(Link l)
   {

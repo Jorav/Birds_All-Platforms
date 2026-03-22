@@ -13,8 +13,21 @@ public class LinkModule : ModuleBase
   public float InternalRotation { get; set; } = 0f;
   public LinkManagementModule Manager { get; set; }
 
+  private List<LinkConfiguration> _linkConfigurations = new List<LinkConfiguration>
+  {
+    new LinkConfiguration { Angle = 0, Distance = 0.5f },
+    new LinkConfiguration { Angle = 90, Distance = 0.5f },
+    new LinkConfiguration { Angle = 180, Distance = 0.5f },
+    new LinkConfiguration { Angle = 270, Distance = 0.5f }
+  };
+
   protected override void ConfigurePropertySync()
   {
+  }
+
+  public void SetLinkConfigurations(List<LinkConfiguration> configurations)
+  {
+    _linkConfigurations = configurations;
   }
 
   public override void Initialize(IModuleContainer container)
@@ -34,10 +47,23 @@ public class LinkModule : ModuleBase
 
     if (container is IEntity entity)
     {
-      Links.Add(new Link(new Vector2(container.Width / 2, 0), entity));   // Right (0)
-      Links.Add(new Link(new Vector2(0, container.Width / 2), entity));   // Down (1)
-      Links.Add(new Link(new Vector2(-container.Width / 2, 0), entity));  // Left (2)
-      Links.Add(new Link(new Vector2(0, -container.Width / 2), entity));  // Up (3)
+      foreach (var config in _linkConfigurations)
+      {
+        Vector2 offset = config.GetOffset(container.Width.Value);
+        Links.Add(new Link(offset, entity));
+      }
+    }
+  }
+
+  public void UpdateScale(float scale)
+  {
+    if (container is IEntity entity)
+    {
+      for (int i = 0; i < Links.Count && i < _linkConfigurations.Count; i++)
+      {
+        Vector2 newOffset = _linkConfigurations[i].GetOffset(container.Width.Value);
+        Links[i].UpdateOffset(newOffset);
+      }
     }
   }
 
@@ -97,18 +123,19 @@ public class LinkModule : ModuleBase
     }
   }
 
-  public void UpdateScale(float scale)
-  {
-    foreach (var link in Links)
-    {
-      link.Scale = scale;
-    }
-  }
-
   public override object Clone()
   {
     var cloned = new LinkModule();
     cloned.InternalRotation = this.InternalRotation;
+    cloned._linkConfigurations = new List<LinkConfiguration>();
+    foreach (var config in _linkConfigurations)
+    {
+      cloned._linkConfigurations.Add(new LinkConfiguration
+      {
+        Angle = config.Angle,
+        Distance = config.Distance
+      });
+    }
     return cloned;
   }
 

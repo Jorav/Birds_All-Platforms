@@ -40,6 +40,7 @@ public static class SpriteFactory
       case ID_SPRITE.GUN: s.Texture = textures[(int)ID_SPRITE.GUN]; break;
       case ID_SPRITE.SPIKE: s.Texture = textures[(int)ID_SPRITE.SPIKE]; break;
       case ID_SPRITE.FILLER: s.Texture = textures[(int)ID_SPRITE.FILLER]; break;
+      case ID_SPRITE.HULL_THIN: s.Texture = textures[(int)ID_SPRITE.HULL_THIN]; break;
       #endregion
       #region background
       case ID_SPRITE.CLOUD: s.Texture = textures[(int)ID_SPRITE.CLOUD]; break;

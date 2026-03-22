@@ -34,6 +34,6 @@ public bool ReplaceEntity(IEntity oldEntity, IEntity newEntity)
       return ReplaceEntity(oldEntity, newEntity);
     }
 
-    return oldLinkModule.ReplaceWithNewEntity(oldEntity, newEntity, this);
+    return oldLinkModule.ReplaceWithNewEntity(newEntity, this);
   }
 }

@@ -2,7 +2,6 @@
 using Birds.src.events;
 using Birds.src.factories;
 using Birds.src.modules.entity;
-using Birds.src.modules.entity.collision_handling;
 using Birds.src.collision.bounding_areas;
 using Birds.src.visual;
 using Microsoft.Xna.Framework;

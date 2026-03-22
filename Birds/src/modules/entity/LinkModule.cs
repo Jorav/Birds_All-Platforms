@@ -119,35 +119,33 @@ public class LinkModule : ModuleBase
       }
     }
   }
-  public (Link myLink, Link otherLink)? GetFirstConnection()
+  public Link? GetFirstConnection()
   {
     foreach (var link in Links)
     {
       if (!link.ConnectionAvailable)
       {
-        return (link, link.connection);
+        return link;
       }
     }
     return null;
   }
 
-  public bool ReplaceWithNewEntity(IEntity oldEntity, IEntity newEntity, IModuleContainer parentContainer)
+  public bool ReplaceWithNewEntity(IEntity newEntity, IModuleContainer parentContainer)
   {
-    var connection = GetFirstConnection();
-    if (connection == null)
+    var oldLink = (Links.Count == 4 && !Links[2].ConnectionAvailable) ? Links[2] : GetFirstConnection();
+    if (oldLink == null)
     {
       return false;
     }
-
-    var (oldLink, connectedLink) = connection.Value;
-
+    var connectedLink = oldLink.connection;
     SeverConnections();
-    parentContainer.Entities.Remove(oldEntity);
+    parentContainer.Entities.Remove((IEntity)container);
 
     var newLinkModule = newEntity.GetModule<LinkModule>();
     if (newLinkModule == null || newLinkModule.Links.Count == 0)
     {
-      parentContainer.Entities.Add(oldEntity);
+      parentContainer.Entities.Add((IEntity)container);
       oldLink.ConnectTo(connectedLink);
       return false;
     }
@@ -160,7 +158,7 @@ public class LinkModule : ModuleBase
       if (e.CollidesWith(newEntity))
       {
         newLinkModule.SeverConnections();
-        parentContainer.Entities.Add(oldEntity);
+        parentContainer.Entities.Add((IEntity)container);
         oldLink.ConnectTo(connectedLink);
         return false;
       }

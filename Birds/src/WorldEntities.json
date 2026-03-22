@@ -201,7 +201,66 @@
                 }
             ]
         },
+        "HULL_THIN": {
+            "Properties": {
+                "Mass": 0.5,
+                "Thrust": 0
+            },
+            "Modules": [
+                {
+                    "Type": "CollisionHandlerModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "MovementModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "RotationModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "RadiusModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "CollisionDetectionModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "LinkModule",
+                    "Parameters": {
+                        "Links": [
+                            {
+                                "Angle": 0,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 90,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 180,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 270,
+                                "Distance": 0.5
+                            }
+                        ]
+                    }
+                },
+                {
+                    "Type": "DrawModule",
+                    "Parameters": {}
+                }
+            ]
+        },
         "LINK_COMPOSITE": {
+            "Properties": {
+                "Mass": 0.5,
+                "Thrust": 0.5
+            },
             "Modules": [
                 {
                     "Type": "CollisionHandlerModule",

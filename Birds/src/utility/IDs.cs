@@ -14,7 +14,8 @@ public enum ID_ENTITY
   ENGINE,
   CLOUD,
   SUN,
-  FILLER
+  FILLER,
+  HULL_THIN
 }
 
 public enum ID_COMPOSITE
@@ -69,6 +70,7 @@ public enum ID_SPRITE
   BUTTON,
   BACKGROUND_GRAY,
   BACKGROUND_WHITE,
+  HULL_THIN
 }
 public enum ID_MOVEMENT_MODULE
 {

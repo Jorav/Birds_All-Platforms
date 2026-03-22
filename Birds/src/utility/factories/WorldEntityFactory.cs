@@ -29,6 +29,7 @@ public static class WorldEntityFactory
     { ID_ENTITY.FILLER, ID_SPRITE.FILLER },
     { ID_ENTITY.SUN, ID_SPRITE.SUN },
     { ID_ENTITY.CLOUD, ID_SPRITE.CLOUD },
+    { ID_ENTITY.HULL_THIN, ID_SPRITE.HULL_THIN},
   };
 
   static WorldEntityFactory()

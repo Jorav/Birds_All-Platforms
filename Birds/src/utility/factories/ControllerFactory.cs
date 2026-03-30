@@ -152,6 +152,7 @@ namespace Birds.src.factories
           c.AddModule(new GroupDrawModule());
           c.AddModule(new GroupRadiusModule());
           c.Position.Value = position;
+          c.Scale.Value = 3;
           return c;
 
         default:

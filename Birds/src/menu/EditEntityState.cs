@@ -18,19 +18,15 @@ using System.Linq;
 
 namespace Birds.src.menu;
 
-public class EditEntityState : MenuState
+public class EditEntityState : BuildStateBase
 {
-  State previousState;
-  State backgroundState;
-  IEntity editedEntity;
-  IEntity originalEntity;
-  Controller editedController;
-  Controller originalController;
-  ID_ENTITY idToBeAddded;
-  EntityButton clicked;
-  EntityButton previouslyClicked;
-  private bool wasPressed = true;
-  private readonly Sprite overlay;
+  private IEntity editedEntity;
+  private IEntity originalEntity;
+  private ID_ENTITY idToBeAddded;
+  private EntityButton clicked;
+  private EntityButton previouslyClicked;
+  private EntityButtonManager buttonManager;
+
   private bool isSaveModalOpen = false;
   private TextInputBox textInput;
   private Button openSaveModalButton;
@@ -38,39 +34,41 @@ public class EditEntityState : MenuState
   private Button cancelSaveButton;
   private SpriteFont font;
   private bool saveAndExit;
-  private List<EntityButton> partButtons = new List<EntityButton>();
 
   public EditEntityState(
-    Game1 game,
-    GraphicsDevice graphicsDevice,
-    ContentManager content,
-    State stateToReturnTo,
-    State stateToDraw,
-    Input input,
-    Controller originalController,
-    IEntity editedEntity) : base(game, graphicsDevice, content, input)
+      Game1 game,
+      GraphicsDevice graphicsDevice,
+      ContentManager content,
+      State stateToReturnTo,
+      State stateToDraw,
+      Input input,
+      Controller originalController,
+      IEntity editedEntity) : base(game, graphicsDevice, content, stateToDraw, input, originalController)
   {
-    this.originalController = originalController;
-    this.previousState = stateToReturnTo;
-    this.backgroundState = stateToDraw;
-    components = new List<IComponent>();
+    this.backgroundState = stateToReturnTo;
+
     this.editedEntity = (IEntity)editedEntity.Clone();
     originalEntity = editedEntity;
     editedController = ControllerFactory.Create(
-         new List<IEntity> { this.editedEntity },
+        new List<IEntity> { this.editedEntity },
         ID_CONTROLLER.DEFAULT
-        );
-    Input.Camera.Controller = editedController;
-    Input.Camera.InBuildScreen = true;
-    idToBeAddded = ID_ENTITY.DEFAULT;
+    );
 
-    overlay = SpriteFactory.GetSprite(ID_SPRITE.BACKGROUND_WHITE, new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2), SpriteFactory.textures[(int)ID_SPRITE.BACKGROUND_WHITE].Height / Game1.ScreenHeight);
+    idToBeAddded = ID_ENTITY.DEFAULT;
     font = Game1.font;
 
-    // Load part buttons dynamically from WorldEntityFactory.Previews
+    InitializeButtons();
+    InitializeModalComponents();
+    AddOpenLinks();
+    Input.Camera.Controller = editedController;
+    Input.Camera.InBuildScreen = true;
+  }
+
+  private void InitializeButtons()
+  {
+    buttonManager = new EntityButtonManager(components);
     LoadPartButtons();
 
-    // Save button
     openSaveModalButton = new Button(SpriteFactory.GetSprite(ID_SPRITE.BUTTON, Vector2.Zero, 2f), font)
     {
       Text = "Save",
@@ -78,8 +76,31 @@ public class EditEntityState : MenuState
     };
     openSaveModalButton.Click += OpenSaveModalButton_Click;
     components.Add(openSaveModalButton);
+  }
 
-    // Modal components
+  private void LoadPartButtons()
+  {
+    buttonManager.CreateButtonGrid(
+        WorldEntityFactory.Previews,
+        OnPartButtonClicked,
+        scale: 3f,
+        buttonsPerRow: 3,
+        startX: 50f,
+        filter: partID => WorldEntityLoader.HasModule(partID, ID_MODULE.LinkModule) && partID != ID_ENTITY.FILLER
+    );
+
+    clicked = buttonManager.GetFirstButton();
+    if (clicked != null)
+    {
+      buttonManager.SetFirstButtonSelected();
+      idToBeAddded = WorldEntityFactory.Previews.First(kvp =>
+          WorldEntityLoader.HasModule(kvp.Key, ID_MODULE.LinkModule) &&
+          kvp.Key != ID_ENTITY.FILLER).Key;
+    }
+  }
+
+  private void InitializeModalComponents()
+  {
     textInput = new TextInputBox(new Rectangle(Game1.ScreenWidth / 2 - 150, Game1.ScreenHeight / 2 - 20, 300, 40), font, graphicsDevice);
 
     confirmSaveButton = new Button(SpriteFactory.GetSprite(ID_SPRITE.BUTTON, Vector2.Zero, 2f), font)
@@ -95,63 +116,6 @@ public class EditEntityState : MenuState
       Position = new Vector2(Game1.ScreenWidth / 2 + 10, Game1.ScreenHeight / 2 + 30),
     };
     cancelSaveButton.Click += CancelSaveButton_Click;
-
-    AddOpenLinks();
-  }
-
-  private void LoadPartButtons()
-  {
-    foreach (var btn in partButtons)
-    {
-      components.Remove(btn);
-    }
-    partButtons.Clear();
-
-    float scale = 3f;
-    float xOffset = 50f;
-    float buttonDistance = 5f;
-    float currentY = 20f;
-    int buttonsPerRow = 3;
-    int buttonIndex = 0;
-
-    foreach (var kvp in WorldEntityFactory.Previews)
-    {
-      ID_ENTITY partID = kvp.Key;
-      ISprite previewSprite = kvp.Value;
-
-      if (!WorldEntityLoader.HasModule(partID, ID_MODULE.LinkModule)
-        || partID == ID_ENTITY.FILLER)
-        continue;
-
-      int row = buttonIndex / buttonsPerRow;
-      int col = buttonIndex % buttonsPerRow;
-
-      float xPos = Game1.ScreenWidth - xOffset - (SpriteFactory.textures[(int)ID_SPRITE.BUTTON_ENTITY].Width * scale + buttonDistance) * (buttonsPerRow - col);
-      float yPos = currentY + row * (SpriteFactory.textures[(int)ID_SPRITE.BUTTON_ENTITY].Height * scale + buttonDistance);
-
-      EntityButton btn = new EntityButton(
-        previewSprite,
-        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale),
-        autoFit: true
-      )
-      {
-        Scale = scale,
-        Position = new Vector2(xPos, yPos)
-      };
-
-      btn.Click += (sender, e) => OnPartButtonClicked(partID, sender as EntityButton);
-
-      if (buttonIndex == 0)
-      {
-        btn.IsClicked = true;
-        clicked = btn;
-        idToBeAddded = partID;
-      }
-
-      partButtons.Add(btn);
-      components.Add(btn);
-      buttonIndex++;
-    }
   }
 
   private void OnPartButtonClicked(ID_ENTITY partID, EntityButton clickedButton)
@@ -192,7 +156,7 @@ public class EditEntityState : MenuState
     isSaveModalOpen = false;
     textInput.IsActive = false;
 
-    if (previousState is BuildControllerState buildState)
+    if (backgroundState is BuildControllerState buildState)
     {
       buildState.LoadBlueprintButtons();
     }
@@ -206,6 +170,7 @@ public class EditEntityState : MenuState
       ReturnToPreviousState();
       return;
     }
+
     if (isSaveModalOpen)
     {
       textInput.Update(gameTime);
@@ -214,26 +179,22 @@ public class EditEntityState : MenuState
       return;
     }
 
-    base.Update(gameTime);
-    Input.HandleZoom();
-    editedController.Update(gameTime);
-
     UpdateClickedState();
-    bool mouseAboveComponent = IsMouseAboveComponent();
 
-    if (Input.IsPressed && !mouseAboveComponent)
+    if (Input.IsPressed && !IsMouseAboveComponent())
     {
       var bc = editedEntity.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
       if (bc.Contains(Input.PositionGameCoords))
       {
         AddEntityIfFillerClicked();
       }
-      else if (!wasPressed)
+      else if (Input.WasPressed)
       {
         ReturnToPreviousState();
       }
     }
-    wasPressed = Input.IsPressed;
+
+    base.Update(gameTime);
   }
 
   private void UpdateClickedState()
@@ -243,20 +204,9 @@ public class EditEntityState : MenuState
       if (previouslyClicked != null)
         previouslyClicked.IsClicked = false;
       previouslyClicked = clicked;
-      clicked.IsClicked = true;
+      if (clicked != null)
+        clicked.IsClicked = true;
     }
-  }
-
-  private bool IsMouseAboveComponent()
-  {
-    foreach (IComponent c in components)
-    {
-      if (c is Button b && b.IsHovering())
-      {
-        return true;
-      }
-    }
-    return false;
   }
 
   private void AddEntityIfFillerClicked()
@@ -282,11 +232,11 @@ public class EditEntityState : MenuState
     managementModule.AddFillerEntities();
   }
 
-  private void ReturnToPreviousState()
+  protected override void ReturnToPreviousState()
   {
     editedController.Entities.Set(Enumerable.Empty<IEntity>());
     editedController.Dispose();
-    game.ChangeState(previousState);
+    game.ChangeState(backgroundState);
     var managementModule = editedEntity.GetModule<LinkManagementModule>();
     managementModule.ClearFillerEntities();
     originalController.Entities.Remove(originalEntity);
@@ -297,18 +247,13 @@ public class EditEntityState : MenuState
     Input.Camera.InBuildScreen = true;
   }
 
-  public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+  protected override void DrawCustomContent(SpriteBatch spriteBatch)
   {
-    backgroundState.Draw(gameTime, spriteBatch);
-    spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.AnisotropicClamp);
-    overlay.Draw(spriteBatch);
-    spriteBatch.End();
-    spriteBatch.Begin(transformMatrix: Input.Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.AnisotropicClamp);
-    editedController.Draw(spriteBatch);
     DrawAvailableLinks(spriteBatch);
-    spriteBatch.End();
-    base.Draw(gameTime, spriteBatch);
+  }
 
+  protected override void DrawModalContent(GameTime gameTime, SpriteBatch spriteBatch)
+  {
     if (isSaveModalOpen)
     {
       spriteBatch.Begin();
@@ -351,5 +296,5 @@ public class EditEntityState : MenuState
     }
 
     fillerEntity.Dispose();
-  } 
+  }
 }

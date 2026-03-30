@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Birds.src.utility;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 using Birds.src.factories;
 using Birds.src.events;
 using Birds.src.containers.controller;
@@ -23,9 +22,7 @@ public class GameState : State
   public static Controller Player { get; set; }
   public Camera Camera { get; set; }
 
-  private bool wasPressed = true;
-  Stopwatch timer = new Stopwatch();
-  private int doubleClickTreshold = 400;
+  private DoubleClickHelper doubleClickHelper;
 
   public GameState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, Input input, [OptionalAttribute] State previousState) : base(game, graphicsDevice, content, input)
   {
@@ -34,6 +31,9 @@ public class GameState : State
     foregrounds = new List<Background>();
     this.previousState = previousState;
     newEntities = new List<IEntity>();
+
+    doubleClickHelper = new DoubleClickHelper(400);
+
     if (Player == null)
     {
       Player = ControllerFactory.Create(
@@ -64,27 +64,14 @@ public class GameState : State
 
   public override void PostUpdate()
   {
-    //throw new NotImplementedException();
   }
 
   public override void Update(GameTime gameTime)
   {
-    /*if (Player.Input.PauseClicked)
-        game.ChangeState(new PauseState(game, graphicsDevice, content, this, input));*/
-    /*else if (Player.Input.BuildClicked)
-        if (Player.Entities != null && Player.Entities.Count>0)
-            game.ChangeState(new BuildOverviewState(game, graphicsDevice, content, this, input, Player));*/
-    /*if (input.EnterClicked && previousState != null)
-    {
-        game.ChangeState(previousState);
-        if (previousState is IPlayable p)
-            input.Camera = p.Camera;
-    }*/
     RunGame(gameTime);
     HandleScroll();
-    CheckClickOnPlayer();
+    CheckKeyboardShortcuts();
     CheckDoubleClick();
-    wasPressed = Input.IsPressed;
   }
 
   private void HandleScroll()
@@ -92,33 +79,23 @@ public class GameState : State
     Input.HandleZoom();
   }
 
-  private void CheckClickOnPlayer()
+  private void CheckKeyboardShortcuts()
   {
-    if (!wasPressed && Input.IsPressed && Player.GetModule<BaseCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
+    if (input.BuildClicked)
     {
+      game.ChangeState(new BuildControllerState(game, graphicsDevice, content, this, input, Player));
+      return;
     }
   }
 
   private void CheckDoubleClick()
   {
-    if (!wasPressed && Input.IsPressed)
+    bool playerClicked = Player.GetModule<BaseCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords);
+
+    if (doubleClickHelper.CheckDoubleClick(Input.IsPressed, playerClicked))
     {
-      if (timer.IsRunning)
-      {
-        if (timer.ElapsedMilliseconds < doubleClickTreshold && Player.GetModule<BaseCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
-          HandleDoubleClick();
-        timer.Reset();
-      }
-      else
-      {
-        if (Player.GetModule<BaseCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords))
-        {
-          timer.Start();
-        }
-      }
+      HandleDoubleClick();
     }
-    if (timer.IsRunning && timer.ElapsedMilliseconds >= doubleClickTreshold)
-      timer.Reset();
   }
 
   private void HandleDoubleClick()
@@ -128,28 +105,11 @@ public class GameState : State
 
   public void RunGame(GameTime gameTime)
   {
-
-    //UPDATE
     controller.Update(gameTime);
 
-    //ADD NEW ENTITIES
-    /*foreach (IEntity c in controllers)
-        if (c is Controller cc)
-        {
-            foreach (IEntity cSeperated in cc.ExtractAllSeperatedEntities())
-                newEntities.Add(cSeperated);
-            cc.SeperatedEntities.Clear();
-        }
-    foreach (IEntity c in newEntities)
-        controllers.Add(c);
-    newEntities.Clear();*/
-
-    //BACKGROUNDS
     foreach (Background b in backgrounds)
       b.Update(gameTime);
     foreach (Background f in foregrounds)
       f.Update(gameTime);
-
   }
 }
-

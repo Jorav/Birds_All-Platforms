@@ -15,9 +15,22 @@ public class Input
   public Keys Pause { get; set; }
   public Keys Build { get; set; }
   public Keys Enter { get; set; }
-  //public static Vector2 PositionGameCoords { get { return (Position - new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2)) / Camera.Zoom + Camera.Position; } }
+
+  private static int trackedTLID = -1;
+  private static float previousScrollValue;
+  private static bool pinching = false;
+  private static float pinchPreviousDistance;
+  private static Vector2 previousPosition = Vector2.Zero;
+  private static bool previousIsPressed = false;
+
+  private bool pauseDown;
+  private bool buildDown;
+  private bool enterDown;
+
   public static void Update(GameTime gameTime)
   {
+    previousIsPressed = IsPressed;
+
     UpdatePosition();
     UpdateIsPressed();
     UpdateIsReleased();
@@ -42,13 +55,11 @@ public class Input
           }
         }
         IsReleased = !anyPressed;
-
       }
       else
       {
         foreach (TouchLocation tl in touchCollection)
         {
-
           if (tl.Id == trackedTLID)
           {
             if (tl.State == TouchLocationState.Released)
@@ -56,7 +67,6 @@ public class Input
               trackedTLID = -1;
               IsReleased = true;
             }
-
           }
         }
       }
@@ -95,7 +105,7 @@ public class Input
     if (tc.IsConnected)
     {
       TouchCollection touchCollection = TouchPanel.GetState();
-      if (trackedTLID != -1) //remove last tracked touch location if its not active anymore
+      if (trackedTLID != -1)
       {
         foreach (TouchLocation tl in touchCollection)
         {
@@ -106,7 +116,7 @@ public class Input
           }
         }
       }
-      if (trackedTLID == -1)//track new location if untracked
+      if (trackedTLID == -1)
       {
         foreach (TouchLocation tl in touchCollection)
         {
@@ -116,7 +126,7 @@ public class Input
           }
         }
       }
-      if (!pinching && trackedTLID != -1) //return to the tracked location
+      if (!pinching && trackedTLID != -1)
       {
         foreach (TouchLocation tl in touchCollection)
         {
@@ -182,92 +192,30 @@ public class Input
       previousScrollValue = scrollValue;
     }
   }
-  private static float previousScrollValue;
-  private static bool pinching = false;
-  private static float pinchPreviousDistance;
+
   public static Vector2 PositionGameCoords { get { return Camera.ScreenToWorld(Position); } }
+
   public static Vector2 Position
   {
     set; get;
   } = previousPosition;
-  private static Vector2 previousPosition = Vector2.Zero;
+
   public static bool IsPressed
   {
     get; set;
   }
+
+  public static bool WasPressed
+  {
+    get { return IsPressed && !previousIsPressed; }
+  }
+
   public static bool IsReleased
   {
     get; set;
   }
-  //public Vector2 MousePositionGameCoords { get { return (Mouse.GetState().Position.ToVector2() - new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2) )/Camera.Zoom + Camera.Position; } }
-  //public Vector2 TouchPadPositionGameCoords { get { return (TouchPadPosition - new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2)) / Camera.Zoom + Camera.Position; } }
-  /*public Vector2 TouchPadPosition
-  {
-      get
-      {
-          TouchPanelCapabilities tc = TouchPanel.GetCapabilities();
-          if (tc.IsConnected)
-          {
-              TouchCollection touchCollection = TouchPanel.GetState();
-              if (trackedTLID != -1) //remove last tracked touch location if its not active anymore
-              {
-                  foreach (TouchLocation tl in touchCollection)
-                  {
-                      if (tl.Id == trackedTLID)
-                      {
-                          if (tl.State == TouchLocationState.Released)
-                              trackedTLID = -1;
-                      }
-                  }
-              }
-              if (trackedTLID == -1)//track new location if untracked
-              {
-                  foreach (TouchLocation tl in touchCollection)
-                  {
-                      if ((tl.State == TouchLocationState.Pressed) || (tl.State == TouchLocationState.Moved))
-                      {
-                          trackedTLID = tl.Id;
-                      }
-                  }
-              }
-              if (trackedTLID != -1) //return to the tracked location
-              {
-                  foreach (TouchLocation tl in touchCollection)
-                  {
-                      if (tl.Id == trackedTLID && ((tl.State == TouchLocationState.Pressed) || (tl.State == TouchLocationState.Moved)))
-                      {
-                          return tl.Position;
-                      }
-                  }
-              }
-          }
-          return Vector2.Zero;
-      }
-  }*/
-  private static int trackedTLID = -1;
-  /*public bool TouchPadActive { 
-      get 
-      { 
-          TouchPanelCapabilities tc = TouchPanel.GetCapabilities();
-          if(tc.IsConnected)
-          {
-              TouchCollection touchCollection = TouchPanel.GetState();
-              foreach (TouchLocation tl in touchCollection)
-              {
-                  if (tl.Id == trackedTLID)
-                  {
-                      if (tl.State == TouchLocationState.Released)
-                          trackedTLID = -1;
-                  }
-                  if ((tl.State == TouchLocationState.Pressed) || (tl.State == TouchLocationState.Moved))
-                      return true;
-              }
-          }
-          return false;
-      } 
-  }*/
-  private bool pauseDown;
-  public bool PauseClicked //OBS, new state of button needs to change each update
+
+  public bool PauseClicked
   {
     get
     {
@@ -281,8 +229,8 @@ public class Input
       return pauseClicked;
     }
   }
-  private bool buildDown;
-  public bool BuildClicked //OBS, new state of button needs to change each update
+
+  public bool BuildClicked
   {
     get
     {
@@ -296,8 +244,8 @@ public class Input
       return buildClicked;
     }
   }
-  private bool enterDown;
-  public bool EnterClicked //OBS, new state of button needs to change each update
+
+  public bool EnterClicked
   {
     get
     {
@@ -311,45 +259,4 @@ public class Input
       return enterClicked;
     }
   }
-  /*private bool leftMBDown;
-  public bool LeftMBClicked //OBS, new state of button needs to change each update
-  {
-      get
-      {
-          bool leftMBClicked = false;
-          bool newLeftMBDown = Mouse.GetState().LeftButton == ButtonState.Pressed;
-          if (!leftMBDown && newLeftMBDown)
-          {
-              leftMBClicked = true;
-          }
-          leftMBDown = newLeftMBDown;
-          return leftMBClicked;
-      }
-  }
-  public bool LeftMBDown
-  {
-      get
-      {
-          return Mouse.GetState().LeftButton == ButtonState.Pressed;
-      }
-  }
-  public bool RightMBDown
-  {
-      get
-      {
-          return Mouse.GetState().RightButton == ButtonState.Pressed;
-      }
-  }
-  public int PreviousScrollValue { get; set; }
-  private int scrollValue;
-  public int ScrollValue
-  {
-      get
-      {
-          PreviousScrollValue = scrollValue;
-          scrollValue = Mouse.GetState().ScrollWheelValue;
-          return scrollValue;
-      }
-  }*/
-
 }

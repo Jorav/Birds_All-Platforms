@@ -27,8 +27,7 @@ public static class CompositeControllerFactory
   private static IBlueprintStorage _storage = new JsonBlueprintStorage();
   public const string DEFAULT_SINGLE = "Single Entity";
   public const string DEFAULT_CROSS = "Cross Shape";
-
-  public static Dictionary<string, CompositeSprite> Previews { get; set; } = new();
+  public static Dictionary<string, ISprite> Previews { get; set; } = new();
 
   public static CompositeController GetComposite(Vector2 position, string blueprintName, bool useGeometricCenter = false)
   {
@@ -167,7 +166,7 @@ public static class CompositeControllerFactory
     foreach (var name in blueprintNames)
     {
       var tempComposite = GetComposite(spawnPos, name, true);
-      var preview = new CompositeSprite(spawnPos, tempComposite.Entities);
+      ISprite preview = new CompositeSprite(spawnPos, tempComposite.Entities);
       Previews[name] = preview;
       tempComposite.Dispose();
     }
@@ -178,7 +177,7 @@ public static class CompositeControllerFactory
     var entities = composite.Entities.Cast<WorldEntity>().ToList();
     var blueprint = BlueprintFactory.CreateBlueprint(entities, blueprintName);
     await _storage.SaveBlueprintAsync(blueprint);
-    var preview = new CompositeSprite(composite.Position.Value, composite.Entities);
+    ISprite preview = new CompositeSprite(composite.Position.Value, composite.Entities);
 
     if (Previews.ContainsKey(blueprintName))
     {

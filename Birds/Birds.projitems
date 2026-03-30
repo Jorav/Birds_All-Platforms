@@ -30,6 +30,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ModuleContainerExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ObservableCollectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\SyncedProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\BuildStateBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\EntityButtonManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\DoubleClickHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\TextInputBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\EditEntityState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\composite\CompositeMovementModule.cs" />

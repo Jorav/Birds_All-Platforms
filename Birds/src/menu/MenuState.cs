@@ -8,7 +8,7 @@ namespace Birds.src.menu
 {
     public abstract class MenuState : State
     {
-        protected List<IComponent> components;
+        protected List<IComponent> components = new();
 
         public MenuState(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, Input input) : base(game, graphicsDevice, content, input)
         {

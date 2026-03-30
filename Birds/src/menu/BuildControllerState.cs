@@ -28,6 +28,10 @@ public class BuildControllerState : BuildStateBase
 
   private string pendingBlueprintName = null;
 
+  private EntityButton _activeDeleteButton;
+  private EntityButton _buttonToRemove;
+  private string _blueprintToRemove;
+
   public BuildControllerState(
       Game1 game,
       GraphicsDevice graphicsDevice,
@@ -69,21 +73,64 @@ public class BuildControllerState : BuildStateBase
         startX: 20f
     );
   }
-
-  private void OnBlueprintButtonClicked(string blueprintName, EntityButton clickedButton)
-  {
-    pendingBlueprintName = blueprintName;
-  }
-
   public override void Update(GameTime gameTime)
   {
     base.Update(gameTime);
-    var collisionDetector = editedController.GetModule<GroupCollisionDetectionModule>();
-    collisionDetector.AddInternalCollisions();
+
+    if (Input.WasPressed && _activeDeleteButton != null)
+    {
+      if (!_activeDeleteButton.IsHovering())
+      {
+        _activeDeleteButton.IsDeleteMode = false;
+        _activeDeleteButton = null;
+      }
+    }
+
+    if (_buttonToRemove != null)
+    {
+      CompositeControllerFactory.DeleteBlueprint(_blueprintToRemove);
+      _buttonToRemove = null;
+      _activeDeleteButton = null;
+      LoadBlueprintButtons();
+    }
 
     UpdateSelectionCircle();
     AddEntityIfClicked();
     HandleClickLogic();
+
+  }
+
+  private void OnBlueprintButtonClicked(string blueprintName, EntityButton clickedButton)
+  {
+    if (clickedButton.IsDeleteMode)
+    {
+      _buttonToRemove = clickedButton;
+      _blueprintToRemove = blueprintName;
+      return;
+    }
+
+    if (_activeDeleteButton != null && _activeDeleteButton != clickedButton)
+    {
+      _activeDeleteButton.IsDeleteMode = false;
+      _activeDeleteButton = null;
+    }
+
+    pendingBlueprintName = blueprintName;
+  }
+
+  private void OnBlueprintButtonLongPressed(string blueprintName, EntityButton clickedButton)
+  {
+    if (blueprintName == CompositeControllerFactory.DEFAULT_SINGLE ||
+        blueprintName == CompositeControllerFactory.DEFAULT_CROSS)
+      return;
+
+    if (_activeDeleteButton != null && _activeDeleteButton != clickedButton)
+    {
+      _activeDeleteButton.IsDeleteMode = false;
+    }
+
+    clickedButton.IsDeleteMode = !clickedButton.IsDeleteMode;
+    _activeDeleteButton = clickedButton.IsDeleteMode ? clickedButton : null;
   }
 
   private void AddEntityIfClicked()
@@ -137,11 +184,6 @@ public class BuildControllerState : BuildStateBase
     {
       pendingBlueprintName = CompositeControllerFactory.DEFAULT_SINGLE;
     }
-  }
-
-  private void OnBlueprintButtonLongPressed(string arg1, EntityButton button)
-  {
-    Debug.WriteLine("Button held! Show delete option.");
   }
 
   protected override void ReturnToPreviousState()

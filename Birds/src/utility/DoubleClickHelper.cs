@@ -9,7 +9,7 @@ public class DoubleClickHelper
   private readonly int thresholdMs;
   private bool isWaitingForSecondClick = false;
 
-  public DoubleClickHelper(int thresholdMs = 400)
+  public DoubleClickHelper(int thresholdMs = 300)
   {
     this.thresholdMs = thresholdMs;
   }

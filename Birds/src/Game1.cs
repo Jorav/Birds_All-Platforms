@@ -79,6 +79,7 @@ public class Game1 : Game
     textures[(int)ID_SPRITE.BACKGROUND_GRAY] = Content.Load<Texture2D>("background/GRAY");
     textures[(int)ID_SPRITE.BUTTON] = Content.Load<Texture2D>("menu/BUTTON");
     textures[(int)ID_SPRITE.BUTTON_ENTITY] = Content.Load<Texture2D>("menu/BUTTON_ENTITY");
+    textures[(int)ID_SPRITE.DELETE] = Content.Load<Texture2D>("menu/DELETEX");
 
     SpriteFactory.textures = textures;
     font = Content.Load<SpriteFont>("menu/FONT");

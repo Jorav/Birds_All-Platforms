@@ -5,14 +5,19 @@ using Birds.src.modules.composite;
 using Birds.src.modules.controller;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.position;
+using Birds.src.storage;
+using Birds.src.storage.implementations;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Birds.src.factories;
 
 public static class BlueprintFactory
 {
+  private static IBlueprintStorage _storage = new JsonBlueprintStorage();
+
   public static List<WorldEntity> CreateFromBlueprint(CompositeBlueprint blueprint, Vector2 spawnPosition, bool useGeometricCenter = false)
   {
     if (blueprint == null || blueprint.Entities == null || blueprint.Connections == null || blueprint.Entities.Count == 0)
@@ -157,6 +162,7 @@ public static class BlueprintFactory
     }
     return connections;
   }
+
   public static void RestoreConnections(List<IEntity> originalEntities, List<IEntity> clonedEntities)
   {
     for (int entityIndex = 0; entityIndex < originalEntities.Count; entityIndex++)
@@ -175,7 +181,7 @@ public static class BlueprintFactory
         var connectedEntity = originalLink.connection.Entity;
         var connectedEntityIndex = originalEntities.IndexOf(connectedEntity);
 
-        if (connectedEntityIndex < 0) 
+        if (connectedEntityIndex < 0)
           continue;
         if (entityIndex > connectedEntityIndex)
           continue;
@@ -190,4 +196,9 @@ public static class BlueprintFactory
       }
     }
   }
+
+  public static async Task SaveBlueprintAsync(CompositeBlueprint blueprint) => await _storage.SaveBlueprintAsync(blueprint);
+  public static async Task<CompositeBlueprint> LoadBlueprintAsync(string name) => await _storage.LoadBlueprintAsync(name);
+  public static async Task<List<string>> GetBlueprintNamesAsync() => await _storage.GetBlueprintNamesAsync();
+  public static async Task DeleteBlueprintAsync(string name) => await _storage.DeleteBlueprintAsync(name);
 }

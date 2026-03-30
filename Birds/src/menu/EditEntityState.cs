@@ -6,6 +6,7 @@ using Birds.src.menu.controls;
 using Birds.src.modules.composite;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.collision_detection;
+using Birds.src.storage.implementations;
 using Birds.src.utility;
 using Birds.src.utility.factories;
 using Birds.src.visual;
@@ -83,6 +84,7 @@ public class EditEntityState : BuildStateBase
     buttonManager.CreateButtonGrid(
         WorldEntityFactory.Previews,
         OnPartButtonClicked,
+        (id, btn) => { },
         scale: 3f,
         buttonsPerRow: 3,
         startX: 50f,
@@ -151,7 +153,7 @@ public class EditEntityState : BuildStateBase
     managementModule.ClearFillerEntities();
     var entitiesToSave = editedEntity.Entities.Cast<WorldEntity>().ToList();
     var blueprint = BlueprintFactory.CreateBlueprint(entitiesToSave, textInput.Text);
-    await new Birds.src.storage.implementations.JsonBlueprintStorage().SaveBlueprintAsync(blueprint);
+    await new JsonBlueprintStorage().SaveBlueprintAsync(blueprint);
     CompositeControllerFactory.InitializePreviews();
     isSaveModalOpen = false;
     textInput.IsActive = false;
@@ -164,6 +166,7 @@ public class EditEntityState : BuildStateBase
 
   public override void Update(GameTime gameTime)
   {
+    base.Update(gameTime);
     if (saveAndExit)
     {
       SaveEntityAnUpdatePreviousState();
@@ -193,8 +196,6 @@ public class EditEntityState : BuildStateBase
         ReturnToPreviousState();
       }
     }
-
-    base.Update(gameTime);
   }
 
   private void UpdateClickedState()

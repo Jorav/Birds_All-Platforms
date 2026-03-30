@@ -22,6 +22,7 @@ public class EntityButtonManager
   public void CreateButtonGrid<T>(
       IEnumerable<KeyValuePair<T, ISprite>> previews,
       Action<T, EntityButton> onButtonClick,
+      Action<string, EntityButton> longPressAction,
       float scale = 3f,
       int buttonsPerRow = 3,
       float startX = 50f,
@@ -38,7 +39,9 @@ public class EntityButtonManager
         continue;
 
       var button = CreateButton(kvp.Value, scale, buttonIndex, buttonsPerRow, startX, startY, spacing);
+      string blueprintName = kvp.Key.ToString();
       button.Click += (sender, e) => onButtonClick(kvp.Key, sender as EntityButton);
+      button.LongPress += (s, e) => longPressAction(blueprintName, button);
 
       buttons.Add(button);
       components.Add(button);

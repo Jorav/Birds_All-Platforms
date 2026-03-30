@@ -26,6 +26,8 @@ public class BuildControllerState : BuildStateBase
   private DoubleClickHelper doubleClickHelper;
   private const float selectionBuffer = 1.5f;
 
+  private string pendingBlueprintName = null;
+
   public BuildControllerState(
       Game1 game,
       GraphicsDevice graphicsDevice,
@@ -62,6 +64,7 @@ public class BuildControllerState : BuildStateBase
     buttonManager.CreateButtonGrid(
         CompositeControllerFactory.Previews.Take(10),
         OnBlueprintButtonClicked,
+        OnBlueprintButtonLongPressed,
         scale: 3f,
         startX: 20f
     );
@@ -69,19 +72,29 @@ public class BuildControllerState : BuildStateBase
 
   private void OnBlueprintButtonClicked(string blueprintName, EntityButton clickedButton)
   {
-    editedController.Entities.AddRange(
-        CompositeControllerFactory.CreateComposites(editedController.Position, 1, blueprintName));
+    pendingBlueprintName = blueprintName;
   }
 
   public override void Update(GameTime gameTime)
   {
+    base.Update(gameTime);
     var collisionDetector = editedController.GetModule<GroupCollisionDetectionModule>();
     collisionDetector.AddInternalCollisions();
 
     UpdateSelectionCircle();
+    AddEntityIfClicked();
     HandleClickLogic();
+  }
 
-    base.Update(gameTime);
+  private void AddEntityIfClicked()
+  {
+    if (pendingBlueprintName != null)
+    {
+      editedController.Entities.AddRange(
+          CompositeControllerFactory.CreateComposites(editedController.Position, 1, pendingBlueprintName));
+
+      pendingBlueprintName = null;
+    }
   }
 
   private void UpdateSelectionCircle()
@@ -122,9 +135,13 @@ public class BuildControllerState : BuildStateBase
 
     if (doubleClickHelper.CheckDoubleClick(Input.IsPressed, true))
     {
-      editedController.Entities.AddRange(
-          CompositeControllerFactory.CreateComposites(Input.PositionGameCoords, 1, CompositeControllerFactory.DEFAULT_SINGLE));
+      pendingBlueprintName = CompositeControllerFactory.DEFAULT_SINGLE;
     }
+  }
+
+  private void OnBlueprintButtonLongPressed(string arg1, EntityButton button)
+  {
+    Debug.WriteLine("Button held! Show delete option.");
   }
 
   protected override void ReturnToPreviousState()

@@ -42,6 +42,7 @@ public class Camera
         Zoom = GameZoom;
       }
       inBuildScreen = value;
+      UpdateTransformMatrix();
     }
   }
   public float Width { get { return Game1.ScreenWidth / Zoom; } }

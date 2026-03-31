@@ -103,9 +103,7 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
 
     var template = WorldEntityFactory.GetEntity(Vector2.Zero, targetID, false);
     var templateLinkModule = template.GetModule<LinkModule>();
-    var inboundLink = templateLinkModule?.Links.Count > 0
-        ? (templateLinkModule.Links.Count == 4 ? templateLinkModule.Links[2] : templateLinkModule.Links[0])
-        : null;
+    var inboundLink = templateLinkModule?.GetInboundLink();
 
     if (inboundLink == null) { template.Dispose(); return; }
 
@@ -121,9 +119,7 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
         if (!openLink.ConnectionAvailable) continue;
         var filler = WorldEntityFactory.GetEntity(Vector2.Zero, ID_ENTITY.FILLER, false, ghostSpriteId);
         var fillerLinkModule = filler.GetModule<LinkModule>();
-        var fillerInbound = fillerLinkModule?.Links.Count > 0
-            ? (fillerLinkModule.Links.Count == 4 ? fillerLinkModule.Links[2] : fillerLinkModule.Links[0])
-            : null;
+        var fillerInbound = fillerLinkModule?.GetInboundLink();
 
         if (fillerInbound != null)
         {

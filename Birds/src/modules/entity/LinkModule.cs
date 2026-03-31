@@ -135,7 +135,7 @@ public class LinkModule : ModuleBase
 
   public bool ReplaceWithNewEntity(IEntity newEntity, IModuleContainer parentContainer)
   {
-    var oldLink = (Links.Count == 4 && !Links[2].ConnectionAvailable) ? Links[2] : GetFirstConnection();
+    var oldLink = GetInboundLink();
     if (oldLink == null)
     {
       return false;
@@ -185,6 +185,17 @@ public class LinkModule : ModuleBase
       });
     }
     return cloned;
+  }
+
+  public Link? GetInboundLink()
+  {
+    if (Links.Count == 0) return null;
+    if (Links.Count == 4)
+    {
+      return Links[2];
+    }
+
+    return GetFirstConnection() ?? Links[0];
   }
 
   public override void Dispose()

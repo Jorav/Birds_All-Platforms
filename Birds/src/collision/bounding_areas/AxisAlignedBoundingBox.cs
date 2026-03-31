@@ -161,7 +161,7 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
       return 0;
     return 1;
   }
-  public bool CollidesWith(AxisAlignedBoundingBox AABB)
+  public bool   CollidesWith(AxisAlignedBoundingBox AABB)
   {
     return UL.X < AABB.UL.X + AABB.Width &&
             UL.X + Width > AABB.UL.X &&

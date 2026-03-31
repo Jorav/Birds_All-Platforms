@@ -2,11 +2,8 @@
 using Microsoft.Xna.Framework;
 using System;
 using Birds.src.visual;
-using Birds.src.utility;
 using Birds.src.events;
 using Birds.src.modules;
-using Birds.src.factories;
-using Birds.src.menu;
 using Birds.src.modules.shared.collision_detection;
 using Birds.src.collision.bounding_areas;
 using Birds.src.modules.entity;
@@ -14,7 +11,7 @@ using Birds.src;
 
 public class DrawModule : ModuleBase, IDrawModule
 {
-  public Sprite Sprite { get; private set; }
+  public Sprite Sprite { get; set; }
   private Vector2 _position;
   public Vector2 Position
   {

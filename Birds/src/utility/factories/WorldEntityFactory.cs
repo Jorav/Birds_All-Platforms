@@ -51,7 +51,7 @@ public static class WorldEntityFactory
     }
   }
 
-  public static WorldEntity GetEntity(Vector2 position, ID_ENTITY id, bool isComposite = false)
+  public static WorldEntity GetEntity(Vector2 position, ID_ENTITY id, bool isComposite = false, ID_SPRITE spriteId = ID_SPRITE.FILLER)
   {
     WorldEntity we;
     if (availableEntities.Count > 0)
@@ -65,7 +65,7 @@ public static class WorldEntityFactory
     
     we.EntityID = id;
     we.Position.Value = position;
-    WorldEntityLoader.ApplyConfiguration(we, id, isComposite);
+    WorldEntityLoader.ApplyConfiguration(we, id, isComposite, spriteId);
     return we;
   }
 

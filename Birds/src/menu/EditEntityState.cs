@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Birds.src.menu;
 
@@ -31,6 +32,7 @@ public class EditEntityState : BuildStateBase
   private EntityButton saveButton;
   private SpriteFont font;
   private bool saveAndExit;
+  private bool refreshFillers = false;
 
   public EditEntityState(
       Game1 game,
@@ -103,7 +105,8 @@ public class EditEntityState : BuildStateBase
   private void OnPartButtonClicked(ID_ENTITY partID, EntityButton clickedButton)
   {
     idToBeAddded = partID;
-    clicked = clickedButton;
+    clicked = clickedButton; AddOpenLinks();
+    refreshFillers = true;
   }
 
   private void SaveButton_Click(object sender, EventArgs e)
@@ -111,7 +114,7 @@ public class EditEntityState : BuildStateBase
     saveAndExit = true;
   }
 
-  private async void SaveEntityAndUpdatePreviousState()
+  private async Task SaveEntityAndUpdatePreviousState()
   {
     var managementModule = editedEntity.GetModule<LinkManagementModule>();
     managementModule.ClearFillerEntities();
@@ -134,11 +137,16 @@ public class EditEntityState : BuildStateBase
   public override void Update(GameTime gameTime)
   {
     base.Update(gameTime);
+    if (refreshFillers)
+    {
+      AddOpenLinks();
+      refreshFillers = false;
+    }
     saveButton?.Update(gameTime);
 
     if (saveAndExit)
     {
-      SaveEntityAndUpdatePreviousState();
+      _ = SaveEntityAndUpdatePreviousState();
       saveAndExit = false;
       return;
     }
@@ -181,7 +189,7 @@ public class EditEntityState : BuildStateBase
         bool successfullyReplaced = editedEntity.ReplaceAndAttach(entity, WorldEntityFactory.CreateEntities(Vector2.Zero, 1, idToBeAddded, isComposite: true).First());
         if (successfullyReplaced)
         {
-          linkManagementModule.AddFillerEntities();
+          refreshFillers = true;
         }
         break;
       }
@@ -191,7 +199,7 @@ public class EditEntityState : BuildStateBase
   private void AddOpenLinks()
   {
     var managementModule = editedEntity.GetModule<LinkManagementModule>();
-    managementModule.AddFillerEntities();
+    managementModule.AddFillerEntities(idToBeAddded);
   }
 
   protected override void ReturnToPreviousState()
@@ -247,5 +255,5 @@ public class EditEntityState : BuildStateBase
     }
 
     fillerEntity.Dispose();
-  }
+  } 
 }

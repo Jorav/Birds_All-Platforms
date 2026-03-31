@@ -108,7 +108,7 @@ public class WorldEntityLoader
     return merged;
   }
 
-  public static void ApplyConfiguration(IEntity entity, ID_ENTITY entityId, bool isPartOfComposite = false)
+  public static void ApplyConfiguration(IEntity entity, ID_ENTITY entityId, bool isPartOfComposite = false, ID_SPRITE spriteId = ID_SPRITE.FILLER)
   {
     if (!_entityConfigs.TryGetValue(entityId, out var config))
     {
@@ -116,7 +116,21 @@ public class WorldEntityLoader
     }
 
     ApplyProperties(entity, config.Properties);
-    Sprite sprite = CreateSpriteIfNeeded(entity, entityId);
+    ID_SPRITE finalSpriteId = (spriteId == ID_SPRITE.FILLER && WorldEntityFactory.EntityToSpriteMap.TryGetValue(entityId, out var mappedId))
+        ? mappedId
+        : spriteId;
+
+    Sprite sprite = SpriteFactory.GetSprite(finalSpriteId, entity.Position.Value, entity.Scale.Value);
+
+    if (entityId == ID_ENTITY.FILLER)
+    {
+      sprite.Alpha = 0.4f;
+      sprite.Color = Color.LightGreen;
+    }
+
+    entity.Width.Value = sprite.Width;
+    entity.Height.Value = sprite.Height;
+
     ApplyModules(entity, config.Modules, isPartOfComposite, sprite);
   }
 
@@ -147,18 +161,6 @@ public class WorldEntityLoader
         valueProperty.SetValue(syncedProp, convertedValue);
       }
     }
-  }
-
-  private static Sprite CreateSpriteIfNeeded(IEntity entity, ID_ENTITY entityId)
-  {
-    if (WorldEntityFactory.EntityToSpriteMap.TryGetValue(entityId, out var spriteId))
-    {
-      var sprite = SpriteFactory.GetSprite(spriteId, entity.Position.Value, entity.Scale.Value);
-      entity.Width.Value = sprite.Width;
-      entity.Height.Value = sprite.Height;
-      return sprite;
-    }
-    return null;
   }
 
   public static bool HasModule(ID_ENTITY entityId, ID_MODULE moduleType)

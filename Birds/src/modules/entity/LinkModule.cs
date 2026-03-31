@@ -2,8 +2,10 @@
 using Birds.src.containers.entity;
 using Birds.src.events;
 using Birds.src.modules.composite;
+using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Security.Principal;
 
 namespace Birds.src.modules.entity;
 
@@ -155,6 +157,8 @@ public class LinkModule : ModuleBase
 
     foreach (IEntity e in parentContainer.Entities)
     {
+      if (e.EntityID == ID_ENTITY.FILLER)
+        continue;
       if (e.CollidesWith(newEntity))
       {
         newLinkModule.SeverConnections();

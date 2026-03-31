@@ -4,6 +4,7 @@ using Birds.src.events;
 using Birds.src.factories;
 using Birds.src.modules.entity;
 using Birds.src.utility;
+using Birds.src.visual;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,49 +94,80 @@ public class LinkManagementModule : ModuleBase, IEntityCollectionListener
     return foundEntities;
   }
 
-  public void AddFillerEntities()
+  public void AddFillerEntities(ID_ENTITY targetID)
   {
     ClearFillerEntities();
 
-    foreach (var entity in container.Entities.ToList())
+    if (!WorldEntityFactory.EntityToSpriteMap.TryGetValue(targetID, out ID_SPRITE ghostSpriteId))
+      return;
+
+    var template = WorldEntityFactory.GetEntity(Vector2.Zero, targetID, false);
+    var templateLinkModule = template.GetModule<LinkModule>();
+    var inboundLink = templateLinkModule?.Links.Count > 0
+        ? (templateLinkModule.Links.Count == 4 ? templateLinkModule.Links[2] : templateLinkModule.Links[0])
+        : null;
+
+    if (inboundLink == null) { template.Dispose(); return; }
+
+    var realEntities = container.Entities.Where(e => e is WorldEntity we && we.EntityID != ID_ENTITY.FILLER).ToList();
+
+    foreach (var existingEntity in realEntities)
     {
-      var entityLinkModule = entity.GetModule<LinkModule>();
-      if (entityLinkModule == null) continue;
+      var existingLinkModule = existingEntity.GetModule<LinkModule>();
+      if (existingLinkModule == null) continue;
 
-      foreach (var link in entityLinkModule.Links)
+      foreach (var openLink in existingLinkModule.Links)
       {
-        if (!link.ConnectionAvailable)
-          continue;
+        if (!openLink.ConnectionAvailable) continue;
+        var filler = WorldEntityFactory.GetEntity(Vector2.Zero, ID_ENTITY.FILLER, false, ghostSpriteId);
+        var fillerLinkModule = filler.GetModule<LinkModule>();
+        var fillerInbound = fillerLinkModule?.Links.Count > 0
+            ? (fillerLinkModule.Links.Count == 4 ? fillerLinkModule.Links[2] : fillerLinkModule.Links[0])
+            : null;
 
-        var fillerEntity = WorldEntityFactory.GetEntity(link.AbsolutePositionOnEntity, ID_ENTITY.FILLER, false);
-        fillerEntity.Mass.Value = 1f;
-        var fillerLinkModule = fillerEntity.GetModule<LinkModule>();
-
-        var connectionLink = fillerLinkModule.Links.Count > 0 ? (fillerLinkModule.Links.Count == 4 ? fillerLinkModule.Links[2] : fillerLinkModule.Links[0]) : null;
-        if (connectionLink != null)
-          fillerLinkModule.ConnectAgainstEntity(entity, connectionLink, link);
-
-        bool overlaps = false;
-        foreach (var existingEntity in container.Entities)
+        if (fillerInbound != null)
         {
-          if (fillerEntity.CollidesWith(existingEntity))
+          fillerLinkModule.ConnectAgainstEntity(existingEntity, fillerInbound, openLink);
+
+          bool overlaps = false;
+          foreach (var otherEntity in realEntities)
           {
-            overlaps = true;
-            break;
+            if (filler.CollidesWith(otherEntity))
+            {
+              overlaps = true;
+              break;
+            }
           }
-        }
+          /**if we want to avoid overlapping entities
+          if (!overlaps)
+          {
+            foreach (var existingFiller in fillerEntities)
+            {
+              if (filler.CollidesWith(existingFiller))
+              {
+                overlaps = true;
+                break;
+              }
+            }
+          }*/
 
-        if (!overlaps)
-        {
-          container.Entities.Add(fillerEntity);
+          if (!overlaps)
+          {
+            container.Entities.Add(filler);
+          }
+          else
+          {
+            fillerLinkModule.SeverConnections();
+            filler.Dispose();
+          }
         }
         else
         {
-          fillerLinkModule.SeverConnections();
-          fillerEntity.Dispose();
+          filler.Dispose();
         }
       }
     }
+    template.Dispose();
   }
 
   public void ClearFillerEntities()

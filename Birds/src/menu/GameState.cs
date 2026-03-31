@@ -37,7 +37,7 @@ public class GameState : State
     if (Player == null)
     {
       Player = ControllerFactory.Create(
-        CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, CompositeControllerFactory.DEFAULT_CROSS),
+        CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, CompositeControllerFactory.DEFAULT_SINGLE),
         ID_CONTROLLER.PLAYER
         );
       controller.Add(Player);

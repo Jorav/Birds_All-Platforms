@@ -99,6 +99,116 @@
                 }
             ]
         },
+        "HULL_RECTANGULAR_BAD": {
+            "Properties": {
+                "Mass": 1.25,
+                "Thrust": 0.75
+            },
+            "Modules": [
+                {
+                    "Type": "CollisionHandlerModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "MovementModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "RotationModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "RadiusModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "CollisionDetectionModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "LinkModule",
+                    "Parameters": {
+                        "Links": [
+                            {
+                                "Angle": 0,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 90,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 180,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 270,
+                                "Distance": 0.5
+                            }
+                        ]
+                    }
+                },
+                {
+                    "Type": "DrawModule",
+                    "Parameters": {}
+                }
+            ]
+        },
+        "HULL_RECTANGULAR_GOOD": {
+            "Properties": {
+                "Mass": 0.75,
+                "Thrust": 1.5
+            },
+            "Modules": [
+                {
+                    "Type": "CollisionHandlerModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "MovementModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "RotationModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "RadiusModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "CollisionDetectionModule",
+                    "Parameters": {}
+                },
+                {
+                    "Type": "LinkModule",
+                    "Parameters": {
+                        "Links": [
+                            {
+                                "Angle": 0,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 90,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 180,
+                                "Distance": 0.5
+                            },
+                            {
+                                "Angle": 270,
+                                "Distance": 0.5
+                            }
+                        ]
+                    }
+                },
+                {
+                    "Type": "DrawModule",
+                    "Parameters": {}
+                }
+            ]
+        },
         "FILLER": {
             "Modules": [
                 {
@@ -333,10 +443,22 @@
                 }
             ]
         },
+        "ENGINE_BAD": {
+            "Properties": {
+                "Mass": 0.5,
+                "Thrust": 1.5
+            }
+        },
         "ENGINE": {
             "Properties": {
                 "Mass": 0.5,
-                "Thrust": 2.0
+                "Thrust": 2.5
+            }
+        },
+        "ENGINE_GOOD": {
+            "Properties": {
+                "Mass": 0.5,
+                "Thrust": 3.5
             }
         },
         "SHOOTER": {

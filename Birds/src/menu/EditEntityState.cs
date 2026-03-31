@@ -1,4 +1,5 @@
-﻿using Birds.src.containers.controller;
+﻿using Birds.src.containers.composite;
+using Birds.src.containers.controller;
 using Birds.src.containers.entity;
 using Birds.src.events;
 using Birds.src.factories;
@@ -27,12 +28,7 @@ public class EditEntityState : BuildStateBase
   private EntityButton clicked;
   private EntityButton previouslyClicked;
   private EntityButtonManager buttonManager;
-
-  private bool isSaveModalOpen = false;
-  private TextInputBox textInput;
-  private Button openSaveModalButton;
-  private Button confirmSaveButton;
-  private Button cancelSaveButton;
+  private EntityButton saveButton;
   private SpriteFont font;
   private bool saveAndExit;
 
@@ -59,7 +55,6 @@ public class EditEntityState : BuildStateBase
     font = Game1.font;
 
     InitializeButtons();
-    InitializeModalComponents();
     AddOpenLinks();
     Input.Camera.Controller = editedController;
     Input.Camera.InBuildScreen = true;
@@ -70,13 +65,17 @@ public class EditEntityState : BuildStateBase
     buttonManager = new EntityButtonManager(components);
     LoadPartButtons();
 
-    openSaveModalButton = new Button(SpriteFactory.GetSprite(ID_SPRITE.BUTTON, Vector2.Zero, 2f), font)
+    ISprite saveIcon = SpriteFactory.GetSprite(ID_SPRITE.SAVE, Vector2.Zero);
+    ISprite buttonBg = SpriteFactory.GetSprite(ID_SPRITE.ENTITY_BUTTON_MENU, Vector2.Zero);
+
+    saveButton = new EntityButton(saveIcon, buttonBg, autoFit: true)
     {
-      Text = "Save",
-      Position = new Vector2(Game1.ScreenWidth - 200, Game1.ScreenHeight - 80),
+      Scale = 4f,
+      Position = new Vector2(Game1.ScreenWidth - 200, Game1.ScreenHeight - 200),
     };
-    openSaveModalButton.Click += OpenSaveModalButton_Click;
-    components.Add(openSaveModalButton);
+
+    saveButton.Click += SaveButton_Click;
+    components.Add(saveButton);
   }
 
   private void LoadPartButtons()
@@ -101,49 +100,14 @@ public class EditEntityState : BuildStateBase
     }
   }
 
-  private void InitializeModalComponents()
-  {
-    textInput = new TextInputBox(new Rectangle(Game1.ScreenWidth / 2 - 150, Game1.ScreenHeight / 2 - 20, 300, 40), font, graphicsDevice);
-
-    confirmSaveButton = new Button(SpriteFactory.GetSprite(ID_SPRITE.BUTTON, Vector2.Zero, 2f), font)
-    {
-      Text = "Confirm",
-      Position = new Vector2(Game1.ScreenWidth / 2 - 150, Game1.ScreenHeight / 2 + 30),
-    };
-    confirmSaveButton.Click += ConfirmSaveButton_Click;
-
-    cancelSaveButton = new Button(SpriteFactory.GetSprite(ID_SPRITE.BUTTON, Vector2.Zero, 2f), font)
-    {
-      Text = "Cancel",
-      Position = new Vector2(Game1.ScreenWidth / 2 + 10, Game1.ScreenHeight / 2 + 30),
-    };
-    cancelSaveButton.Click += CancelSaveButton_Click;
-  }
-
   private void OnPartButtonClicked(ID_ENTITY partID, EntityButton clickedButton)
   {
     idToBeAddded = partID;
     clicked = clickedButton;
   }
 
-  private void OpenSaveModalButton_Click(object sender, EventArgs e)
+  private void SaveButton_Click(object sender, EventArgs e)
   {
-    isSaveModalOpen = true;
-    textInput.IsActive = true;
-  }
-
-  private void CancelSaveButton_Click(object sender, EventArgs e)
-  {
-    isSaveModalOpen = false;
-    textInput.IsActive = false;
-  }
-
-  private async void ConfirmSaveButton_Click(object sender, EventArgs e)
-  {
-    if (string.IsNullOrWhiteSpace(textInput.Text))
-    {
-      return;
-    }
     saveAndExit = true;
   }
 
@@ -151,34 +115,31 @@ public class EditEntityState : BuildStateBase
   {
     var managementModule = editedEntity.GetModule<LinkManagementModule>();
     managementModule.ClearFillerEntities();
+
     var entitiesToSave = editedEntity.Entities.Cast<WorldEntity>().ToList();
-    var blueprint = BlueprintFactory.CreateBlueprint(entitiesToSave, textInput.Text);
-    await new JsonBlueprintStorage().SaveBlueprintAsync(blueprint);
+    string newName = Guid.NewGuid().ToString();
+
+    var blueprint = BlueprintFactory.CreateBlueprint(entitiesToSave, newName);
+    await BlueprintFactory.SaveBlueprintAsync(blueprint);
     CompositeControllerFactory.InitializePreviews();
-    isSaveModalOpen = false;
-    textInput.IsActive = false;
 
     if (backgroundState is BuildControllerState buildState)
     {
       buildState.LoadBlueprintButtons();
     }
+
+    ReturnToPreviousState();
   }
 
   public override void Update(GameTime gameTime)
   {
     base.Update(gameTime);
+    saveButton?.Update(gameTime);
+
     if (saveAndExit)
     {
       SaveEntityAnUpdatePreviousState();
-      ReturnToPreviousState();
-      return;
-    }
-
-    if (isSaveModalOpen)
-    {
-      textInput.Update(gameTime);
-      confirmSaveButton.Update(gameTime);
-      cancelSaveButton.Update(gameTime);
+      saveAndExit = false;
       return;
     }
 
@@ -255,18 +216,7 @@ public class EditEntityState : BuildStateBase
 
   protected override void DrawModalContent(GameTime gameTime, SpriteBatch spriteBatch)
   {
-    if (isSaveModalOpen)
-    {
-      spriteBatch.Begin();
-      var darkOverlay = new Texture2D(graphicsDevice, 1, 1);
-      darkOverlay.SetData(new[] { new Color(0, 0, 0, 150) });
-      spriteBatch.Draw(darkOverlay, new Rectangle(0, 0, Game1.ScreenWidth, Game1.ScreenHeight), Color.White);
-      spriteBatch.DrawString(font, "Name the blueprint:", new Vector2(Game1.ScreenWidth / 2 - 150, Game1.ScreenHeight / 2 - 50), Color.White);
-      textInput.Draw(spriteBatch);
-      confirmSaveButton.Draw(spriteBatch);
-      cancelSaveButton.Draw(spriteBatch);
-      spriteBatch.End();
-    }
+    // Save button is drawn via the components list in the base class
   }
 
   private void DrawAvailableLinks(SpriteBatch spriteBatch)

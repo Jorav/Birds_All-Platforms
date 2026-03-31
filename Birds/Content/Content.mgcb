@@ -61,6 +61,18 @@
 /processorParam:TextureFormat=Color
 /build:background/WHITE_SMALL.png
 
+#begin menu/BUTTON_ENTITY_MENU.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:menu/BUTTON_ENTITY_MENU.png
+
 #begin menu/BUTTON_ENTITY.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -116,6 +128,42 @@
 /processorParam:TextureFormat=Compressed
 /build:menu/FONT.spritefont
 
+#begin menu/SAVE.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:menu/SAVE.png
+
+#begin parts/ENGINE_BAD.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:parts/ENGINE_BAD.png
+
+#begin parts/ENGINE_GOOD.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:parts/ENGINE_GOOD.png
+
 #begin parts/ENGINE.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -163,6 +211,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:parts/HULL_LINK.png
+
+#begin parts/HULL_RECTANGULAR_BAD.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:parts/HULL_RECTANGULAR_BAD.png
+
+#begin parts/HULL_RECTANGULAR_GOOD.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:parts/HULL_RECTANGULAR_GOOD.png
 
 #begin parts/HULL_RECTANGULAR.png
 /importer:TextureImporter

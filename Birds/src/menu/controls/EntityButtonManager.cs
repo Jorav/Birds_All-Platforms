@@ -54,15 +54,15 @@ public class EntityButtonManager
     int row = index / buttonsPerRow;
     int col = index % buttonsPerRow;
 
-    float buttonWidth = SpriteFactory.textures[(int)ID_SPRITE.BUTTON_ENTITY].Width * scale;
-    float buttonHeight = SpriteFactory.textures[(int)ID_SPRITE.BUTTON_ENTITY].Height * scale;
+    float buttonWidth = SpriteFactory.textures[(int)ID_SPRITE.ENTITY_BUTTON].Width * scale;
+    float buttonHeight = SpriteFactory.textures[(int)ID_SPRITE.ENTITY_BUTTON].Height * scale;
 
     float xPos = Game1.ScreenWidth - startX - (buttonWidth + spacing) * (buttonsPerRow - col);
     float yPos = startY + row * (buttonHeight + spacing);
 
     return new EntityButton(
         previewSprite,
-        SpriteFactory.GetSprite(ID_SPRITE.BUTTON_ENTITY, Vector2.Zero, scale),
+        SpriteFactory.GetSprite(ID_SPRITE.ENTITY_BUTTON, Vector2.Zero, scale),
         autoFit: true)
     {
       Scale = scale,

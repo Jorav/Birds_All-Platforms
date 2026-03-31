@@ -1,7 +1,6 @@
 ﻿using Birds.src.containers.composite.blueprints;
 using Birds.src.containers.composite.blueprints.parts;
 using Birds.src.containers.entity;
-using Birds.src.modules.composite;
 using Birds.src.modules.controller;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.position;
@@ -10,6 +9,9 @@ using Birds.src.storage.implementations;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Birds.src.factories;
@@ -195,6 +197,33 @@ public static class BlueprintFactory
         clonedLink1.ConnectTo(clonedLink2);
       }
     }
+  }
+
+  public static string GenerateDeterministicHash(CompositeBlueprint blueprint)
+  {
+    var sb = new StringBuilder();
+
+    foreach (var e in blueprint.Entities.OrderBy(e => e.EntityType).ThenBy(e => e.Id))
+    {
+      sb.Append($"E:{(int)e.EntityType},");
+    }
+
+    foreach (var c in blueprint.Connections.OrderBy(c => c.EntityId1).ThenBy(c => c.EntityId2).ThenBy(c => c.LinkIndex1))
+    {
+      sb.Append($"C:{c.EntityId1}-{c.LinkIndex1}:{c.EntityId2}-{c.LinkIndex2},");
+    }
+
+    using (SHA256 sha256Hash = SHA256.Create())
+    {
+      byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()));
+      return BitConverter.ToString(bytes).Replace("-", "").ToLower().Substring(0, 16);
+    }
+  }
+
+  public static async Task<bool> IsDuplicateBlueprintAsync(string hashName)
+  {
+    var existingNames = await GetBlueprintNamesAsync();
+    return existingNames.Contains(hashName);
   }
 
   public static async Task SaveBlueprintAsync(CompositeBlueprint blueprint) => await _storage.SaveBlueprintAsync(blueprint);

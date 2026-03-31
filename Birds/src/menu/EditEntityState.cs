@@ -48,7 +48,7 @@ public class EditEntityState : BuildStateBase
     originalEntity = editedEntity;
     editedController = ControllerFactory.Create(
         new List<IEntity> { this.editedEntity },
-        ID_CONTROLLER.DEFAULT
+        ID_CONTROLLER.DEFAULT 
     );
 
     idToBeAddded = ID_ENTITY.DEFAULT;
@@ -111,7 +111,7 @@ public class EditEntityState : BuildStateBase
     saveAndExit = true;
   }
 
-  private async void SaveEntityAnUpdatePreviousState()
+  private async void SaveEntityAndUpdatePreviousState()
   {
     var managementModule = editedEntity.GetModule<LinkManagementModule>();
     managementModule.ClearFillerEntities();
@@ -138,7 +138,7 @@ public class EditEntityState : BuildStateBase
 
     if (saveAndExit)
     {
-      SaveEntityAnUpdatePreviousState();
+      SaveEntityAndUpdatePreviousState();
       saveAndExit = false;
       return;
     }

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Birds.src.utility.factories;
 
 namespace Birds.src.menu.controls;
 
@@ -28,25 +28,62 @@ public class EntityButtonManager
       float startX = 50f,
       float startY = 20f,
       float spacing = 5f,
+      float sectionSpacing = 30f,
       Func<T, bool> filter = null)
   {
     ClearButtons();
 
-    int buttonIndex = 0;
+    var hullItems = new List<KeyValuePair<T, ISprite>>();
+    var blueprintItems = new List<KeyValuePair<T, ISprite>>();
+
     foreach (var kvp in previews)
     {
-      if (filter != null && !filter(kvp.Key))
-        continue;
+      if (filter != null && !filter(kvp.Key)) continue;
 
-      var button = CreateButton(kvp.Value, scale, buttonIndex, buttonsPerRow, startX, startY, spacing);
-      string blueprintName = kvp.Key.ToString();
-      button.Click += (sender, e) => onButtonClick(kvp.Key, sender as EntityButton);
-      button.LongPress += (s, e) => longPressAction(blueprintName, button);
-
-      buttons.Add(button);
-      components.Add(button);
-      buttonIndex++;
+      string name = kvp.Key.ToString();
+      if (Enum.TryParse(typeof(ID_ENTITY), name, out _) && WorldEntityLoader.Hulls.Any(h => h.ToString() == name))
+      {
+        hullItems.Add(kvp);
+      }
+      else
+      {
+        blueprintItems.Add(kvp);
+      }
     }
+
+    int currentTotalIndex = 0;
+    float currentYOffset = startY;
+
+    if (hullItems.Count > 0)
+    {
+      foreach (var kvp in hullItems)
+      {
+        var button = CreateButton(kvp.Value, scale, currentTotalIndex, buttonsPerRow, startX, currentYOffset, spacing);
+        SetupButton(button, kvp, onButtonClick, longPressAction);
+        currentTotalIndex++;
+      }
+
+      int rowsUsed = (int)Math.Ceiling((double)hullItems.Count / buttonsPerRow);
+      float buttonHeight = SpriteFactory.textures[(int)ID_SPRITE.ENTITY_BUTTON].Height * scale;
+      currentYOffset += (rowsUsed * (buttonHeight + spacing)) + sectionSpacing;
+    }
+
+    int blueprintIndex = 0;
+    foreach (var kvp in blueprintItems)
+    {
+      var button = CreateButton(kvp.Value, scale, blueprintIndex, buttonsPerRow, startX, currentYOffset, spacing);
+      SetupButton(button, kvp, onButtonClick, longPressAction);
+      blueprintIndex++;
+    }
+  }
+
+  private void SetupButton<T>(EntityButton button, KeyValuePair<T, ISprite> kvp, Action<T, EntityButton> onButtonClick, Action<string, EntityButton> longPressAction)
+  {
+    string blueprintName = kvp.Key.ToString();
+    button.Click += (sender, e) => onButtonClick(kvp.Key, sender as EntityButton);
+    button.LongPress += (s, e) => longPressAction(blueprintName, button);
+    buttons.Add(button);
+    components.Add(button);
   }
 
   private EntityButton CreateButton(ISprite previewSprite, float scale, int index, int buttonsPerRow, float startX, float startY, float spacing)
@@ -92,4 +129,3 @@ public class EntityButtonManager
     return buttons.FirstOrDefault();
   }
 }
-

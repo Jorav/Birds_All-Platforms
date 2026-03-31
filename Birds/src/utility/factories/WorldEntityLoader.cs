@@ -17,9 +17,12 @@ namespace Birds.src.utility.factories;
 public class WorldEntityLoader
 {
   private const string CONFIG_PATH = "src/WorldEntities.json";
+  public const string PARAM_LINKS = "Links";
 
   private static WorldEntityConfiguration _defaultConfig;
   private static Dictionary<ID_ENTITY, WorldEntityConfiguration> _entityConfigs = new();
+  public static List<ID_ENTITY> Hulls { get; private set; } = new();
+
   private static readonly JsonSerializerOptions _jsonOptions = new()
   {
     PropertyNameCaseInsensitive = true,
@@ -36,6 +39,7 @@ public class WorldEntityLoader
 
     _defaultConfig = configFile.Default;
     LoadEntityConfigurations(configFile);
+    IdentifyHulls();
   }
 
   private static string LoadConfigFile()
@@ -60,6 +64,25 @@ public class WorldEntityLoader
       else
       {
         _entityConfigs[entityId] = _defaultConfig;
+      }
+    }
+  }
+
+  private static void IdentifyHulls()
+  {
+    Hulls.Clear();
+    foreach (var kvp in _entityConfigs)
+    {
+      if (kvp.Key == ID_ENTITY.FILLER) continue;
+
+      var linkModule = kvp.Value.Modules?.FirstOrDefault(m => m.Type == ID_MODULE.LinkModule);
+      if (linkModule != null && linkModule.Parameters.TryGetValue(PARAM_LINKS, out var linksObj) && linksObj is JsonElement linksJson)
+      {
+        var links = JsonSerializer.Deserialize<List<LinkConfiguration>>(linksJson.GetRawText(), _jsonOptions);
+        if (links != null && links.Count > 1)
+        {
+          Hulls.Add(kvp.Key);
+        }
       }
     }
   }
@@ -138,6 +161,15 @@ public class WorldEntityLoader
     return null;
   }
 
+  public static bool HasModule(ID_ENTITY entityId, ID_MODULE moduleType)
+  {
+    if (_entityConfigs.TryGetValue(entityId, out var config))
+    {
+      return config.Modules.Any(m => m.Type == moduleType);
+    }
+    return false;
+  }
+
   private static void ApplyModules(IEntity entity, List<ModuleConfigurationEntry> modules, bool isPartOfComposite, Sprite sprite)
   {
     entity.ClearModules();
@@ -182,7 +214,7 @@ public class WorldEntityLoader
 
       case ID_MODULE.LinkModule:
         var linkModule = new LinkModule();
-        if (moduleConfig.Parameters.TryGetValue("Links", out var linksObj) && linksObj is JsonElement linksJson)
+        if (moduleConfig.Parameters.TryGetValue(PARAM_LINKS, out var linksObj) && linksObj is JsonElement linksJson)
         {
           var linkConfigs = JsonSerializer.Deserialize<List<LinkConfiguration>>(linksJson.GetRawText(), _jsonOptions);
           linkModule.SetLinkConfigurations(linkConfigs);
@@ -194,17 +226,6 @@ public class WorldEntityLoader
         if (sprite != null)
           entity.AddModule(new DrawModule(sprite));
         break;
-
-      default:
-        throw new NotImplementedException($"Module type '{moduleConfig.Type}' is not implemented");
     }
-  }
-
-  public static bool HasModule(ID_ENTITY entityId, ID_MODULE moduleType)
-  {
-    if (!_entityConfigs.TryGetValue(entityId, out var config))
-      return false;
-
-    return config.Modules.Any(m => m.Type == moduleType);
   }
 }

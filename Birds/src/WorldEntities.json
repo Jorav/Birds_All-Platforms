@@ -101,8 +101,8 @@
         },
         "HULL_RECTANGULAR_BAD": {
             "Properties": {
-                "Mass": 1.25,
-                "Thrust": 0.75
+                "Mass": 1.1,
+                "Thrust": 0.9
             },
             "Modules": [
                 {
@@ -156,8 +156,8 @@
         },
         "HULL_RECTANGULAR_GOOD": {
             "Properties": {
-                "Mass": 0.75,
-                "Thrust": 1.5
+                "Mass": 0.9,
+                "Thrust": 1.1
             },
             "Modules": [
                 {

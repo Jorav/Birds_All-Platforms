@@ -16,6 +16,7 @@ using Birds.src.modules.shared.collision_detection;
 using System.Collections.Generic;
 using Birds.src.menu.controls;
 using System.Linq;
+using Birds.src.utility.factories;
 
 namespace Birds.src.menu;
 
@@ -66,13 +67,14 @@ public class BuildControllerState : BuildStateBase
   public void LoadBlueprintButtons()
   {
     buttonManager.CreateButtonGrid(
-        CompositeControllerFactory.Previews.Take(10),
+        CompositeControllerFactory.Previews,
         OnBlueprintButtonClicked,
         OnBlueprintButtonLongPressed,
         scale: 3f,
         startX: 20f
     );
   }
+
   public override void Update(GameTime gameTime)
   {
     base.Update(gameTime);
@@ -97,7 +99,6 @@ public class BuildControllerState : BuildStateBase
     UpdateSelectionCircle();
     AddEntityIfClicked();
     HandleClickLogic();
-
   }
 
   private void OnBlueprintButtonClicked(string blueprintName, EntityButton clickedButton)
@@ -120,9 +121,11 @@ public class BuildControllerState : BuildStateBase
 
   private void OnBlueprintButtonLongPressed(string blueprintName, EntityButton clickedButton)
   {
-    if (blueprintName == CompositeControllerFactory.DEFAULT_SINGLE ||
-        blueprintName == CompositeControllerFactory.DEFAULT_CROSS)
-      return;
+    if (Enum.TryParse(blueprintName, out ID_ENTITY id))
+    {
+      if (WorldEntityLoader.Hulls.Contains(id))
+        return;
+    }
 
     if (_activeDeleteButton != null && _activeDeleteButton != clickedButton)
     {

@@ -13,7 +13,7 @@ namespace Birds.src.modules.shared.collision_detection;
 
 public class GroupCollisionDetectionModule : BaseCollisionDetectionModule, IEntityCollectionListener
 {
-  private readonly ICollisionStructure collisionStructure;
+  private ICollisionStructure collisionStructure;
   private readonly bool evaluateInternalCollisions;
   private List<ICollidable> childCollidables = new List<ICollidable>(32);
 

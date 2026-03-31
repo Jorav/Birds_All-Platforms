@@ -13,6 +13,4 @@ public interface ISprite : IComponent
   Color Color { get; set; }
   float Alpha { get; set; }
   float Scale { get; set; }
-
-  void Draw(SpriteBatch sb);
 }

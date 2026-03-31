@@ -124,7 +124,7 @@ public class EditEntityState : BuildStateBase
 
     var blueprint = BlueprintFactory.CreateBlueprint(entitiesToSave, newName);
     await BlueprintFactory.SaveBlueprintAsync(blueprint);
-    CompositeControllerFactory.InitializePreviews();
+    await CompositeControllerFactory.InitializePreviews();
 
     if (backgroundState is BuildControllerState buildState)
     {

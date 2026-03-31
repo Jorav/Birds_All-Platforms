@@ -9,7 +9,7 @@ namespace Birds.src.menu.controls;
 
 public class EntityButton : Button
 {
-  public ISprite sprite { get; private set; }
+  public new ISprite entitySprite { get; private set; }
   private float hullFactor = 1f;
   public bool IsClicked { get; set; }
   public bool IsDeleteMode { get; set; }
@@ -23,9 +23,9 @@ public class EntityButton : Button
       base.sprite.Origin = Vector2.Zero;
       base.sprite.Position = value;
 
-      if (sprite != null)
+      if (entitySprite != null)
       {
-        sprite.Position = value + new Vector2((base.sprite.Width * scale) / 2, (base.sprite.Height * scale) / 2);
+        entitySprite.Position = value + new Vector2((base.sprite.Width * scale) / 2, (base.sprite.Height * scale) / 2);
       }
     }
   }
@@ -37,7 +37,7 @@ public class EntityButton : Button
     {
       scale = value;
       base.sprite.Scale = value;
-      if (sprite != null) sprite.Scale = value * hullFactor;
+      if (entitySprite != null) entitySprite.Scale = value * hullFactor;
       Position = position;
     }
   }
@@ -45,16 +45,16 @@ public class EntityButton : Button
   public EntityButton(ISprite entitySprite, ISprite backgroundSprite, bool autoFit = true, SpriteFont font = null)
       : base(backgroundSprite, font)
   {
-    this.sprite = entitySprite;
+    this.entitySprite = entitySprite;
     if (autoFit) CalculateHullFactor(0.8f);
     this.Position = position;
   }
 
   private void CalculateHullFactor(float paddingFactor)
   {
-    if (sprite == null) return;
-    float ratioX = (float)base.sprite.Width / sprite.Width;
-    float ratioY = (float)base.sprite.Height / sprite.Height;
+    if (entitySprite == null) return;
+    float ratioX = (float)base.sprite.Width / entitySprite.Width;
+    float ratioY = (float)base.sprite.Height / entitySprite.Height;
     hullFactor = Math.Min(ratioX, ratioY) * paddingFactor;
   }
 
@@ -64,7 +64,7 @@ public class EntityButton : Button
     if (IsClicked) isHovering = true;
 
     base.Draw(spritebatch);
-    sprite?.Draw(spritebatch);
+    entitySprite?.Draw(spritebatch);
 
     if (IsDeleteMode)
     {

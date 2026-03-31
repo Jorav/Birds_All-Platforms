@@ -42,7 +42,7 @@ public abstract class SteeringModule : ModuleBase
     }
   }
 
-  public virtual object Clone()
+  public override object Clone()
   {
     SteeringModule sNew = (SteeringModule)this.MemberwiseClone();
     return sNew;

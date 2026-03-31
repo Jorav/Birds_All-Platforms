@@ -12,7 +12,7 @@ public class WorldEntity : ModuleContainer, IEntity
   {
   }
 
-  public virtual object Clone()
+  public override object Clone()
   {
     var cloned = (WorldEntity)base.Clone();
     return cloned;

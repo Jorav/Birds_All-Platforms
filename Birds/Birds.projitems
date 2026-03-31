@@ -31,6 +31,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ObservableCollectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\SyncedProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\BuildStateBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\DragHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\EntityButtonManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\DoubleClickHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\TextInputBox.cs" />
@@ -45,6 +46,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\model\WorldEntityConfigurationFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\model\WorldEntityConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\WorldEntityLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\utility\LongPressTimer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\visual\CompositeSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\visual\ISprite.cs" />
     <Compile Include="..\Birds\src\modules\composite\SubEntityCollisionExtractionModule.cs" />

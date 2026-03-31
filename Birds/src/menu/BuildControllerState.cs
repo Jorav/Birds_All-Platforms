@@ -25,8 +25,8 @@ public class BuildControllerState : BuildStateBase
   private BoundingCircle selectionCircle;
   private EntityButtonManager buttonManager;
   private DoubleClickHelper doubleClickHelper;
+  private DragHelper dragHelper;
   private const float selectionBuffer = 1.5f;
-
   private string pendingBlueprintName = null;
 
   private EntityButton _activeDeleteButton;
@@ -43,6 +43,7 @@ public class BuildControllerState : BuildStateBase
   {
     editedController = (Controller)originalController.Clone();
     editedController.GetModule<SteeringModule>().actionsLocked = true;
+    dragHelper = new DragHelper(editedController, Input.Camera);
 
     doubleClickHelper = new DoubleClickHelper(400);
 
@@ -96,6 +97,7 @@ public class BuildControllerState : BuildStateBase
       LoadBlueprintButtons();
     }
 
+    dragHelper.Update(gameTime);
     UpdateSelectionCircle();
     AddEntityIfClicked();
     HandleClickLogic();
@@ -177,15 +179,11 @@ public class BuildControllerState : BuildStateBase
         if (doubleClickHelper.CheckDoubleClick(Input.IsPressed, true))
         {
           game.ChangeState(new EditEntityState(game, graphicsDevice, content, this, backgroundState, input, editedController, entity));
+          dragHelper.Reset();
           return;
         }
         return;
       }
-    }
-
-    if (doubleClickHelper.CheckDoubleClick(Input.IsPressed, true))
-    {
-      pendingBlueprintName = CompositeControllerFactory.DEFAULT_SINGLE;
     }
   }
 

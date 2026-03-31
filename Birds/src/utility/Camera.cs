@@ -11,6 +11,7 @@ public class Camera
   public Matrix Transform { get; private set; }
   public Vector2 Position { get; set; }
   public Vector2 PreviousPosition { get; set; }
+  public bool IsLocked { get; set; }
   public float Rotation { get; set; }
   private float zoom;
   public float Zoom
@@ -104,6 +105,7 @@ public class Camera
 
   private void AdjustPosition()
   {
+    if (IsLocked) return;
     PreviousPosition = Position;
     Position = Controller.Position;// reviousPosition + 0.1f * (Controller.Position - PreviousPosition);
   }

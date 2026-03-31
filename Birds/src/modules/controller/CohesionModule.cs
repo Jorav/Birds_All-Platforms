@@ -129,9 +129,9 @@ public class CohesionModule : ModuleBase
     }
   }
 
-  public virtual object Clone()
+  public override object Clone()
   {
-    return (CohesionModule)this.MemberwiseClone();
+    return (CohesionModule)base.Clone();
   }
 
   public override void Dispose()

@@ -15,6 +15,7 @@ namespace Birds.src.menu
     protected GraphicsDevice graphicsDevice;
     protected Game1 game;
     protected Input input;
+    public bool IsLocked { get; set; } = false;
     #endregion
 
     #region Methods

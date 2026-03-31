@@ -115,9 +115,9 @@ public static class CompositeControllerFactory
     return null;
   }
 
-  public static void InitializePreviews()
+  public static async Task InitializePreviews()
   {
-    var savedNames = BlueprintFactory.GetBlueprintNamesAsync().GetAwaiter().GetResult();
+    var savedNames = await BlueprintFactory.GetBlueprintNamesAsync();
     var blueprintNames = WorldEntityLoader.Hulls.Select(id => id.ToString()).ToList();
 
     foreach (var name in savedNames)

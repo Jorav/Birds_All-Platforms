@@ -16,8 +16,6 @@ public class Background : Controller
   {
     this.relativeSpeed = relativeSpeed;
     this.camera = camera;
-    if (movement == null)
-      movement = Vector2.Zero;
     this.movement = movement;
     previousZoom = camera.Zoom;
   }

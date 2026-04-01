@@ -58,6 +58,8 @@ public class CompositeSprite : ISprite
 
     Width = (int)(maxX - minX);
     Height = (int)(maxY - minY);
+
+    Origin = new Vector2((minX + maxX) / 2, (minY + maxY) / 2);
   }
 
   public void Update(GameTime gameTime) { }
@@ -68,7 +70,7 @@ public class CompositeSprite : ISprite
 
     foreach (var part in _parts)
     {
-      part.Sprite.Position = this.Position + (part.LocalOffset * this.Scale);
+      part.Sprite.Position = this.Position + ((part.LocalOffset - this.Origin) * this.Scale);
       part.Sprite.Scale = part.OriginalScale * this.Scale;
       part.Sprite.Alpha = this.Alpha;
       part.Sprite.Draw(sb);

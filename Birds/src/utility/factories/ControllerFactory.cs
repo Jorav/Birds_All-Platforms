@@ -91,7 +91,7 @@ namespace Birds.src.factories
       switch (id)
       {
         case ID_CONTROLLER.DEFAULT:
-          c = new Controller(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
+          c = new Controller(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.HULL_RECTANGULAR_BAD));
           c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupMassModule());
           c.AddModule(new GroupWeightedPositionModule());
@@ -107,7 +107,7 @@ namespace Birds.src.factories
           return c;
 
         case ID_CONTROLLER.PLAYER:
-          c = new Controller(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
+          c = new Controller(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.HULL_RECTANGULAR_BAD));
           c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupMassModule());
           c.AddModule(new GroupWeightedPositionModule());
@@ -125,7 +125,7 @@ namespace Birds.src.factories
           return c;
 
         case ID_CONTROLLER.CHASER_AI:
-          c = new Controller(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.DEFAULT));
+          c = new Controller(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.HULL_RECTANGULAR_BAD));
           c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupMassModule());
           c.AddModule(new GroupWeightedPositionModule());

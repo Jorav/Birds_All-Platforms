@@ -24,7 +24,7 @@ public static class CompositeControllerFactory
   public static Stack<CompositeController> availableEntities = new(100);
   public static Dictionary<string, ISprite> Previews { get; set; } = new();
 
-  public const string DEFAULT_SINGLE = "DEFAULT";
+  public const string DEFAULT_SINGLE = "HULL_RECTANGULAR_BAD";
   public const string DEFAULT_CROSS = "Cross Shape";
 
   public static CompositeController GetComposite(Vector2 position, string blueprintName, bool useGeometricCenter = false)
@@ -107,7 +107,7 @@ public static class CompositeControllerFactory
 
     if (Enum.TryParse(blueprintName, out ID_ENTITY id))
     {
-      if (WorldEntityLoader.Hulls.Contains(id) || id == ID_ENTITY.DEFAULT)
+      if (WorldEntityLoader.Hulls.Contains(id) || id == ID_ENTITY.HULL_RECTANGULAR_BAD)
       {
         return CreateSingleEntityBlueprint(id);
       }
@@ -164,11 +164,11 @@ public static class CompositeControllerFactory
       Name = DEFAULT_CROSS,
       Entities = new List<EntityPlacement>
       {
-          new EntityPlacement { Id = 0, EntityType = ID_ENTITY.DEFAULT },
-          new EntityPlacement { Id = 1, EntityType = ID_ENTITY.DEFAULT },
-          new EntityPlacement { Id = 2, EntityType = ID_ENTITY.DEFAULT },
-          new EntityPlacement { Id = 3, EntityType = ID_ENTITY.DEFAULT },
-          new EntityPlacement { Id = 4, EntityType = ID_ENTITY.DEFAULT }
+          new EntityPlacement { Id = 0, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
+          new EntityPlacement { Id = 1, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
+          new EntityPlacement { Id = 2, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
+          new EntityPlacement { Id = 3, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
+          new EntityPlacement { Id = 4, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD }
       },
       Connections = new List<Connection>
       {

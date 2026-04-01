@@ -20,7 +20,6 @@ public class GameState : State
   protected State previousState;
   public List<IEntity> newEntities;
   public static Controller Player { get; set; }
-  public Camera Camera { get; set; }
 
   private DoubleClickHelper doubleClickHelper;
 
@@ -33,7 +32,10 @@ public class GameState : State
     newEntities = new List<IEntity>();
 
     doubleClickHelper = new DoubleClickHelper(400);
-
+    if (Input.Camera == null)
+    {
+      Input.Camera = new Camera();
+    }
     if (Player == null)
     {
       Player = ControllerFactory.Create(
@@ -42,13 +44,11 @@ public class GameState : State
         );
       controller.Add(Player);
     }
-    Camera = new Camera(Player);
-    Input.Camera = Camera;
   }
 
   public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
   {
-    spriteBatch.Begin(transformMatrix: Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.AnisotropicClamp);
+    spriteBatch.Begin(transformMatrix: Input.Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.AnisotropicClamp);
     graphicsDevice.Clear(Color.CornflowerBlue);
     foreach (Background b in backgrounds)
     {

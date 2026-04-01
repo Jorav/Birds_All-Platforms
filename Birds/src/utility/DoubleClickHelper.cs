@@ -21,7 +21,7 @@ public class DoubleClickHelper
       Reset();
     }
 
-    if (!Input.WasPressed)
+    if (!Input.WasJustPressed)
     {
       return false;
     }

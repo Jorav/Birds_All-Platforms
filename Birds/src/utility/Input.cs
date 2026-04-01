@@ -21,7 +21,6 @@ public class Input
   private static bool pinching = false;
   private static float pinchPreviousDistance;
   private static Vector2 previousPosition = Vector2.Zero;
-  private static bool previousIsPressed = false;
 
   private bool pauseDown;
   private bool buildDown;
@@ -29,13 +28,11 @@ public class Input
 
   public static void Update(GameTime gameTime)
   {
-    previousIsPressed = IsPressed;
+    WasPressed = IsPressed;
 
     UpdatePosition();
     UpdateIsPressed();
     UpdateIsReleased();
-    if (Camera != null)
-      Camera.Update();
   }
 
   private static void UpdateIsReleased()
@@ -207,7 +204,17 @@ public class Input
 
   public static bool WasPressed
   {
-    get { return IsPressed && !previousIsPressed; }
+    get; set;
+  }
+
+  public static bool WasJustPressed
+  {
+    get { return IsPressed && !WasPressed; }
+  }
+
+  public static bool WasJustReleased
+  {
+    get { return !IsPressed && WasPressed; }
   }
 
   public static bool IsReleased

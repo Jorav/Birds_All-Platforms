@@ -68,7 +68,7 @@ public class Button : IComponent
     {
       isHovering = true;
 
-      if (Input.WasPressed)
+      if (Input.WasJustPressed)
       {
         isBeingHeld = true;
         currentHoldTime = 0;

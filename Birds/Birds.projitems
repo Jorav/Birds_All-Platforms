@@ -31,6 +31,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ObservableCollectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\SyncedProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\BuildStateBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\CameraModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\DragHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\controls\EntityButtonManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\DoubleClickHelper.cs" />

@@ -80,7 +80,7 @@ public class BuildControllerState : BuildStateBase
   {
     base.Update(gameTime);
 
-    if (Input.WasPressed && _activeDeleteButton != null)
+    if (Input.WasJustPressed && _activeDeleteButton != null)
     {
       if (!_activeDeleteButton.IsHovering())
       {
@@ -161,7 +161,7 @@ public class BuildControllerState : BuildStateBase
     if (!Input.IsPressed || IsMouseAboveComponent())
       return;
 
-    if (Input.WasPressed)
+    if (Input.WasJustPressed)
     {
       var playerWithBufferClicked = selectionCircle.Contains(Input.PositionGameCoords);
 

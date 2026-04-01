@@ -160,7 +160,7 @@ public class EditEntityState : BuildStateBase
       {
         AddEntityIfFillerClicked();
       }
-      else if (Input.WasPressed)
+      else if (Input.WasJustPressed)
       {
         ReturnToPreviousState();
       }

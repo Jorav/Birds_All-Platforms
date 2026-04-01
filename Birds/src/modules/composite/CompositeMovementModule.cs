@@ -6,24 +6,16 @@ namespace Birds.src.modules.composite;
 
 public class CompositeMovementModule : MovementModule
 {
-  private bool _isManualMove;
-
-  public override void PerformManualMove(Vector2 targetPosition)
-  {
-    _isManualMove = true;
-    base.PerformManualMove(targetPosition);
-    _isManualMove = false;
-  }
-
   protected override void Move(Vector2 distance)
   {
-    if (_isManualMove)
+    if (_manualMoveTarget.HasValue)
     {
       foreach (IEntity entity in container.Entities)
       {
         entity.Position.Value += distance;
         entity.Velocity.Value = this.Velocity;
       }
+      this.Velocity = Vector2.Zero;
     }
     else
     {

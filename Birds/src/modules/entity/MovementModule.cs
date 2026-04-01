@@ -13,7 +13,9 @@ public class MovementModule : ModuleBase, IMovementModule
   public virtual Vector2 Velocity { get; set; }
   public virtual float Friction { get; set; } = 0.1f;
   private Vector2 totalExteriorForce;
-  private Vector2? _manualMoveTarget;
+  public Vector2? _manualMoveTarget;
+
+  public bool HasManualMovePending => _manualMoveTarget.HasValue;
 
   public Vector2 TotalExteriorForce
   {
@@ -44,7 +46,7 @@ public class MovementModule : ModuleBase, IMovementModule
     base.Initialize(container);
   }
 
-  public virtual void PerformManualMove(Vector2 targetPosition)
+  public virtual void SetManualMoveTarget(Vector2 targetPosition)
   {
     _manualMoveTarget = targetPosition;
   }
@@ -77,23 +79,27 @@ public class MovementModule : ModuleBase, IMovementModule
 
   protected override void Update(GameTime gameTime)
   {
-    if (Mass == 0)
+    if (_manualMoveTarget.HasValue)
     {
+      PerformManualMove();
       return;
     }
 
-    if (_manualMoveTarget.HasValue)
-    {
-      Velocity = _manualMoveTarget.Value - Position;
-      Move(Velocity);
-      _manualMoveTarget = null;
-      TotalExteriorForce = Vector2.Zero;
-      return;
-    }
+    if (Mass <= 0) return;
 
     Vector2 FrictionForce = (Velocity * Mass + TotalExteriorForce) * Friction * (float)Game1.timeStep * 60;
     Velocity = Velocity + (TotalExteriorForce - FrictionForce) / Mass * (float)Game1.timeStep * 60;
     Move(Velocity * (float)Game1.timeStep * 60);
+    TotalExteriorForce = Vector2.Zero;
+  }
+
+  public virtual void PerformManualMove()
+  {
+    if (!_manualMoveTarget.HasValue) return;
+    Vector2 target = _manualMoveTarget.Value;
+    Move(target - Position);
+    _manualMoveTarget = null;
+    Velocity = Vector2.Zero;
     TotalExteriorForce = Vector2.Zero;
   }
 

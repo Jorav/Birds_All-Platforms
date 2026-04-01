@@ -1,10 +1,7 @@
-﻿using Birds.src.containers.controller;
+﻿using Birds.src;
 using Birds.src.events;
 using Microsoft.Xna.Framework;
 using System;
-using System.Runtime.InteropServices;
-
-namespace Birds.src.utility;
 
 public class Camera
 {
@@ -13,6 +10,7 @@ public class Camera
   public Vector2 PreviousPosition { get; set; }
   public bool IsLocked { get; set; }
   public float Rotation { get; set; }
+
   private float zoom;
   public float Zoom
   {
@@ -26,129 +24,63 @@ public class Camera
       zoom = value;
     }
   }
-  private bool inBuildScreen;
-  public bool InBuildScreen
-  {
-    get { return inBuildScreen; }
-    set
-    {
-      if (value)
-      {
-        Zoom = BuildMenuZoom;
-        zoomSpeed = 10f;
-      }
-      else
-      {
-        zoomSpeed = 0.01f;
-        Zoom = GameZoom;
-      }
-      inBuildScreen = value;
-      UpdateTransformMatrix();
-    }
-  }
+
+  public bool InBuildScreen { get; set; }
   public float Width { get { return Game1.ScreenWidth / Zoom; } }
   public float Height { get { return Game1.ScreenHeight / Zoom; } }
   public bool AutoAdjustZoom { get; set; }
-  public float GameZoom { get { if (Controller != null) return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (900 + 1 * Controller.Radius); else return 1; } }
-  //        public float GameZoom { get { if (Controller != null) return  Game1.ScreenWidth / 3 / Controller.Radius; else return 1; } }
-  public float BuildMenuZoom { get { if (Controller != null) return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (2 * Controller.Radius + 900 / 8); else return 1; } }
 
-  private IModuleContainer controller;
-  public IModuleContainer Controller {
-    get { return controller; } 
-    set {
-      if (value != null) 
-      { 
-        Position = value.Position; 
-        PreviousPosition = value.Position; 
-      } controller = value; 
+  public IModuleContainer Controller { get; set; }
+
+  public float GameZoom
+  {
+    get
+    {
+      if (Controller != null)
+        return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (900 + 1 * Controller.Radius);
+      else
+        return 1;
     }
   }
-  private float zoomSpeed;
+
+  public float BuildMenuZoom
+  {
+    get
+    {
+      if (Controller != null)
+        return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (2 * Controller.Radius + 900 / 8);
+      else
+        return 1;
+    }
+  }
+
   private float maxZoom = 3;
   private float minZoom = 0.5f;
 
-  public Camera([OptionalAttribute] IModuleContainer controller, float zoomSpeed = 0.01f)
+  public Camera(IModuleContainer controller = null)
   {
-    if (controller != null)
-      Controller = controller;
-    else
-      Position = Vector2.Zero;
+    Controller = controller;
+    Position = controller?.Position ?? Vector2.Zero;
     PreviousPosition = Position;
     Rotation = 0;
-    Zoom = GameZoom;
-    this.zoomSpeed = zoomSpeed;
+    Zoom = 1;
     AutoAdjustZoom = true;
     UpdateTransformMatrix();
-  }
-
-  public void Update()
-  {
-    PreviousPosition = Position;
-    if (Controller != null)
-      AdjustPosition();
-    if (AutoAdjustZoom)
-    {
-      if (InBuildScreen)
-      {
-        AdjustZoom(BuildMenuZoom);
-      }
-      else
-      {
-        AdjustZoom(GameZoom);
-      }
-    }
-
-    Rotation = 0;
-    UpdateTransformMatrix();
-  }
-
-  private void AdjustPosition()
-  {
-    if (IsLocked) return;
-    PreviousPosition = Position;
-    Position = Controller.Position;// reviousPosition + 0.1f * (Controller.Position - PreviousPosition);
-  }
-
-  private void AdjustZoom(float optimalZoom)
-  {
-    if (optimalZoom > Zoom)
-    {
-      if (optimalZoom / Zoom > 1 + zoomSpeed)
-        Zoom *= 1 + zoomSpeed;
-      else
-        Zoom = optimalZoom;
-    }
-    else if (optimalZoom < Zoom)
-    {
-      if (Zoom / optimalZoom > 1 + zoomSpeed)
-        Zoom /= 1 + zoomSpeed;
-      else
-        Zoom = optimalZoom;
-    }
   }
 
   public Vector2 ScreenToWorld(Vector2 screenPosition)
   {
     float x = (screenPosition.X - (Game1.ScreenWidth / 2)) / Zoom + Position.X;
     float y = (screenPosition.Y - (Game1.ScreenHeight / 2)) / Zoom + Position.Y;
-
     return new Vector2(x, y);
   }
 
   public void UpdateTransformMatrix()
   {
-    Matrix position = Matrix.CreateTranslation(
-        -Position.X,
-        -Position.Y,
-        0);
+    Matrix position = Matrix.CreateTranslation(-Position.X, -Position.Y, 0);
     Matrix rotation = Matrix.CreateRotationZ(Rotation);
-    Matrix origin = Matrix.CreateTranslation(
-        Game1.ScreenWidth / 2,
-        Game1.ScreenHeight / 2,
-        0);
+    Matrix origin = Matrix.CreateTranslation(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2, 0);
     Matrix zoom = Matrix.CreateScale(Zoom, Zoom, 0);
     Transform = position * rotation * zoom * origin;
   }
 }
-

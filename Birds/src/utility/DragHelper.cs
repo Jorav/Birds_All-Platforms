@@ -1,7 +1,6 @@
 ﻿using Birds.src.containers.entity;
 using Birds.src.events;
 using Birds.src.modules.entity;
-using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
@@ -12,11 +11,12 @@ public class DragHelper
   private IModuleContainer _container;
   private LongPressTimer _longPressTimer;
   private Vector2 _dragOffset;
-  private Vector2 _lastMousePosition;
   private Camera _camera;
+  private Vector2 _originalEntityPosition;
 
   public bool IsDragging { get; private set; }
   public IEntity DraggedEntity { get; private set; }
+  public bool SnapBackOnRelease { get; set; } = true;
 
   public DragHelper(IModuleContainer container, Camera camera)
   {
@@ -29,57 +29,74 @@ public class DragHelper
   {
     Vector2 currentMouseWorld = Input.PositionGameCoords;
 
+    if (Input.WasJustPressed)
+    {
+      Reset();
+      SelectEntityAt(currentMouseWorld);
+      return;
+    }
+
     if (!Input.IsPressed)
     {
-      _longPressTimer.Stop();
-      IsDragging = false;
-      _camera.IsLocked = false;
-      DraggedEntity = null;
+      HandleMouseReleased();
       return;
     }
 
     if (IsDragging && DraggedEntity != null)
     {
       _camera.IsLocked = true;
-      Vector2 targetPos = currentMouseWorld + _dragOffset;
-      var movement = DraggedEntity.GetModule<MovementModule>();
-      movement?.PerformManualMove(targetPos);
-
-      _lastMousePosition = currentMouseWorld;
+      DraggedEntity.GetModule<MovementModule>()?.SetManualMoveTarget(currentMouseWorld + _dragOffset);
       return;
     }
 
-    if (Input.WasPressed)
+    if (_longPressTimer.IsBeingHeld && DraggedEntity != null)
     {
-      foreach (var entity in _container.Entities.Reverse())
-      {
-        if (entity.Contains(currentMouseWorld))
-        {
-          DraggedEntity = entity;
-          _longPressTimer.Start();
-          break;
-        }
-      }
+      UpdateLongPress(gameTime, currentMouseWorld);
     }
-    else if (_longPressTimer.IsBeingHeld && DraggedEntity != null)
+  }
+
+  private void HandleMouseReleased()
+  {
+    if (IsDragging && DraggedEntity != null && SnapBackOnRelease)
     {
-      if (!DraggedEntity.Contains(currentMouseWorld))
+      var movementModule = DraggedEntity.GetModule<MovementModule>();
+      movementModule.SetManualMoveTarget(_originalEntityPosition);
+      movementModule.PerformManualMove();
+      _camera.Position = _container.Position;
+      _camera.PreviousPosition = _container.Position;
+    }
+
+    Reset();
+  }
+
+  private void SelectEntityAt(Vector2 worldPos)
+  {
+    foreach (var entity in _container.Entities)
+    {
+      if (entity.Contains(worldPos))
       {
-        _longPressTimer.Stop();
-        DraggedEntity = null;
+        DraggedEntity = entity;
+        _longPressTimer.Start();
         return;
       }
+    }
+  }
 
-      _longPressTimer.Update(gameTime);
-
-      if (_longPressTimer.JustTriggered)
-      {
-        IsDragging = true;
-        _dragOffset = DraggedEntity.Position.Value - currentMouseWorld;
-      }
+  private void UpdateLongPress(GameTime gameTime, Vector2 worldPos)
+  {
+    if (!DraggedEntity.Contains(worldPos))
+    {
+      Reset();
+      return;
     }
 
-    _lastMousePosition = currentMouseWorld;
+    _longPressTimer.Update(gameTime);
+    if (_longPressTimer.JustTriggered)
+    {
+      IsDragging = true;
+      _originalEntityPosition = DraggedEntity.Position.Value;
+      _dragOffset = DraggedEntity.Position.Value - worldPos;
+    }
   }
 
   public void Reset()

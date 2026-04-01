@@ -47,6 +47,7 @@ namespace Birds.src.factories
               evaluateInternalCollisions: true
           ));
           c.AddModule(new FlockingCohesionModule());
+          c.AddModule(new CameraModule());
           c.AddModule(new GroupDrawModule());
           return c;
 

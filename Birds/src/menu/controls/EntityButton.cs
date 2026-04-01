@@ -69,7 +69,7 @@ public class EntityButton : Button
     if (IsDeleteMode)
     {
       Vector2 center = Position + new Vector2((base.sprite.Width * scale) / 2, (base.sprite.Height * scale) / 2);
-      var deleteSprite = SpriteFactory.GetSprite(ID_SPRITE.DELETE, center, scale);
+      var deleteSprite = SpriteFactory.GetSprite(ID_SPRITE.DELETE_X, center, scale);
       deleteSprite.Draw(spritebatch);
     }
 

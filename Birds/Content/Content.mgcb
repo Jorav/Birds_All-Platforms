@@ -97,7 +97,7 @@
 /processorParam:TextureFormat=Color
 /build:menu/BUTTON.png
 
-#begin menu/DELETE.png
+#begin menu/DELETE_BUTTON.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -107,9 +107,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:menu/DELETE.png
+/build:menu/DELETE_BUTTON.png
 
-#begin menu/DELETEX.png
+#begin menu/DELETE_X.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -119,7 +119,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:menu/DELETEX.png
+/build:menu/DELETE_X.png
 
 #begin menu/FONT.spritefont
 /importer:FontDescriptionImporter

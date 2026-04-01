@@ -32,6 +32,7 @@ public class BuildControllerState : BuildStateBase
   private EntityButton _activeDeleteButton;
   private EntityButton _buttonToRemove;
   private string _blueprintToRemove;
+  private EntityButton deleteButton;
 
   public BuildControllerState(
       Game1 game,
@@ -49,8 +50,21 @@ public class BuildControllerState : BuildStateBase
 
     InitializeSelectionCircle();
     InitializeButtons();
+    InitializeDeleteButton();
     Input.Camera.Controller = editedController;
     Input.Camera.InBuildScreen = true;
+  }
+
+  private void InitializeDeleteButton()
+  {
+    ISprite deleteIcon = SpriteFactory.GetSprite(ID_SPRITE.DELETE_BUTTON, Vector2.Zero);
+    ISprite buttonBg = SpriteFactory.GetSprite(ID_SPRITE.ENTITY_BUTTON_MENU, Vector2.Zero);
+
+    deleteButton = new EntityButton(deleteIcon, buttonBg, autoFit: true)
+    {
+      Scale = 4f,
+      Position = new Vector2(Game1.ScreenWidth - 200, Game1.ScreenHeight - 200),
+    };
   }
 
   private void InitializeSelectionCircle()
@@ -96,11 +110,32 @@ public class BuildControllerState : BuildStateBase
       _activeDeleteButton = null;
       LoadBlueprintButtons();
     }
+    if (dragHelper.IsDragging)
+    {
+      deleteButton?.Update(gameTime);
+    }
+    HandleDeleteEntity();
+
+
 
     dragHelper.Update(gameTime);
     UpdateSelectionCircle();
     AddEntityIfClicked();
     HandleClickLogic();
+  }
+
+  private void HandleDeleteEntity()
+  {
+    if (dragHelper.IsDragging && Input.WasJustReleased && deleteButton.IsHovering())
+    {
+      var entityToDelete = dragHelper.DraggedEntity;
+      if (entityToDelete != null && editedController.Entities.Count > 1)
+      {
+        editedController.Entities.Remove(entityToDelete);
+        entityToDelete.Dispose();
+        dragHelper.Reset();
+      }
+    }
   }
 
   private void OnBlueprintButtonClicked(string blueprintName, EntityButton clickedButton)
@@ -184,6 +219,16 @@ public class BuildControllerState : BuildStateBase
         }
         return;
       }
+    }
+  }
+
+  protected override void DrawModalContent(GameTime gameTime, SpriteBatch spriteBatch)
+  {
+    if (dragHelper.IsDragging && deleteButton != null)
+    {
+      spriteBatch.Begin(sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.AnisotropicClamp);
+      deleteButton.Draw(spriteBatch);
+      spriteBatch.End();
     }
   }
 

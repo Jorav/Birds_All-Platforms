@@ -84,7 +84,8 @@ public class Game1 : Game
     textures[(int)ID_SPRITE.BUTTON] = Content.Load<Texture2D>("menu/BUTTON");
     textures[(int)ID_SPRITE.ENTITY_BUTTON] = Content.Load<Texture2D>("menu/BUTTON_ENTITY");
     textures[(int)ID_SPRITE.ENTITY_BUTTON_MENU] = Content.Load<Texture2D>("menu/BUTTON_ENTITY_MENU");
-    textures[(int)ID_SPRITE.DELETE] = Content.Load<Texture2D>("menu/DELETEX");
+    textures[(int)ID_SPRITE.DELETE_X] = Content.Load<Texture2D>("menu/DELETE_X");
+    textures[(int)ID_SPRITE.DELETE_BUTTON] = Content.Load<Texture2D>("menu/DELETE_BUTTON");
     textures[(int)ID_SPRITE.SAVE] = Content.Load<Texture2D>("menu/SAVE");
 
     SpriteFactory.textures = textures;

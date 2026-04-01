@@ -125,7 +125,7 @@ public class WorldEntityLoader
     if (entityId == ID_ENTITY.FILLER)
     {
       sprite.Alpha = 0.4f;
-      sprite.Color = Color.LightGreen;
+      sprite.Color = Color.Lime;
     }
 
     entity.Width.Value = sprite.Width;

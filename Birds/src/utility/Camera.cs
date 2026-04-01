@@ -25,13 +25,42 @@ public class Camera
     }
   }
 
-  public bool InBuildScreen { get; set; }
+  private bool inBuildScreen;
+  public bool InBuildScreen
+  {
+    get { return inBuildScreen; }
+    set
+    {
+      if (value)
+      {
+        Zoom = BuildMenuZoom;
+      }
+      else
+      {
+        Zoom = GameZoom;
+      }
+      inBuildScreen = value;
+      UpdateTransformMatrix();
+    }
+  }
   public float Width { get { return Game1.ScreenWidth / Zoom; } }
   public float Height { get { return Game1.ScreenHeight / Zoom; } }
   public bool AutoAdjustZoom { get; set; }
 
-  public IModuleContainer Controller { get; set; }
-
+  private IModuleContainer controller;
+  public IModuleContainer Controller
+  {
+    get { return controller; }
+    set
+    {
+      if (value != null)
+      {
+        Position = value.Position;
+        PreviousPosition = value.Position;
+      }
+      controller = value;
+    }
+  }
   public float GameZoom
   {
     get

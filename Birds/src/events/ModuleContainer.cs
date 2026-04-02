@@ -15,7 +15,6 @@ public abstract class ModuleContainer : IModuleContainer
   private SyncedProperty<float> _rotation;
   private SyncedProperty<float> _mass;
   private SyncedProperty<float> _radius;
-  private SyncedProperty<Color> _color;
   private SyncedProperty<ID_OTHER> _team;
   private SyncedProperty<Vector2> _velocity;
   private SyncedProperty<float> _scale;
@@ -28,7 +27,6 @@ public abstract class ModuleContainer : IModuleContainer
   public SyncedProperty<float> Rotation => _rotation ??= new SyncedProperty<float>(0);
   public SyncedProperty<float> Mass => _mass ??= new SyncedProperty<float>(1);
   public SyncedProperty<float> Radius => _radius ??= new SyncedProperty<float>(1);
-  public SyncedProperty<Color> Color => _color ??= new SyncedProperty<Color>(Microsoft.Xna.Framework.Color.White);
   public SyncedProperty<ID_OTHER> Team => _team ??= new SyncedProperty<ID_OTHER>();
   public SyncedProperty<Vector2> Velocity => _velocity ??= new SyncedProperty<Vector2>();
   public SyncedProperty<float> Scale => _scale ??= new SyncedProperty<float>(1);
@@ -39,7 +37,7 @@ public abstract class ModuleContainer : IModuleContainer
 
   private ObservableCollection<IEntity> _entities = new();
   public ObservableCollection<IEntity> Entities => _entities;
-  public List<IModuleContainer> Collisions { get; set;  } = new(8);
+  public List<IModuleContainer> Collisions { get; set; } = new(8);
 
   private Dictionary<Type, ModuleBase> modules = new Dictionary<Type, ModuleBase>();
 
@@ -55,7 +53,6 @@ public abstract class ModuleContainer : IModuleContainer
     _rotation?.Reset(0);
     _mass?.Reset(1);
     _radius?.Reset(1);
-    _color?.Reset(Microsoft.Xna.Framework.Color.White);
     _team?.Reset();
     _scale?.Reset(1);
     _width?.Reset(1);
@@ -183,7 +180,6 @@ public abstract class ModuleContainer : IModuleContainer
     if (_rotation != null) cloned._rotation = new SyncedProperty<float>(_rotation.Value);
     if (_mass != null) cloned._mass = new SyncedProperty<float>(_mass.Value);
     if (_radius != null) cloned._radius = new SyncedProperty<float>(_radius.Value);
-    if (_color != null) cloned._color = new SyncedProperty<Color>(_color.Value);
     if (_team != null) cloned._team = new SyncedProperty<ID_OTHER>(_team.Value);
     if (_velocity != null) cloned._velocity = new SyncedProperty<Vector2>(Vector2.Zero);
     if (_scale != null) cloned._scale = new SyncedProperty<float>(_scale.Value);
@@ -201,7 +197,7 @@ public abstract class ModuleContainer : IModuleContainer
 
     cloned.Entities.Set(_entities.Select(e => (IEntity)e.Clone()));
 
-    SyncWriteProperties();
+    cloned.SyncWriteProperties();
     return cloned;
   }
 

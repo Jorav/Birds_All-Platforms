@@ -38,10 +38,9 @@ public class Sprite : ISprite
 
   public void Draw(SpriteBatch sb)
   {
-
     Color c = new Color(Color, alpha: Alpha);
     if (isVisible)
-      sb.Draw(texture, Position, null, new Color(Color, alpha: Alpha), Rotation, Origin, Scale, SpriteEffects.None, 0f);
+      sb.Draw(texture, Position, null, c, Rotation, Origin, Scale, SpriteEffects.None, 0f);
   }
 
   public Sprite Clone()
@@ -49,15 +48,26 @@ public class Sprite : ISprite
     return new Sprite(this.texture, this.Scale, this.Alpha)
     {
       Color = this.Color,
-      Rotation = this.Rotation, // Keep original relative rotation
+      Rotation = this.Rotation,
       Origin = this.Origin,
       Position = this.Position,
       isVisible = this.isVisible
     };
   }
 
+  public void Reset()
+  {
+    this.Scale = 1f;
+    this.Alpha = 1f;
+    this.Rotation = 0f;
+    this.Position = Vector2.Zero;
+    this.Color = Color.White;
+    this.isVisible = true;
+  }
+
   public void Dispose()
   {
+    Reset();
     SpriteFactory.availableSprites.Push(this);
   }
 }

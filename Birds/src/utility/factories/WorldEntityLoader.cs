@@ -9,8 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using Birds.src.utility.factories.model;
 using System.Linq;
+using Birds.src.utility.factories.model.entity;
 
 namespace Birds.src.utility.factories;
 
@@ -34,23 +34,13 @@ public class WorldEntityLoader
 
   public static void Initialize()
   {
-    string json = LoadConfigFile();
+    string json = File.ReadAllText(CONFIG_PATH);
     var configFile = JsonSerializer.Deserialize<WorldEntityConfigurationFile>(json, _jsonOptions);
 
     _defaultConfig = configFile.Default;
     LoadEntityConfigurations(configFile);
     IdentifyHulls();
   }
-
-  private static string LoadConfigFile()
-  {
-    using (var stream = TitleContainer.OpenStream(CONFIG_PATH))
-    using (var reader = new StreamReader(stream))
-    {
-      return reader.ReadToEnd();
-    }
-  }
-
   private static void LoadEntityConfigurations(WorldEntityConfigurationFile configFile)
   {
     foreach (ID_ENTITY entityId in Enum.GetValues(typeof(ID_ENTITY)))
@@ -93,8 +83,8 @@ public class WorldEntityLoader
     {
       Properties = new Dictionary<string, object>(_defaultConfig.Properties),
       Modules = entityConfig.Modules?.Count > 0
-        ? new List<ModuleConfigurationEntry>(entityConfig.Modules)
-        : new List<ModuleConfigurationEntry>(_defaultConfig.Modules)
+        ? (entityConfig.Modules)
+        : (_defaultConfig.Modules)
     };
 
     if (entityConfig.Properties != null)

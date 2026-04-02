@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Birds.src.utility.factories.model;
+namespace Birds.src.utility.factories.model.entity;
 
 public class WorldEntityConfiguration
 {

@@ -88,14 +88,13 @@ public class Game1 : Game
     textures[(int)ID_SPRITE.DELETE_BUTTON] = Content.Load<Texture2D>("menu/DELETE_BUTTON");
     textures[(int)ID_SPRITE.SAVE] = Content.Load<Texture2D>("menu/SAVE");
 
-    SpriteFactory.textures = textures;
     font = Content.Load<SpriteFont>("menu/FONT");
-
-
-    currentState = new MainMenu(this, GraphicsDevice, Content, input);
-    WarmupPropertyCache();
+    SpriteFactory.textures = textures;
+    SpriteLoader.Initialize();
     WorldEntityFactory.InitializePreviews();
     CompositeControllerFactory.InitializePreviews();
+    WarmupPropertyCache();
+    currentState = new MainMenu(this, GraphicsDevice, Content, input);
   }
 
   //Im not sure i like this but it does improve things significantly since we are compiling syncing

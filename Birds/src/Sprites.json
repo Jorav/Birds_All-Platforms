@@ -1,0 +1,36 @@
+﻿{
+    "Default": {
+        "Alpha": 1.0,
+        "Color": {
+            "R": 255,
+            "G": 255,
+            "B": 255,
+            "A": 255
+        },
+        "Visible": true
+    },
+    "Sprites": {
+        "FILLER": {
+            "Alpha": 0.4,
+            "Color": {
+                "R": 0,
+                "G": 255,
+                "B": 0,
+                "A": 255
+            },
+            "Visible": true
+        },
+        "BACKGROUND_GRAY": {
+            "Alpha": 0.8
+        },
+        "BACKGROUND_WHITE": {
+            "Alpha": 0.8
+        },
+        "SUN": {
+            "Alpha": 1.0
+        },
+        "CLOUD": {
+            "Alpha": 0.8
+        }
+    }
+}

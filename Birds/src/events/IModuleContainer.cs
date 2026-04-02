@@ -23,7 +23,6 @@ public interface IModuleContainer
   SyncedProperty<float> Rotation { get; }
   SyncedProperty<float> Mass { get; }
   SyncedProperty<float> Radius { get; }
-  SyncedProperty<Microsoft.Xna.Framework.Color> Color { get; }
   SyncedProperty<ID_OTHER> Team { get; }
   SyncedProperty<Vector2> Velocity { get; }
   SyncedProperty<float> Scale { get; }

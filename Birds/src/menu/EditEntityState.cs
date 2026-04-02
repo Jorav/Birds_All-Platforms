@@ -50,7 +50,7 @@ public class EditEntityState : BuildStateBase
     originalEntity = editedEntity;
     editedController = ControllerFactory.Create(
         new List<IEntity> { this.editedEntity },
-        ID_CONTROLLER.DEFAULT 
+        ID_CONTROLLER.DEFAULT
     );
 
     font = Game1.font;
@@ -91,13 +91,20 @@ public class EditEntityState : BuildStateBase
         filter: partID => WorldEntityLoader.HasModule(partID, ID_MODULE.LinkModule) && partID != ID_ENTITY.FILLER
     );
 
-    clicked = null;
+    if (clicked != null)
+    {
+      buttonManager.SetFirstButtonSelected();
+      idToBeAddded = WorldEntityFactory.Previews.First(kvp =>
+          WorldEntityLoader.HasModule(kvp.Key, ID_MODULE.LinkModule) &&
+          kvp.Key != ID_ENTITY.FILLER).Key;
+    }
   }
 
   private void OnPartButtonClicked(ID_ENTITY partID, EntityButton clickedButton)
   {
     idToBeAddded = partID;
-    clicked = clickedButton; AddOpenLinks();
+    clicked = clickedButton;
+    AddOpenLinks();
     refreshFillers = true;
   }
 
@@ -147,27 +154,14 @@ public class EditEntityState : BuildStateBase
 
     if (Input.IsPressed && !IsMouseAboveComponent())
     {
-      bool interactedWithFiller = false;
-
-      if (idToBeAddded.HasValue)
+      var bc = editedEntity.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
+      if (bc.Contains(Input.PositionGameCoords))
       {
-        interactedWithFiller = AddEntityIfFillerClicked();
+        AddEntityIfFillerClicked();
       }
-
-      if (Input.WasJustPressed && !interactedWithFiller)
+      else if (Input.WasJustPressed)
       {
-        if (idToBeAddded.HasValue)
-        {
-          ClearSelection();
-        }
-        else
-        {
-          var bc = editedEntity.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
-          if (!bc.Contains(Input.PositionGameCoords))
-          {
-            ReturnToPreviousState();
-          }
-        }
+        ReturnToPreviousState();
       }
     }
   }
@@ -184,7 +178,7 @@ public class EditEntityState : BuildStateBase
     }
   }
 
-  private bool AddEntityIfFillerClicked()
+  private void AddEntityIfFillerClicked()
   {
     var linkManagementModule = editedEntity.GetModule<LinkManagementModule>();
     foreach (IEntity entity in linkManagementModule.fillerEntities)
@@ -196,21 +190,16 @@ public class EditEntityState : BuildStateBase
         {
           refreshFillers = true;
         }
-        return true;
+        break;
       }
     }
-    return false;
   }
 
   private void AddOpenLinks()
   {
+    if (!idToBeAddded.HasValue) return;
     var managementModule = editedEntity.GetModule<LinkManagementModule>();
-    managementModule.ClearFillerEntities();
-
-    if (idToBeAddded.HasValue)
-    {
-      managementModule.AddFillerEntities(idToBeAddded.Value);
-    }
+    managementModule.AddFillerEntities(idToBeAddded.Value);
   }
 
   protected override void ReturnToPreviousState()
@@ -226,15 +215,6 @@ public class EditEntityState : BuildStateBase
     Input.Camera.Controller = originalController;
     Input.Camera.Position = originalController.Position;
     Input.Camera.InBuildScreen = true;
-  }
-  private void ClearSelection()
-  {
-    idToBeAddded = ID_ENTITY.DEFAULT;
-    clicked = null;
-    UpdateClickedState();
-
-    var managementModule = editedEntity.GetModule<LinkManagementModule>();
-    managementModule.ClearFillerEntities();
   }
 
   protected override void DrawCustomContent(SpriteBatch spriteBatch)
@@ -275,5 +255,5 @@ public class EditEntityState : BuildStateBase
     }
 
     fillerEntity.Dispose();
-  } 
+  }
 }

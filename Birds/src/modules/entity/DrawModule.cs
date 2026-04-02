@@ -8,10 +8,13 @@ using Birds.src.modules.shared.collision_detection;
 using Birds.src.collision.bounding_areas;
 using Birds.src.modules.entity;
 using Birds.src;
+using Birds.src.containers.entity;
+using Birds.src.utility;
 
 public class DrawModule : ModuleBase, IDrawModule
 {
   public Sprite Sprite { get; set; }
+
   private Vector2 _position;
   public Vector2 Position
   {
@@ -23,6 +26,7 @@ public class DrawModule : ModuleBase, IDrawModule
         Sprite.Position = value;
     }
   }
+
   private float _rotation;
   public float Rotation
   {
@@ -34,17 +38,7 @@ public class DrawModule : ModuleBase, IDrawModule
         Sprite.Rotation = value;
     }
   }
-  private Color _color;
-  public Color Color
-  {
-    get => _color;
-    set
-    {
-      _color = value;
-      if (Sprite != null)
-        Sprite.Color = value;
-    }
-  }
+
   private float _scale;
   public float Scale
   {
@@ -56,6 +50,37 @@ public class DrawModule : ModuleBase, IDrawModule
         Sprite.Scale = value;
     }
   }
+
+  public Color Color
+  {
+    get => Sprite?.Color ?? Color.White;
+    set
+    {
+      if (Sprite != null)
+        Sprite.Color = value;
+    }
+  }
+
+  public float Alpha
+  {
+    get => Sprite?.Alpha ?? 1f;
+    set
+    {
+      if (Sprite != null)
+        Sprite.Alpha = value;
+    }
+  }
+
+  public bool Visible
+  {
+    get => Sprite?.isVisible ?? true;
+    set
+    {
+      if (Sprite != null)
+        Sprite.isVisible = value;
+    }
+  }
+
   public float Width { get; set; }
   public float Height { get; set; }
 
@@ -79,7 +104,6 @@ public class DrawModule : ModuleBase, IDrawModule
   {
     ReadSync(() => Position, container.Position);
     ReadSync(() => Rotation, container.Rotation);
-    ReadWriteSync(() => Color, container.Color);
     ReadWriteSync(() => Scale, container.Scale);
     WriteSync(() => Width, container.Width);
     WriteSync(() => Height, container.Height);
@@ -89,7 +113,6 @@ public class DrawModule : ModuleBase, IDrawModule
   {
     base.Initialize(container);
     Scale = Sprite.Scale;
-    Color = Sprite.Color;
     Width = Sprite.Width;
     Height = Sprite.Height;
   }
@@ -158,9 +181,18 @@ public class DrawModule : ModuleBase, IDrawModule
 
   public override object Clone()
   {
-    var cloned = (DrawModule)this.MemberwiseClone();
-    cloned.Sprite = new Sprite(this.Sprite.Texture, this.Scale);
+    var cloned = (DrawModule)base.Clone();
+    cloned.Sprite = Sprite.Clone();
+    cloned._scale = 1f;
+    cloned._rotation = 0f;
+    cloned._position = Vector2.Zero;
     return cloned;
+  }
+
+  public override void Dispose()
+  {
+    Sprite.Dispose();
+    base.Dispose();
   }
 
   public static void DrawRectangleOutline(SpriteBatch sb, Vector2 ul, Vector2 ur, Vector2 dr, Vector2 dl, Color color, int thickness)

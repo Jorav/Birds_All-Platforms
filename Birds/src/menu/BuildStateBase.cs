@@ -31,11 +31,11 @@ public abstract class BuildStateBase : MenuState
   {
     this.backgroundState = backgroundState;
     this.originalController = originalController;
-
     overlay = SpriteFactory.GetSprite(
-        ID_SPRITE.BACKGROUND_WHITE,
-        new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2),
-        SpriteFactory.textures[(int)ID_SPRITE.BACKGROUND_WHITE].Height / (float)Game1.ScreenHeight);
+      ID_SPRITE.BACKGROUND_WHITE,
+      new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2),
+      SpriteFactory.GetBackgroundScale(ID_SPRITE.BACKGROUND_WHITE)
+    );
 
     InitializeCamera();
     LockPlayerActions();

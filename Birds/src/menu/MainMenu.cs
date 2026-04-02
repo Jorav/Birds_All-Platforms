@@ -42,7 +42,11 @@ public class MainMenu : MenuState
       Text = "Quit",
     };
     quitButton.Click += QuitButton_Click;
-    Sprite background = SpriteFactory.GetSprite(ID_SPRITE.BACKGROUND_GRAY, new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2), SpriteFactory.textures[(int)ID_SPRITE.BACKGROUND_WHITE].Height / Game1.ScreenHeight);
+    Sprite background = SpriteFactory.GetSprite(
+        ID_SPRITE.BACKGROUND_GRAY,
+        new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2),
+        SpriteFactory.GetBackgroundScale(ID_SPRITE.BACKGROUND_GRAY)
+    );
     ButtonContainer container = new ButtonContainer(ID_POSITION.POSITION_MIDDLE, new List<Button> { newGameButton });
     components = new List<IComponent>()
             {

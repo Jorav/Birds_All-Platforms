@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Birds.src.utility.factories.model;
+namespace Birds.src.utility.factories.model.entity;
 
 public class WorldEntityConfigurationFile
 {

@@ -83,7 +83,7 @@ public class Camera
     }
   }
 
-  private float maxZoom = 3;
+  private float maxZoom = 6;
   private float minZoom = 0.5f;
 
   public Camera(IModuleContainer controller = null)

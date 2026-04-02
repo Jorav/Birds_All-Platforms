@@ -152,16 +152,18 @@ public class EditEntityState : BuildStateBase
 
     UpdateClickedState();
 
-    if (Input.IsPressed && !IsMouseAboveComponent())
+    if (Input.WasJustPressed && !IsMouseAboveComponent())
     {
-      var bc = editedEntity.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
-      if (bc.Contains(Input.PositionGameCoords))
+      bool hitFiller = AddEntityIfFillerClicked();
+
+      if (!hitFiller)
       {
-        AddEntityIfFillerClicked();
-      }
-      else if (Input.WasJustPressed)
-      {
-        ReturnToPreviousState();
+        ClearSelectionAndFillers();
+          var bc = editedEntity.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
+          if (!bc.Contains(Input.PositionGameCoords))
+        {
+          ReturnToPreviousState();
+        }
       }
     }
   }
@@ -178,21 +180,36 @@ public class EditEntityState : BuildStateBase
     }
   }
 
-  private void AddEntityIfFillerClicked()
+  private bool AddEntityIfFillerClicked()
   {
+    if (!idToBeAddded.HasValue) return false;
+
     var linkManagementModule = editedEntity.GetModule<LinkManagementModule>();
     foreach (IEntity entity in linkManagementModule.fillerEntities)
     {
       if (entity.Contains(Input.PositionGameCoords))
       {
-        bool successfullyReplaced = editedEntity.ReplaceAndAttach(entity, WorldEntityFactory.CreateEntities(Vector2.Zero, 1, idToBeAddded.Value, isComposite: true).First());
+        bool successfullyReplaced = editedEntity.ReplaceAndAttach(
+            entity,
+            WorldEntityFactory.CreateEntities(Vector2.Zero, 1, idToBeAddded.Value, isComposite: true).First()
+        );
+
         if (successfullyReplaced)
         {
           refreshFillers = true;
         }
-        break;
+        return true;
       }
     }
+    return false;
+  }
+
+  private void ClearSelectionAndFillers()
+  {
+    idToBeAddded = null;
+    clicked = null;
+    var managementModule = editedEntity.GetModule<LinkManagementModule>();
+    managementModule.ClearFillerEntities();
   }
 
   private void AddOpenLinks()

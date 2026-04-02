@@ -22,11 +22,9 @@ namespace Birds.src.menu;
 
 public class BuildControllerState : BuildStateBase
 {
-  private BoundingCircle selectionCircle;
   private EntityButtonManager buttonManager;
   private DoubleClickHelper doubleClickHelper;
   private DragHelper dragHelper;
-  private const float selectionBuffer = 1.5f;
   private string pendingBlueprintName = null;
 
   private EntityButton _activeDeleteButton;
@@ -44,11 +42,11 @@ public class BuildControllerState : BuildStateBase
   {
     editedController = (Controller)originalController.Clone();
     editedController.GetModule<SteeringModule>().actionsLocked = true;
+    editedController.Rotation.Value = 0;
     dragHelper = new DragHelper(editedController, Input.Camera);
 
     doubleClickHelper = new DoubleClickHelper(400);
 
-    InitializeSelectionCircle();
     InitializeButtons();
     InitializeDeleteButton();
     Input.Camera.Controller = editedController;
@@ -65,12 +63,6 @@ public class BuildControllerState : BuildStateBase
       Scale = 4f,
       Position = new Vector2(Game1.ScreenWidth - 200, Game1.ScreenHeight - 200),
     };
-  }
-
-  private void InitializeSelectionCircle()
-  {
-    var boundingCircle = editedController.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
-    selectionCircle = BoundingAreaFactory.GetCircle(boundingCircle.Position, boundingCircle.Radius * selectionBuffer);
   }
 
   private void InitializeButtons()
@@ -115,11 +107,7 @@ public class BuildControllerState : BuildStateBase
       deleteButton?.Update(gameTime);
     }
     HandleDeleteEntity();
-
-
-
     dragHelper.Update(gameTime);
-    UpdateSelectionCircle();
     AddEntityIfClicked();
     HandleClickLogic();
   }
@@ -184,41 +172,32 @@ public class BuildControllerState : BuildStateBase
     }
   }
 
-  private void UpdateSelectionCircle()
-  {
-    var boundingCircle = editedController.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
-    selectionCircle.Radius = boundingCircle.Radius * selectionBuffer;
-    selectionCircle.Position = boundingCircle.Position;
-  }
-
   private void HandleClickLogic()
   {
     if (!Input.IsPressed || IsMouseAboveComponent())
       return;
 
-    if (Input.WasJustPressed)
-    {
-      var playerWithBufferClicked = selectionCircle.Contains(Input.PositionGameCoords);
+    var bc = editedController.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
 
-      if (!playerWithBufferClicked)
+    if (bc.Contains(Input.PositionGameCoords))
+    {
+      foreach (IEntity entity in editedController.Entities)
       {
-        ReturnToPreviousState();
-        return;
+        if (entity.Contains(Input.PositionGameCoords))
+        {
+          if (entity is CompositeController && doubleClickHelper.CheckDoubleClick(Input.IsPressed, true))
+          {
+            game.ChangeState(new EditEntityState(game, graphicsDevice, content, this, backgroundState, input, editedController, entity));
+            dragHelper.Reset();
+            return;
+          }
+          break;
+        }
       }
     }
-
-    foreach (IEntity entity in editedController.Entities)
+    else if (Input.WasJustPressed)
     {
-      if (entity.Contains(Input.PositionGameCoords) && entity is CompositeController)
-      {
-        if (doubleClickHelper.CheckDoubleClick(Input.IsPressed, true))
-        {
-          game.ChangeState(new EditEntityState(game, graphicsDevice, content, this, backgroundState, input, editedController, entity));
-          dragHelper.Reset();
-          return;
-        }
-        return;
-      }
+      ReturnToPreviousState();
     }
   }
 

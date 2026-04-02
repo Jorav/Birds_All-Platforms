@@ -80,6 +80,7 @@ public abstract class BuildStateBase : MenuState
   {
     HandleCommonInput();
     editedController?.Update(gameTime);
+    Input.Camera.UpdateTransformMatrix();//TODO: Remove this since its a quick fix
     base.Update(gameTime);
   }
 

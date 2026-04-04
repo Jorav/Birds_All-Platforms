@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Birds.src.utility;
+using Birds.src.player;
 
 namespace Birds.src.menu.controls;
 
@@ -42,8 +43,8 @@ public class EntityButton : Button
     }
   }
 
-  public EntityButton(ISprite entitySprite, ISprite backgroundSprite, bool autoFit = true, SpriteFont font = null)
-      : base(backgroundSprite, font)
+  public EntityButton(ISprite entitySprite, ISprite backgroundSprite, Input input, bool autoFit = true, SpriteFont font = null)
+      : base(backgroundSprite, input, font)
   {
     this.entitySprite = entitySprite;
     if (autoFit) CalculateHullFactor(0.8f);

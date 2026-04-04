@@ -1,32 +1,27 @@
-using Birds.src.utility;
+using Birds.src.player;
 using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.controller.steering;
 
-public class PlayerSteeringModule : SteeringModule
+public class PlayerSteeringModule(Input playerInput) : SteeringModule()
 {
   private bool hasStartedMoving;
   private bool wasPressed;
-
-  public PlayerSteeringModule() : base()
-  {
-  }
 
   public override bool ShouldAccelerate
   {
     get
     {
-      //bool accelerate = false;
       bool accelerate = false;
       if (actionsLocked)
       {
         return accelerate;
       }
-      if (Input.IsPressed && !wasPressed)
+      if (playerInput.IsPressed && !wasPressed)
       {
         hasStartedMoving = true;
       }
-      if (Input.IsPressed && hasStartedMoving)
+      if (playerInput.IsPressed && hasStartedMoving)
       {
         accelerate = true;
       }
@@ -34,19 +29,16 @@ public class PlayerSteeringModule : SteeringModule
       {
         hasStartedMoving = false;
       }
-      wasPressed = Input.IsPressed;
+      wasPressed = playerInput.IsPressed;
       return accelerate;
     }
-
   }
 
   public override Vector2 PositionLookedAt
   {
     get
     {
-      return Input.PositionGameCoords;
+      return playerInput.PositionGameCoords;
     }
   }
-
-  //ADD: When updating, get the state from the player via Input
 }

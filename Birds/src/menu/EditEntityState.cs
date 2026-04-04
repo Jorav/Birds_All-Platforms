@@ -7,6 +7,7 @@ using Birds.src.menu.controls;
 using Birds.src.modules.composite;
 using Birds.src.modules.entity;
 using Birds.src.modules.shared.collision_detection;
+using Birds.src.player;
 using Birds.src.storage.implementations;
 using Birds.src.utility;
 using Birds.src.utility.factories;
@@ -57,19 +58,19 @@ public class EditEntityState : BuildStateBase
 
     InitializeButtons();
     AddOpenLinks();
-    Input.Camera.Controller = editedController;
-    Input.Camera.InBuildScreen = true;
+    input.Camera.TrackedController = editedController;
+    input.Camera.InBuildScreen = true;
   }
 
   private void InitializeButtons()
   {
-    buttonManager = new EntityButtonManager(components);
+    buttonManager = new EntityButtonManager(components, input);
     LoadPartButtons();
 
     ISprite saveIcon = SpriteFactory.GetSprite(ID_SPRITE.SAVE, Vector2.Zero);
     ISprite buttonBg = SpriteFactory.GetSprite(ID_SPRITE.ENTITY_BUTTON_MENU, Vector2.Zero);
 
-    saveButton = new EntityButton(saveIcon, buttonBg, autoFit: true)
+    saveButton = new EntityButton(saveIcon, buttonBg, input, autoFit: true)
     {
       Scale = 4f,
       Position = new Vector2(Game1.ScreenWidth - 200, Game1.ScreenHeight - 200),
@@ -152,7 +153,7 @@ public class EditEntityState : BuildStateBase
 
     UpdateClickedState();
 
-    if (Input.WasJustPressed && !IsMouseAboveComponent())
+    if (input.WasJustPressed && !IsMouseAboveComponent())
     {
       bool hitFiller = AddEntityIfFillerClicked();
 
@@ -160,7 +161,7 @@ public class EditEntityState : BuildStateBase
       {
         ClearSelectionAndFillers();
           var bc = editedEntity.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
-          if (!bc.Contains(Input.PositionGameCoords))
+          if (!bc.Contains(input.PositionGameCoords))
         {
           ReturnToPreviousState();
         }
@@ -187,7 +188,7 @@ public class EditEntityState : BuildStateBase
     var linkManagementModule = editedEntity.GetModule<LinkManagementModule>();
     foreach (IEntity entity in linkManagementModule.fillerEntities)
     {
-      if (entity.Contains(Input.PositionGameCoords))
+      if (entity.Contains(input.PositionGameCoords))
       {
         bool successfullyReplaced = editedEntity.ReplaceAndAttach(
             entity,
@@ -229,9 +230,9 @@ public class EditEntityState : BuildStateBase
     originalController.Entities.Remove(originalEntity);
     originalEntity.Dispose();
     originalController.Entities.Add(editedEntity);
-    Input.Camera.Controller = originalController;
-    Input.Camera.Position = originalController.Position;
-    Input.Camera.InBuildScreen = true;
+    input.Camera.TrackedController = originalController;
+    input.Camera.Position = originalController.Position;
+    input.Camera.InBuildScreen = true;
   }
 
   protected override void DrawCustomContent(SpriteBatch spriteBatch)

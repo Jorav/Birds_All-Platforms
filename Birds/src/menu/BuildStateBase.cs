@@ -11,6 +11,7 @@ using System.Linq;
 using Birds.src.menu.controls;
 using Birds.src.modules.controller.steering;
 using Birds.src.events;
+using Birds.src.player;
 
 namespace Birds.src.menu;
 
@@ -43,8 +44,8 @@ public abstract class BuildStateBase : MenuState
 
   protected virtual void InitializeCamera()
   {
-    Input.Camera.Controller = editedController;
-    Input.Camera.InBuildScreen = true;
+    input.Camera.TrackedController = editedController;
+    input.Camera.InBuildScreen = true;
   }
 
   protected virtual void LockPlayerActions()
@@ -66,7 +67,7 @@ public abstract class BuildStateBase : MenuState
 
   protected virtual void HandleCommonInput()
   {
-    Input.HandleZoom();
+    input.HandleZoom();
 
     if (input.BuildClicked)
     {
@@ -80,7 +81,7 @@ public abstract class BuildStateBase : MenuState
   {
     HandleCommonInput();
     editedController?.Update(gameTime);
-    Input.Camera.UpdateTransformMatrix();//TODO: Remove this since its a quick fix
+    input.Camera.UpdateTransformMatrix();//TODO: Remove this since its a quick fix
     base.Update(gameTime);
   }
 
@@ -92,7 +93,7 @@ public abstract class BuildStateBase : MenuState
     overlay.Draw(spriteBatch);
     spriteBatch.End();
 
-    spriteBatch.Begin(transformMatrix: Input.Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.AnisotropicClamp);
+    spriteBatch.Begin(transformMatrix: input.Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.AlphaBlend, samplerState: SamplerState.AnisotropicClamp);
     editedController?.Draw(spriteBatch);
     DrawCustomContent(spriteBatch);
     spriteBatch.End();

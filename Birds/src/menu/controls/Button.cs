@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Birds.src.visual;
 using System;
 using Birds.src.utility;
+using Birds.src.player;
 
 namespace Birds.src.menu.controls;
 
@@ -37,21 +38,23 @@ public class Button : IComponent
   }
   public String Text { get { return TextNew.Text; } set { TextNew.Text = value; } }
   public FadingText TextNew { get; set; }
+  private Input input{ get; set; }
   #endregion
 
   #region Methods
-  public Button(ISprite sprite, SpriteFont font = null, String text = null)
+  public Button(ISprite sprite, Input input, SpriteFont font = null, String text = null)
   {
     this.sprite = sprite;
     position = sprite.Position;
     sprite.Origin = Vector2.Zero;
     TextNew = new FadingText(text, Position, font);
     TextNew.IsVisible = true;
+    this.input = input;
   }
 
   public bool IsHovering()
   {
-    Vector2 pos = Input.Position;
+    Vector2 pos = input.ScreenPosition;
     Rectangle mouseRectangle = new Rectangle(((int)Math.Round(pos.X)), ((int)Math.Round(pos.Y)), 1, 1);
     return mouseRectangle.Intersects(Rectangle);
   }
@@ -68,7 +71,7 @@ public class Button : IComponent
     {
       isHovering = true;
 
-      if (Input.WasJustPressed)
+      if (input.WasJustPressed)
       {
         isBeingHeld = true;
         currentHoldTime = 0;
@@ -82,7 +85,7 @@ public class Button : IComponent
 
     if (isBeingHeld)
     {
-      if (Input.IsPressed)
+      if (input.IsPressed)
       {
         currentHoldTime += gameTime.ElapsedGameTime.TotalMilliseconds;
 

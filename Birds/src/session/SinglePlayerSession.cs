@@ -1,43 +1,43 @@
-﻿namespace Birds.src.session;
-
+﻿using Birds.src.api.client;
+using Birds.src.modules.shared.collision_detection;
+using Birds.src.player;
+using Birds.src.session.world;
+using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Birds.src.containers.controller;
-using Birds.src.utility;
-using Birds.src.factories;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public class SinglePlayerSession : GameSession
-{
-  private LocalGameServer localServer;
+namespace Birds.src.session;
 
-  public SinglePlayerSession(string playerId = "local") : base(playerId)
-  {
-    localServer = new LocalGameServer(gameController);
-  }
+public class SinglePlayerSession(ClientSession session, Input input, Game1 game, GraphicsDevice graphicsDevice)
+    : GameSession(session, input)
+{
+  private readonly DoubleClickHelper doubleClickHelper = new(input, 400);
+  private WorldRenderer worldRenderer;
 
   public override async Task InitializeAsync()
   {
-    var playerController = ControllerFactory.Create(
-        CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, CompositeControllerFactory.DEFAULT_SINGLE),
-        ID_CONTROLLER.PLAYER
-    );
+    WorldInitializer.Initialize(world);
 
-    var player = new Player(
-        id: localPlayerId,
-        controller: playerController
-    );
-
+    var player = new Player(localPlayerId, input);
+    var playerController = world.AddPlayer(input);
+    player.SetController(playerController);
     AddPlayer(player);
-    gameController.Add(playerController);
+    worldRenderer = new WorldRenderer(world, player.Camera);
 
     await Task.CompletedTask;
   }
 
   public override void Update(GameTime gameTime)
   {
-    gameController.Update(gameTime);
+    var localPlayer = LocalPlayer;
+    if (localPlayer == null) return;
+
+    localPlayer.Update(gameTime);
+    world.Update(gameTime);
+
+    CheckKeyboardShortcuts(localPlayer);
+    CheckDoubleClick(localPlayer);
   }
 
   public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -45,25 +45,31 @@ public class SinglePlayerSession : GameSession
     var localPlayer = LocalPlayer;
     if (localPlayer == null) return;
 
-    spriteBatch.Begin(
-        transformMatrix: localPlayer.Camera.Transform,
-        sortMode: SpriteSortMode.Deferred,
-        blendState: BlendState.NonPremultiplied,
-        samplerState: SamplerState.AnisotropicClamp
-    );
-
-    gameController.Draw(spriteBatch);
-
-    spriteBatch.End();
+    graphicsDevice.Clear(Color.CornflowerBlue);
+    worldRenderer.Draw(spriteBatch);
   }
 
-  public override Task ConnectAsync()
+  private void CheckKeyboardShortcuts(Player localPlayer)
   {
-    return Task.CompletedTask;
+    if (input.BuildClicked)
+      OpenBuildState(localPlayer);
   }
 
-  public override Task DisconnectAsync()
+  private void CheckDoubleClick(Player localPlayer)
   {
-    return Task.CompletedTask;
+    bool playerClicked = localPlayer.Controller
+        .GetModule<BaseCollisionDetectionModule>()
+        .BoundingCircle.Contains(input.PositionGameCoords);
+
+    if (doubleClickHelper.CheckDoubleClick(input.IsPressed, playerClicked))
+      OpenBuildState(localPlayer);
   }
+
+  private void OpenBuildState(Player localPlayer)
+  {
+    // TODO: revisit when redoing build state
+  }
+
+  public override Task ConnectAsync() => Task.CompletedTask;
+  public override Task DisconnectAsync() => Task.CompletedTask;
 }

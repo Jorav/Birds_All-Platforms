@@ -1,6 +1,7 @@
 ﻿using Birds.src.containers.entity;
 using Birds.src.events;
 using Birds.src.modules.entity;
+using Birds.src.player;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
@@ -11,32 +12,32 @@ public class DragHelper
   private IModuleContainer _container;
   private LongPressTimer _longPressTimer;
   private Vector2 _dragOffset;
-  private Camera _camera;
+  private Input _input;
   private Vector2 _originalEntityPosition;
 
   public bool IsDragging { get; private set; }
   public IEntity DraggedEntity { get; private set; }
   public bool SnapBackOnRelease { get; set; } = true;
 
-  public DragHelper(IModuleContainer container, Camera camera)
+  public DragHelper(IModuleContainer container, Input input)
   {
     _container = container;
-    _camera = camera;
+    _input = input;
     _longPressTimer = new LongPressTimer(0.5f);
   }
 
   public void Update(GameTime gameTime)
   {
-    Vector2 currentMouseWorld = Input.PositionGameCoords;
+    Vector2 currentMouseWorld = _input.PositionGameCoords;
 
-    if (Input.WasJustPressed)
+    if (_input.WasJustPressed)
     {
       Reset();
       SelectEntityAt(currentMouseWorld);
       return;
     }
 
-    if (!Input.IsPressed)
+    if (!_input.IsPressed)
     {
       HandleMouseReleased();
       return;
@@ -44,7 +45,7 @@ public class DragHelper
 
     if (IsDragging && DraggedEntity != null)
     {
-      _camera.IsLocked = true;
+      _input.Camera.IsLocked = true;
       DraggedEntity.GetModule<MovementModule>()?.SetManualMoveTarget(currentMouseWorld + _dragOffset);
       return;
     }
@@ -62,8 +63,8 @@ public class DragHelper
       var movementModule = DraggedEntity.GetModule<MovementModule>();
       movementModule.SetManualMoveTarget(_originalEntityPosition);
       movementModule.PerformManualMove();
-      _camera.Position = _container.Position;
-      _camera.PreviousPosition = _container.Position;
+      _input.Camera.Position = _container.Position;
+      _input.Camera.PreviousPosition = _container.Position;
     }
 
     Reset();
@@ -101,7 +102,7 @@ public class DragHelper
 
   public void Reset()
   {
-    _camera.IsLocked = false;
+    _input.Camera.IsLocked = false;
     DraggedEntity = null;
     IsDragging = false;
     _longPressTimer.Stop();

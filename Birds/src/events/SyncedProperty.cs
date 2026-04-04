@@ -7,6 +7,7 @@ public class SyncedProperty<T>
 {
   private T _value;
   public event Action<T> ValueChanged;
+  public bool IsDirty { get; private set; }
 
   public T Value
   {
@@ -16,6 +17,7 @@ public class SyncedProperty<T>
       if (!EqualityComparer<T>.Default.Equals(_value, value))
       {
         _value = value;
+        IsDirty = true;
         ValueChanged?.Invoke(value);
       }
     }
@@ -23,6 +25,7 @@ public class SyncedProperty<T>
   public void Reset(T value = default)
   {
     _value = value;
+    IsDirty = false;
     ValueChanged = null;
   }
 
@@ -30,6 +33,8 @@ public class SyncedProperty<T>
   {
     _value = initialValue;
   }
+
+  public void ClearDirty() => IsDirty = false;
 
   public static implicit operator T(SyncedProperty<T> property) => property.Value;
 }

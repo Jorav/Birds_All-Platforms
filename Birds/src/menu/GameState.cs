@@ -9,6 +9,7 @@ using Birds.src.events;
 using Birds.src.containers.controller;
 using Birds.src.containers.entity;
 using Birds.src.modules.shared.collision_detection;
+using Birds.src.player;
 
 namespace Birds.src.menu;
 
@@ -31,10 +32,10 @@ public class GameState : State
     this.previousState = previousState;
     newEntities = new List<IEntity>();
 
-    doubleClickHelper = new DoubleClickHelper(400);
-    if (Input.Camera == null)
+    doubleClickHelper = new DoubleClickHelper(input, 400);
+    if (input.Camera == null)
     {
-      Input.Camera = new Camera();
+      input.Camera = new player.Camera();
     }
     if (Player == null)
     {
@@ -48,7 +49,7 @@ public class GameState : State
 
   public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
   {
-    spriteBatch.Begin(transformMatrix: Input.Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.AnisotropicClamp);
+    spriteBatch.Begin(transformMatrix: input.Camera.Transform, sortMode: SpriteSortMode.Deferred, blendState: BlendState.NonPremultiplied, samplerState: SamplerState.AnisotropicClamp);
     graphicsDevice.Clear(Color.CornflowerBlue);
     foreach (Background b in backgrounds)
     {
@@ -76,7 +77,7 @@ public class GameState : State
 
   private void HandleScroll()
   {
-    Input.HandleZoom();
+    input.HandleZoom();
   }
 
   private void CheckKeyboardShortcuts()
@@ -90,9 +91,9 @@ public class GameState : State
 
   private void CheckDoubleClick()
   {
-    bool playerClicked = Player.GetModule<BaseCollisionDetectionModule>().BoundingCircle.Contains(Input.PositionGameCoords);
+    bool playerClicked = Player.GetModule<BaseCollisionDetectionModule>().BoundingCircle.Contains(input.PositionGameCoords);
 
-    if (doubleClickHelper.CheckDoubleClick(Input.IsPressed, playerClicked))
+    if (doubleClickHelper.CheckDoubleClick(input.IsPressed, playerClicked))
     {
       HandleDoubleClick();
     }

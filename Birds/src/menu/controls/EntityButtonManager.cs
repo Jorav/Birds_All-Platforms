@@ -6,18 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Birds.src.utility.factories;
+using Birds.src.player;
 
 namespace Birds.src.menu.controls;
 
-public class EntityButtonManager
+public class EntityButtonManager(
+  List<IComponent> components,
+  Input input)
 {
   private readonly List<EntityButton> buttons = new List<EntityButton>();
-  private readonly List<IComponent> components;
-
-  public EntityButtonManager(List<IComponent> components)
-  {
-    this.components = components;
-  }
 
   public void CreateButtonGrid<T>(
       IEnumerable<KeyValuePair<T, ISprite>> previews,
@@ -100,6 +97,7 @@ public class EntityButtonManager
     return new EntityButton(
         previewSprite,
         SpriteFactory.GetSprite(ID_SPRITE.ENTITY_BUTTON, Vector2.Zero, scale),
+        input,
         autoFit: true)
     {
       Scale = scale,

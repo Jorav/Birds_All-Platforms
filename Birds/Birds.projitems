@@ -7,9 +7,17 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
     <Import_RootNamespace>Birds</Import_RootNamespace>
+    <LangVersion>12.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Program.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\client\ClientSession.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\client\IGameClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\contracts\EntityStateUpdate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\contracts\GameStateMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\contracts\InputMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\contracts\PlayerJoinRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\server\LocalGameServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\transport\INetworkTransport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\cohesion\KNearestNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\cohesion\KNearestTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\AxisAlignedBoundingBox.cs" />
@@ -31,9 +39,19 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\events\ObservableCollectionExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\events\SyncedProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\BuildStateBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\menu\IState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\CameraModule.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\player\Input.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\player\InputConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\session\SessionGameState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\session\world\WorldInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\session\world\WorldRenderer.cs" />
+    <Compile Include="..\Birds\src\session\world\World.cs" />
+    <Compile Include="..\Birds\src\player\Input.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\player\IPointerDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\player\MouseDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\player\Player.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\player\PlayerState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\player\TouchDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\session\GameSession.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\session\MultiplayerSession.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\session\SinglePlayerSession.cs" />
@@ -124,12 +142,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\CompositeControllerFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\PerformanceMeasurer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\visual\Sprite.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\utility\Camera.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\ControllerFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\WorldEntityFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\factories\SpriteFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\utility\IDs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\utility\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\visual\FadingText.cs" />
   </ItemGroup>
   <ItemGroup>

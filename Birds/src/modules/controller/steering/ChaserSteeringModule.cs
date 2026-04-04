@@ -44,7 +44,7 @@ namespace Birds.src.modules.controller.steering
     private void UpdateTarget()
     {
       float shortestDistance = Vector2.Distance(GameState.Player.Position, Position);
-      Controller bestController = GameState.Player;
+      Controller bestController = GameState.Player;/**
       foreach (Controller c in GameController.controllers)
       {
         float distanceTemp = Vector2.Distance(c.Position, Position);
@@ -62,7 +62,7 @@ namespace Birds.src.modules.controller.steering
           shortestDistance = distanceTemp;
           bestController = c;
         }
-      }
+      }*/
       target = bestController.Entities[0];
     }
 

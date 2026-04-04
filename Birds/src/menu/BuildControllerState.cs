@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using Birds.src.menu.controls;
 using System.Linq;
 using Birds.src.utility.factories;
+using Birds.src.player;
 
 namespace Birds.src.menu;
 
@@ -43,14 +44,14 @@ public class BuildControllerState : BuildStateBase
     editedController = (Controller)originalController.Clone();
     editedController.GetModule<SteeringModule>().actionsLocked = true;
     editedController.Rotation.Value = 0;
-    dragHelper = new DragHelper(editedController, Input.Camera);
+    dragHelper = new DragHelper(editedController, input);
 
-    doubleClickHelper = new DoubleClickHelper(400);
+    doubleClickHelper = new DoubleClickHelper(input, 400);
 
     InitializeButtons();
     InitializeDeleteButton();
-    Input.Camera.Controller = editedController;
-    Input.Camera.InBuildScreen = true;
+    input.Camera.TrackedController = editedController;
+    input.Camera.InBuildScreen = true;
   }
 
   private void InitializeDeleteButton()
@@ -58,7 +59,7 @@ public class BuildControllerState : BuildStateBase
     ISprite deleteIcon = SpriteFactory.GetSprite(ID_SPRITE.DELETE_BUTTON, Vector2.Zero);
     ISprite buttonBg = SpriteFactory.GetSprite(ID_SPRITE.ENTITY_BUTTON_MENU, Vector2.Zero);
 
-    deleteButton = new EntityButton(deleteIcon, buttonBg, autoFit: true)
+    deleteButton = new EntityButton(deleteIcon, buttonBg, input, autoFit: true)
     {
       Scale = 4f,
       Position = new Vector2(Game1.ScreenWidth - 200, Game1.ScreenHeight - 200),
@@ -67,7 +68,7 @@ public class BuildControllerState : BuildStateBase
 
   private void InitializeButtons()
   {
-    buttonManager = new EntityButtonManager(components);
+    buttonManager = new EntityButtonManager(components, input);
     LoadBlueprintButtons();
   }
 
@@ -86,7 +87,7 @@ public class BuildControllerState : BuildStateBase
   {
     base.Update(gameTime);
 
-    if (Input.WasJustPressed && _activeDeleteButton != null)
+    if (input.WasJustPressed && _activeDeleteButton != null)
     {
       if (!_activeDeleteButton.IsHovering())
       {
@@ -114,7 +115,7 @@ public class BuildControllerState : BuildStateBase
 
   private void HandleDeleteEntity()
   {
-    if (dragHelper.IsDragging && Input.WasJustReleased && deleteButton.IsHovering())
+    if (dragHelper.IsDragging && input.WasJustReleased && deleteButton.IsHovering())
     {
       var entityToDelete = dragHelper.DraggedEntity;
       if (entityToDelete != null && editedController.Entities.Count > 1)
@@ -174,18 +175,18 @@ public class BuildControllerState : BuildStateBase
 
   private void HandleClickLogic()
   {
-    if (!Input.IsPressed || IsMouseAboveComponent())
+    if (!input.IsPressed || IsMouseAboveComponent())
       return;
 
     var bc = editedController.GetModule<BaseCollisionDetectionModule>().BoundingCircle;
 
-    if (bc.Contains(Input.PositionGameCoords))
+    if (bc.Contains(input.PositionGameCoords))
     {
       foreach (IEntity entity in editedController.Entities)
       {
-        if (entity.Contains(Input.PositionGameCoords))
+        if (entity.Contains(input.PositionGameCoords))
         {
-          if (entity is CompositeController && doubleClickHelper.CheckDoubleClick(Input.IsPressed, true))
+          if (entity is CompositeController && doubleClickHelper.CheckDoubleClick(input.IsPressed, true))
           {
             game.ChangeState(new EditEntityState(game, graphicsDevice, content, this, backgroundState, input, editedController, entity));
             dragHelper.Reset();
@@ -195,7 +196,7 @@ public class BuildControllerState : BuildStateBase
         }
       }
     }
-    else if (Input.WasJustPressed)
+    else if (input.WasJustPressed)
     {
       ReturnToPreviousState();
     }
@@ -216,8 +217,8 @@ public class BuildControllerState : BuildStateBase
     game.ChangeState(backgroundState);
     originalController.Entities.Set(editedController.Entities);
     originalController.GetModule<SteeringModule>().actionsLocked = false;
-    Input.Camera.Controller = originalController;
-    Input.Camera.InBuildScreen = false;
+    input.Camera.TrackedController = originalController;
+    input.Camera.InBuildScreen = false;
     UnlockPlayerActions();
   }
 }

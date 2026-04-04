@@ -1,59 +1,49 @@
-﻿using Birds.src;
-using Birds.src.events;
+﻿using Birds.src.events;
 using Microsoft.Xna.Framework;
 using System;
 
 namespace Birds.src.player;
 
-public class Camera
+public class Camera(IModuleContainer trackedController = null)
 {
   public Matrix Transform { get; private set; }
-  public Vector2 Position { get; set; }
-  public Vector2 PreviousPosition { get; set; }
+  public Vector2 Position { get; set; } = trackedController?.Position ?? Vector2.Zero;
+  public Vector2 PreviousPosition { get; set; } = trackedController?.Position ?? Vector2.Zero;
   public bool IsLocked { get; set; }
-  public float Rotation { get; set; }
+  public float Rotation { get; set; } = 0;
 
-  private float zoom;
+  private float zoom = 1;
   public float Zoom
   {
-    get { return zoom; }
+    get => zoom;
     set
     {
-      if (value > maxZoom)
-        value = maxZoom;
-      else if (value < minZoom)
-        value = minZoom;
-      zoom = value;
+      if (value > maxZoom) zoom = maxZoom;
+      else if (value < minZoom) zoom = minZoom;
+      else zoom = value;
     }
   }
 
   private bool inBuildScreen;
   public bool InBuildScreen
   {
-    get { return inBuildScreen; }
+    get => inBuildScreen;
     set
     {
-      if (value)
-      {
-        Zoom = BuildMenuZoom;
-      }
-      else
-      {
-        Zoom = GameZoom;
-      }
+      Zoom = value ? BuildMenuZoom : GameZoom;
       inBuildScreen = value;
       UpdateTransformMatrix();
     }
   }
 
-  public float Width { get { return Game1.ScreenWidth / Zoom; } }
-  public float Height { get { return Game1.ScreenHeight / Zoom; } }
-  public bool AutoAdjustZoom { get; set; }
+  public float Width => Game1.ScreenWidth / Zoom;
+  public float Height => Game1.ScreenHeight / Zoom;
+  public bool AutoAdjustZoom { get; set; } = true;
 
-  private IModuleContainer trackedController;
+  private IModuleContainer _trackedController = trackedController;
   public IModuleContainer TrackedController
   {
-    get { return trackedController; }
+    get => _trackedController;
     set
     {
       if (value != null)
@@ -61,61 +51,33 @@ public class Camera
         Position = value.Position;
         PreviousPosition = value.Position;
       }
-      trackedController = value;
+      _trackedController = value;
     }
   }
 
-  public float GameZoom
-  {
-    get
-    {
-      if (TrackedController != null)
-        return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (900 + 1 * TrackedController.Radius);
-      else
-        return 1;
-    }
-  }
+  public float GameZoom => TrackedController != null
+      ? Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (900 + 1 * TrackedController.Radius)
+      : 1;
 
-  public float BuildMenuZoom
-  {
-    get
-    {
-      if (TrackedController != null)
-        return Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (2 * TrackedController.Radius + 900 / 8);
-      else
-        return 1;
-    }
-  }
+  public float BuildMenuZoom => TrackedController != null
+      ? Math.Min(Game1.ScreenWidth, Game1.ScreenHeight) / (2 * TrackedController.Radius + 900 / 8)
+      : 1;
 
   private float maxZoom = 6;
   private float minZoom = 0.5f;
-
-  public Camera(IModuleContainer trackedController = null)
-  {
-    TrackedController = trackedController;
-    Position = trackedController?.Position ?? Vector2.Zero;
-    PreviousPosition = Position;
-    Rotation = 0;
-    Zoom = 1;
-    AutoAdjustZoom = true;
-    UpdateTransformMatrix();
-  }
 
   public void Update(GameTime gameTime)
   {
     PreviousPosition = Position;
 
-    // Only update position if not locked and we have a controller to track
     if (!IsLocked && TrackedController != null)
     {
       Position = TrackedController.Position;
     }
 
-    // Handle auto zoom adjustment
     if (AutoAdjustZoom)
     {
-      float targetZoom = InBuildScreen ? BuildMenuZoom : GameZoom;
-      AdjustZoom(targetZoom);
+      AdjustZoom(InBuildScreen ? BuildMenuZoom : GameZoom);
     }
 
     UpdateTransformMatrix();
@@ -124,23 +86,12 @@ public class Camera
   private void AdjustZoom(float optimalZoom)
   {
     if (IsLocked) return;
-
     float zoomSpeed = InBuildScreen ? 10f : 0.01f;
 
     if (optimalZoom > Zoom)
-    {
-      if (optimalZoom / Zoom > 1 + zoomSpeed)
-        Zoom *= 1 + zoomSpeed;
-      else
-        Zoom = optimalZoom;
-    }
+      Zoom = (optimalZoom / Zoom > 1 + zoomSpeed) ? Zoom * (1 + zoomSpeed) : optimalZoom;
     else if (optimalZoom < Zoom)
-    {
-      if (Zoom / optimalZoom > 1 + zoomSpeed)
-        Zoom /= 1 + zoomSpeed;
-      else
-        Zoom = optimalZoom;
-    }
+      Zoom = (Zoom / optimalZoom > 1 + zoomSpeed) ? Zoom / (1 + zoomSpeed) : optimalZoom;
   }
 
   public Vector2 ScreenToWorld(Vector2 screenPosition)
@@ -162,8 +113,8 @@ public class Camera
     Matrix position = Matrix.CreateTranslation(-Position.X, -Position.Y, 0);
     Matrix rotation = Matrix.CreateRotationZ(Rotation);
     Matrix origin = Matrix.CreateTranslation(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2, 0);
-    Matrix zoom = Matrix.CreateScale(Zoom, Zoom, 0);
-    Transform = position * rotation * zoom * origin;
+    Matrix scale = Matrix.CreateScale(Zoom, Zoom, 0);
+    Transform = position * rotation * scale * origin;
   }
 
   public void LockToPosition(Vector2 lockPosition)
@@ -173,8 +124,43 @@ public class Camera
     UpdateTransformMatrix();
   }
 
-  public void Unlock()
+  public Rectangle GetVisibleBounds(float zoom, float buffer = 0f)
   {
-    IsLocked = false;
+    float width = Game1.ScreenWidth / zoom;
+    float height = Game1.ScreenHeight / zoom;
+    float halfWidth = width / 2f + buffer;
+    float halfHeight = height / 2f + buffer;
+
+    return new Rectangle(
+      (int)(Position.X - halfWidth),
+      (int)(Position.Y - halfHeight),
+      (int)(width + buffer * 2),
+      (int)(height + buffer * 2)
+    );
   }
+
+  public bool IsEntityWithinFrame(ModuleContainer entity, float zoom, float buffer = 0f)
+  {
+    var bounds = GetVisibleBounds(zoom, buffer);
+    var pos = entity.Position.Value;
+    var radius = entity.Radius.Value;
+
+    return bounds.Contains((int)pos.X, (int)pos.Y) ||
+           bounds.Intersects(new Rectangle(
+             (int)(pos.X - radius),
+             (int)(pos.Y - radius),
+             (int)(radius * 2),
+             (int)(radius * 2)
+           ));
+  }
+
+  public Matrix GetParallaxTransform(float parallaxFactor)
+  {
+    Matrix position = Matrix.CreateTranslation(-Position.X * parallaxFactor, -Position.Y * parallaxFactor, 0);
+    Matrix scale = Matrix.CreateScale(Zoom, Zoom, 0);
+    Matrix origin = Matrix.CreateTranslation(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2, 0);
+    return position * scale * origin;
+  }
+
+  public void Unlock() => IsLocked = false;
 }

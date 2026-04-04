@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Birds.src.factories;
 using Birds.src.containers.controller;
+using Birds.src.player;
 
 namespace Birds.src.menu;
 

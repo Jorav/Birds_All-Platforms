@@ -1,4 +1,5 @@
 ﻿using Birds.src.events;
+using Birds.src.player;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 
@@ -18,11 +19,11 @@ public class CameraModule : ModuleBase
     base.Initialize(container);
 
     // Get the global camera from Input
-    camera = Input.Camera;
+    camera = null;// Input.Camera;
 
     if (camera != null)
     {
-      camera.Controller = container;
+      camera.TrackedController = container;
     }
   }
 

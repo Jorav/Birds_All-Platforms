@@ -1,31 +1,28 @@
-﻿namespace Birds.src.session;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Birds.src.containers.controller;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Birds.src.player;
+using Birds.src.api.client;
+using Birds.src.session.world;
 
-public abstract class GameSession
+namespace Birds.src.session;
+
+public abstract class GameSession(ClientSession session, Input input)
 {
-  protected GameController gameController;
-  protected Dictionary<string, Player> players = new();
-  protected string localPlayerId;
+  protected readonly Input input = input;
+  protected readonly string localPlayerId = session.ClientId;
+  protected readonly World world = new();
+  protected readonly Dictionary<string, Player> players = new();
 
-  public GameController GameController => gameController;
   public Player LocalPlayer => players.TryGetValue(localPlayerId, out var p) ? p : null;
   public IReadOnlyDictionary<string, Player> Players => players;
 
-  public GameSession(string localPlayerId)
+  protected void AddPlayer(Player player) => players[player.Id] = player;
+  protected void RemovePlayer(Player player)
   {
-    this.localPlayerId = localPlayerId;
-    gameController = new GameController();
-  }
-
-  protected void AddPlayer(Player player)
-  {
-    players[player.Id] = player;
+    world.RemovePlayer(player.Controller);
+    players.Remove(player.Id);
   }
 
   public abstract Task InitializeAsync();

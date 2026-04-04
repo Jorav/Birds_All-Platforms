@@ -1,4 +1,5 @@
-﻿using Birds.src.utility;
+﻿using Birds.src.player;
+using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;

@@ -99,12 +99,12 @@ public static class WorldEntityFactory
           returnedList.Add(we);
         }
       }
-      else
+      else//TODO: Update how backgrounds are handled
       {
         for (int i = 0; i < numberOfEntities - 1; i++)
         {
-          float x = GameState.Player.Position.Value.X + (float)((rnd.NextDouble() * (Game1.ScreenWidth - 32 * 2) - Game1.ScreenWidth / 2) + 32);
-          float y = GameState.Player.Position.Value.Y + (float)((rnd.NextDouble() * (Game1.ScreenHeight - 32 * 2) - Game1.ScreenHeight / 2) + 32);
+          float x = 0 + (float)((rnd.NextDouble() * (Game1.ScreenWidth - 32 * 2) - Game1.ScreenWidth / 2) + 32);
+          float y = 0 + (float)((rnd.NextDouble() * (Game1.ScreenHeight - 32 * 2) - Game1.ScreenHeight / 2) + 32);
           we = GetEntity(new Vector2(x, y), id, isComposite);
           returnedList.Add(we);
         }

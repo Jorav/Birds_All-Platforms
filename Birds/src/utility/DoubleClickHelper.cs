@@ -1,18 +1,13 @@
 ﻿using System.Diagnostics;
+using Birds.src.player;
 using Birds.src.utility;
 
 namespace Birds.src.utility;
 
-public class DoubleClickHelper
+public class DoubleClickHelper(Input input, int thresholdMs = 300)
 {
   private readonly Stopwatch timer = new Stopwatch();
-  private readonly int thresholdMs;
   private bool isWaitingForSecondClick = false;
-
-  public DoubleClickHelper(int thresholdMs = 300)
-  {
-    this.thresholdMs = thresholdMs;
-  }
 
   public bool CheckDoubleClick(bool isPressed, bool targetClicked)
   {
@@ -21,7 +16,7 @@ public class DoubleClickHelper
       Reset();
     }
 
-    if (!Input.WasJustPressed)
+    if (!input.WasJustPressed)
     {
       return false;
     }

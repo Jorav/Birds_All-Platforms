@@ -1,4 +1,5 @@
 ﻿using Birds.src.containers.controller;
+using Microsoft.Xna.Framework;
 
 namespace Birds.src.player;
 
@@ -6,16 +7,27 @@ public class Player
 {
   public string Id { get; }
   public Input Input { get; }
+  public Controller Controller { get; private set; }
   public Camera Camera { get; }
-  public Controller Controller { get; }
-  public PlayerState CurrentState { get; set; }
-  public bool IsBuilding => CurrentState == PlayerState.Building;
-  public bool IsPlaying => CurrentState == PlayerState.Playing;
-}
+  public PlayerState State { get; set; } = PlayerState.Playing;
 
-public enum PlayerState
-{
-  Playing,
-  Building,
-  Paused
+  public Player(string id, Input input)
+  {
+    Id = id;
+    Input = input;
+    Camera = new Camera();
+    input.Camera = Camera;
+  }
+
+  public void SetController(Controller controller)
+  {
+    Controller = controller;
+    Camera.TrackedController = controller;
+  }
+
+  public void Update(GameTime gameTime)
+  {
+    Input.HandleZoom();
+    Camera.Update(gameTime);
+  }
 }

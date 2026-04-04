@@ -8,12 +8,13 @@ using System.Collections.Generic;
 using Birds.src.containers.entity;
 using Birds.src.collision.BVH;
 using Birds.src.modules.shared.collision_detection;
+using Birds.src.player;
 
 namespace Birds.src.factories
 {
   public class ControllerFactory
   {
-    public static Controller Create(List<IEntity> entities, ID_CONTROLLER id = ID_CONTROLLER.DEFAULT)
+    public static Controller Create(List<IEntity> entities, ID_CONTROLLER id = ID_CONTROLLER.DEFAULT, Input input = null)
     {
       Controller c;
       switch (id)
@@ -41,13 +42,12 @@ namespace Birds.src.factories
           c.AddModule(new GroupMovementModule());
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
-          c.AddModule(new PlayerSteeringModule());
+          c.AddModule(new PlayerSteeringModule(input));
           c.AddModule(new GroupCollisionDetectionModule(
               new AABBTree(),
               evaluateInternalCollisions: true
           ));
           c.AddModule(new FlockingCohesionModule());
-          c.AddModule(new CameraModule());
           c.AddModule(new GroupDrawModule());
           return c;
 
@@ -68,13 +68,13 @@ namespace Birds.src.factories
           return c;
 
         case ID_CONTROLLER.BACKGROUND_SUN:
-          c = new Background(entities, Input.Camera, relativeSpeed: 0.2f);//scale used to be 4
+          c = new Background(entities);//scale used to be 4
           c.AddModule(new GroupDrawModule());
           c.AddModule(new GroupRadiusModule());
           return c;
 
         case ID_CONTROLLER.FOREGROUND_CLOUD:
-          c = new Background(entities, Input.Camera, relativeSpeed: 1.5f);//scale used to be 3
+          c = new Background(entities);//scale used to be 3
           c.AddModule(new GroupDrawModule());
           c.AddModule(new GroupRadiusModule());
           return c;
@@ -85,7 +85,7 @@ namespace Birds.src.factories
     }
 
 
-    public static Controller Create(Vector2 position, ID_CONTROLLER id = ID_CONTROLLER.DEFAULT, int numberOfEntities = 1)
+    public static Controller Create(Vector2 position, int numberOfEntities, ID_CONTROLLER id, Input input = null)
     {
       Controller c;
       switch (id)
@@ -114,7 +114,7 @@ namespace Birds.src.factories
           c.AddModule(new GroupMovementModule());
           c.AddModule(new GroupRotationModule());
           c.AddModule(new GroupRadiusModule());
-          c.AddModule(new PlayerSteeringModule());
+          c.AddModule(new PlayerSteeringModule(input));
           c.AddModule(new CohesionModule());
           c.AddModule(new GroupCollisionDetectionModule(
               new AABBTree(),
@@ -142,14 +142,14 @@ namespace Birds.src.factories
           return c;
 
         case ID_CONTROLLER.BACKGROUND_SUN:
-          c = new Background(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.SUN, isBackground: true), Input.Camera, relativeSpeed: 0.2f);//scale used to be 4
+          c = new Background(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.SUN, isBackground: true));//scale used to be 4
           c.AddModule(new GroupDrawModule());
           c.AddModule(new GroupRadiusModule());
           c.Position.Value = position;
           return c;
 
         case ID_CONTROLLER.FOREGROUND_CLOUD:
-          c = new Background(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.CLOUD, isBackground: true), Input.Camera, relativeSpeed: 1.5f);//scale used to be 3
+          c = new Background(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.CLOUD, isBackground: true));//scale used to be 3
           c.AddModule(new GroupDrawModule());
           c.AddModule(new GroupRadiusModule());
           c.Position.Value = position;

@@ -1,14 +1,13 @@
-﻿using Birds.src.containers.composite;
-using Birds.src.containers.controller;
-using Birds.src.containers.entity;
+﻿using Birds.src.api.client;
+using Birds.src.containers.composite;
 using Birds.src.factories;
 using Birds.src.menu;
+using Birds.src.player;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using System;
-using System.Collections.Generic;
 
 namespace Birds.src;
 
@@ -16,15 +15,14 @@ public class Game1 : Game
 {
   private GraphicsDeviceManager _graphics;
   private SpriteBatch _spriteBatch;
-  //private PerformanceMeasurer performanceMeasurer;
-  //private MeanSquareError meanSquareError;
+  private Input _input;
   public static int ScreenWidth;
   public static int ScreenHeight;
   public static float GRAVITY = 10;
   public static SpriteFont font;
   public static float timeStep = (1f / 60f);
-  private State currentState;
-  private State nextState;
+  private IState currentState;
+  private IState nextState;
   public static bool LOG_MODULE_PERFORMANCE = true;
   public static bool DRAW_OBB_OUTLINE = false;
   public static bool DRAW_BC_OUTLINE = false;
@@ -38,8 +36,8 @@ public class Game1 : Game
   }
 
   protected override void Initialize()
-  {
-    //Add your initialization logic here
+  { // use this and Content to load your game content here
+    ClientSession.Initialize();
     _graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
     _graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
     ScreenWidth = _graphics.PreferredBackBufferWidth;
@@ -53,17 +51,9 @@ public class Game1 : Game
   { // use this and Content to load your game content here
     _spriteBatch = new SpriteBatch(GraphicsDevice);
     _graphics.ApplyChanges();
-    Input input = new Input()
-    {
-      Up = Keys.W,
-      Down = Keys.S,
-      Left = Keys.A,
-      Right = Keys.D,
-      Pause = Keys.Escape,
-      Build = Keys.B,
-      Enter = Keys.Enter,
-    };
+
     GRAVITY = 10;
+
     Texture2D[] textures = new Texture2D[Enum.GetNames(typeof(ID_SPRITE)).Length];
     textures[(int)ID_SPRITE.HULL_RECTANGULAR_BAD] = Content.Load<Texture2D>("parts/HULL_RECTANGULAR_BAD");
     textures[(int)ID_SPRITE.HULL_RECTANGULAR] = Content.Load<Texture2D>("parts/HULL_RECTANGULAR");
@@ -94,7 +84,13 @@ public class Game1 : Game
     WorldEntityFactory.InitializePreviews();
     CompositeControllerFactory.InitializePreviews();
     WarmupPropertyCache();
-    currentState = new MainMenu(this, GraphicsDevice, Content, input);
+    _input = new Input(
+      InputConfiguration.LoadDefault(),
+      TouchPanel.GetCapabilities().IsConnected
+        ? new TouchDevice()
+        : new MouseDevice()
+    );
+    currentState = new MainMenu(this, GraphicsDevice, Content, _input);
   }
 
   //Im not sure i like this but it does improve things significantly since we are compiling syncing
@@ -108,15 +104,18 @@ public class Game1 : Game
     dummyComposite?.Update(new GameTime());
     dummyComposite?.Dispose();
 
-    var dummyController = ControllerFactory.Create(Vector2.Zero, ID_CONTROLLER.DEFAULT, 1);
+    var dummyController = ControllerFactory.Create(
+        WorldEntityFactory.CreateEntities(Vector2.Zero, 1, ID_ENTITY.DEFAULT),
+        ID_CONTROLLER.DEFAULT
+    );
     dummyController.Update(new GameTime());
   }
 
-  public void ChangeState(State state)
+  public void ChangeState(IState state)
   {
     nextState = state;
   }
-  public State GetNextState()
+  public IState GetNextState()
   {
     if (nextState == null)
       return currentState;
@@ -125,18 +124,21 @@ public class Game1 : Game
 
   protected override void Update(GameTime gameTime)
   {
-    Input.Update(gameTime);
+    _input.Update(gameTime);
     currentState.Update(gameTime);
     currentState.PostUpdate();
+
     if (LOG_MODULE_PERFORMANCE)
     {
       ModuleProfiler.Summary();
     }
+
     if (nextState != null)
     {
       currentState = nextState;
       nextState = null;
     }
+
     base.Update(gameTime);
   }
 
@@ -144,6 +146,7 @@ public class Game1 : Game
   {
     ScreenWidth = _graphics.PreferredBackBufferWidth;
     ScreenHeight = _graphics.PreferredBackBufferHeight;
+
     currentState.Draw(gameTime, _spriteBatch);
     base.Draw(gameTime);
   }
@@ -154,4 +157,3 @@ public class Game1 : Game
     base.OnExiting(sender, args);
   }
 }
-

@@ -11,20 +11,15 @@ namespace Birds.src.containers.controller;
 
 public class GameController
 {
-  public static List<Controller> controllers = new();
+  public List<Controller> controllers = new();
   private AABBTree collisionManager = new();
 
-  public void Add(Controller c)
-  {
-    controllers.Add(c);
-  }
+  public void Add(Controller c) => controllers.Add(c);
 
   public void Update(GameTime gameTime)
   {
     foreach (Controller c in controllers)
-    {
       c.Update(gameTime);
-    }
     UpdateGlobalCollisionTree();
     collisionManager.AddInternalCollisions();
   }
@@ -38,17 +33,12 @@ public class GameController
         .ToList();
 
     if (collisionDetectors.Count > 0)
-    {
       collisionManager.BuildTree(collisionDetectors);
-    }
   }
 
   public void Draw(SpriteBatch sb)
   {
     foreach (Controller c in controllers)
-    {
       c.Draw(sb);
-    }
   }
 }
-

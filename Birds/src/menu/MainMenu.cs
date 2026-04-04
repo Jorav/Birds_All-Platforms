@@ -4,80 +4,108 @@ using Microsoft.Xna.Framework.Graphics;
 using Birds.src.menu.controls;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Birds.src.utility;
-using Birds.src.factories;
 using Birds.src.visual;
+using Birds.src.factories;
+using Birds.src.player;
+using Birds.src.session;
 
 namespace Birds.src.menu;
 
 public class MainMenu : MenuState
 {
-  public MainMenu(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, Input input) : base(game, graphicsDevice, content, input)
+  public MainMenu(Game1 game, GraphicsDevice graphicsDevice, ContentManager content, Input input)
+    : base(game, graphicsDevice, content, input)
   {
     this.input = input;
 
-    Button newGameButton = new Button(SpriteFactory.GetSprite(ID_SPRITE.BUTTON, new Vector2(Game1.ScreenWidth / 2 - 100, Game1.ScreenHeight / 2 - 100)), Game1.font)
+    Button startSingleplayerButton = new Button(
+      SpriteFactory.GetSprite(ID_SPRITE.BUTTON, new Vector2(Game1.ScreenWidth / 2 - 100, Game1.ScreenHeight / 2 - 150)),
+      input,
+      Game1.font)
     {
-      Text = "Start",
+      Text = "Singleplayer",
     };
-    newGameButton.Click += NewGameButton_Click;
+    startSingleplayerButton.Click += StartSingleplayer_Click;
 
-    /*Button buildModeButton = new Button(new Sprite(buttonTexture), buttonFont)
+    Button hostGameButton = new Button(
+      SpriteFactory.GetSprite(ID_SPRITE.BUTTON, new Vector2(Game1.ScreenWidth / 2 - 100, Game1.ScreenHeight / 2 - 75)),
+      input,
+      Game1.font)
     {
-        Position = new Vector2(300, 250), //or preferably center
-        Text = "Build Mode",
+      Text = "Host Game",
     };
-    buildModeButton.Click += BuildModeButton_Click;*/
+    hostGameButton.Click += HostGame_Click;
+    Button editorButton = new Button(
+      SpriteFactory.GetSprite(ID_SPRITE.BUTTON, new Vector2(Game1.ScreenWidth / 2 - 100, Game1.ScreenHeight / 2 - 75)),
+      input,
+      Game1.font)
+      {
+        Text = "Editor",
+      };
+    editorButton.Click += Editor_Click;
 
-    /*Button loadGameButton = new Button(new Sprite(buttonTexture), buttonFont)
+    Button joinGameButton = new Button(
+      SpriteFactory.GetSprite(ID_SPRITE.BUTTON, new Vector2(Game1.ScreenWidth / 2 - 100, Game1.ScreenHeight / 2)),
+      input,
+      Game1.font)
     {
-        Position = new Vector2(300, 300), //or preferably center
-        Text = "Load Game",
+      Text = "Join Game",
     };
-    loadGameButton.Click += LoadGameButton_Click;*/
+    joinGameButton.Click += JoinGame_Click;
 
-    Button quitButton = new Button(SpriteFactory.GetSprite(ID_SPRITE.BUTTON, new Vector2(Game1.ScreenWidth / 2 - 100, Game1.ScreenHeight / 2 - 100 + 50)), Game1.font)
+    Button quitButton = new Button(
+      SpriteFactory.GetSprite(ID_SPRITE.BUTTON, new Vector2(Game1.ScreenWidth / 2 - 100, Game1.ScreenHeight / 2 + 75)),
+      input,
+      Game1.font)
     {
       Text = "Quit",
     };
-    quitButton.Click += QuitButton_Click;
+    quitButton.Click += Quit_Click;
+
     Sprite background = SpriteFactory.GetSprite(
         ID_SPRITE.BACKGROUND_GRAY,
         new Vector2(Game1.ScreenWidth / 2, Game1.ScreenHeight / 2),
         SpriteFactory.GetBackgroundScale(ID_SPRITE.BACKGROUND_GRAY)
     );
-    ButtonContainer container = new ButtonContainer(ID_POSITION.POSITION_MIDDLE, new List<Button> { newGameButton });
+
+    ButtonContainer container = new ButtonContainer(
+      ID_POSITION.POSITION_MIDDLE,
+      new List<Button> { startSingleplayerButton, editorButton, hostGameButton, joinGameButton, quitButton }
+    );
+
     components = new List<IComponent>()
-            {
-                background,
-                container,
-                //newGameButton,
-                //buildModeButton,
-                //loadGameButton,
-                //quitButton,
-            };
+    {
+      background,
+      container,
+    };
   }
 
-  private void NewGameButton_Click(object sender, EventArgs e)
+  private void StartSingleplayer_Click(object sender, EventArgs e)
   {
-    game.ChangeState(new TestState(game, graphicsDevice, content, input));
+    var sessionState = new SessionGameState(game, graphicsDevice, content, input);
+    game.ChangeState(sessionState);
   }
 
-  /*private void BuildModeButton_Click(object sender, EventArgs e)
+  private void Editor_Click(object sender, EventArgs e)
   {
-      game.ChangeState(new WorldEditor(game, graphicsDevice, content, input));
-  }*/
-
-  private void LoadGameButton_Click(object sender, EventArgs e)
-  {
-    //load game state from earlier
-    throw new NotImplementedException();
+    //game.ChangeState(new WorldEditor(game, graphicsDevice, content, input));
   }
 
-  private void QuitButton_Click(object sender, EventArgs e)
+  private void HostGame_Click(object sender, EventArgs e)
+  {
+    // TODO: Start Birds.Server process, then create MultiplayerSession
+    throw new NotImplementedException("Host game not yet implemented");
+  }
+
+  private void JoinGame_Click(object sender, EventArgs e)
+  {
+    // TODO: Show input dialog for server address, then create MultiplayerSession
+    throw new NotImplementedException("Join game not yet implemented");
+  }
+
+  private void Quit_Click(object sender, EventArgs e)
   {
     game.Exit();
   }
-
 }

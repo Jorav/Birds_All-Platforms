@@ -1,15 +1,17 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Birds.src.api.client;
+using Birds.src.factories;
 using Birds.src.menu.controls;
-using System;
-using System.Collections.Generic;
+using Birds.src.network;
+using Birds.src.player;
+using Birds.src.server;
+using Birds.src.session;
 using Birds.src.utility;
 using Birds.src.visual;
-using Birds.src.factories;
-using Birds.src.player;
-using Birds.src.session;
-
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 namespace Birds.src.menu;
 
 public class MainMenu : MenuState
@@ -83,8 +85,9 @@ public class MainMenu : MenuState
 
   private void StartSingleplayer_Click(object sender, EventArgs e)
   {
-    var sessionState = new SessionGameState(game, graphicsDevice, content, input);
-    game.ChangeState(sessionState);
+    var singlePlayerSession = new SinglePlayerSession(ClientSession.Current, input, game, graphicsDevice);
+    singlePlayerSession.InitializeAsync().GetAwaiter().GetResult();
+    game.ChangeState(singlePlayerSession);
   }
 
   private void Editor_Click(object sender, EventArgs e)
@@ -92,10 +95,37 @@ public class MainMenu : MenuState
     //game.ChangeState(new WorldEditor(game, graphicsDevice, content, input));
   }
 
-  private void HostGame_Click(object sender, EventArgs e)
+  private async void HostGame_Click(object sender, EventArgs e)
   {
-    // TODO: Start Birds.Server process, then create MultiplayerSession
-    throw new NotImplementedException("Host game not yet implemented");
+    try
+    {
+      bool serverStarted = await ServerManager.StartLocalServerAsync();
+      if (!serverStarted)
+      {
+        return;
+      }
+
+      var networkTransport = new LiteNetLibClientTransport(
+          ServerManager.GetLocalServerAddress(),
+          ServerManager.GetLocalServerPort()
+      );
+
+      var multiplayerSession = new MultiplayerSession(
+          ClientSession.Current,
+          input,
+          game,
+          graphicsDevice,
+          networkTransport,
+          isHost: true
+      );
+
+      await multiplayerSession.InitializeAsync();
+      game.ChangeState(multiplayerSession);
+    }
+    catch (Exception ex)
+    {
+      System.Diagnostics.Debug.WriteLine($"Failed to host game: {ex.Message}");
+    }
   }
 
   private void JoinGame_Click(object sender, EventArgs e)

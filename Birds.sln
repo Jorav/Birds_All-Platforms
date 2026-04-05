@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Birds.Android", "Birds.Andr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Birds.Server", "Birds.Server\Birds.Server.csproj", "{35685ACA-8AE4-47DC-ABC0-72609F114054}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Birds.Client.Network", "Birds.Client.Network\Birds.Client.Network.csproj", "{31E5E6AF-EA66-4DCC-8672-33263A1FC6EE}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,10 +31,6 @@ Global
 		{35685ACA-8AE4-47DC-ABC0-72609F114054}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35685ACA-8AE4-47DC-ABC0-72609F114054}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35685ACA-8AE4-47DC-ABC0-72609F114054}.Release|Any CPU.Build.0 = Release|Any CPU
-		{31E5E6AF-EA66-4DCC-8672-33263A1FC6EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{31E5E6AF-EA66-4DCC-8672-33263A1FC6EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{31E5E6AF-EA66-4DCC-8672-33263A1FC6EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{31E5E6AF-EA66-4DCC-8672-33263A1FC6EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,7 +40,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Birds\Birds.projitems*{0706c08c-7c11-4fdb-8653-11eecb95d2c1}*SharedItemsImports = 5
-		Birds\Birds.projitems*{31e5e6af-ea66-4dcc-8672-33263a1fc6ee}*SharedItemsImports = 5
 		Birds\Birds.projitems*{35685aca-8ae4-47dc-abc0-72609f114054}*SharedItemsImports = 5
 		Birds\Birds.projitems*{7071d1ee-52e8-42f4-8f9f-940528c49a8c}*SharedItemsImports = 5
 		Birds\Birds.projitems*{e04b22af-65be-4357-baee-1342cf53c7ed}*SharedItemsImports = 13

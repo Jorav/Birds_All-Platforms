@@ -1,9 +1,11 @@
-﻿using Birds.src.modules.entity;
+﻿using Birds.src.modules;
 using Birds.src.modules.controller;
-using Birds.src.modules;
+using Birds.src.modules.entity;
+using Birds.src.modules.shared.collision_detection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Birds.src.modules.shared.collision_detection;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Birds.src.events;
 
@@ -57,6 +59,39 @@ public static class ModuleContainerExtensions
   public static IModuleContainer GetManager(this IModuleContainer container)
   {
     return container.GetModule<LinkModule>()?.Manager?.container;
+  }
+
+  public static List<ModuleContainer> FlattenHierarchy(this ModuleContainer container)
+  {
+    var result = new List<ModuleContainer> { container };
+
+    foreach (var child in container.Entities.OfType<ModuleContainer>())
+    {
+      result.AddRange(child.FlattenHierarchy());
+    }
+
+    return result;
+  }
+
+  public static List<ModuleContainer> FlattenControllerHierarchy(this IEnumerable<ModuleContainer> controllers)
+  {
+    var result = new List<ModuleContainer>();
+
+    foreach (var controller in controllers)
+    {
+      result.Add(controller);
+      foreach (var child in controller.Entities.OfType<ModuleContainer>())
+      {
+        result.AddRange(child.FlattenHierarchy());
+      }
+    }
+
+    return result;
+  }
+
+  public static string GetEntityId(this ModuleContainer entity)
+  {
+    return entity.GetHashCode().ToString();
   }
 }
 

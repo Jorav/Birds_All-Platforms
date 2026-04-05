@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Birds.src.api.contracts
+namespace Birds.src.api.contracts;
+
+public class PlayerJoinRequest
 {
-  internal class PlayerJoinRequest
-  {
-  }
+  public string PlayerId { get; set; }
+  public string DisplayName { get; set; }
 }

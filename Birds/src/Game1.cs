@@ -3,6 +3,7 @@ using Birds.src.containers.composite;
 using Birds.src.factories;
 using Birds.src.menu;
 using Birds.src.player;
+using Birds.src.server;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -154,6 +155,7 @@ public class Game1 : Game
   protected override void OnExiting(object sender, EventArgs args)
   {
     //SaveGame();
+    ServerManager.StopLocalServer();
     base.OnExiting(sender, args);
   }
 }

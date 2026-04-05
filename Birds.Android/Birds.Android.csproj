@@ -30,6 +30,7 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Framework.Android" Version="3.8.1.303" />
+    <PackageReference Include="LiteNetLib" Version="2.1.2" />
     <MonoGameContentReference Include="..\Birds\Content\Content.mgcb" Visible="true" />
   </ItemGroup>
 

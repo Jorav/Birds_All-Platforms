@@ -1,8 +1,7 @@
-using Birds.server;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Birds.src.api.transport;
+using Birds.src.network;
 using Microsoft.Xna.Framework;
+using System;
 using System.Threading.Tasks;
 
 namespace Birds.Server;
@@ -10,38 +9,22 @@ namespace Birds.Server;
 public class Program
 {
   private static GameServer _gameServer;
+  private static IServerNetworkTransport _networkTransport;
 
   public static void Main(string[] args)
   {
-    _gameServer = new GameServer();
+    _networkTransport = new LiteNetLibServerTransport(9050);
+    _gameServer = new GameServer(_networkTransport);
 
-    var builder = WebApplication.CreateBuilder(args);
+    _networkTransport.Start();
+    Console.WriteLine("Game server started on port 9050");
 
-    builder.Services.AddSignalR();
-    builder.Services.AddCors(options =>
-    {
-      options.AddPolicy("AllowAll", policy =>
-      {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-      });
-    });
+    _ = Task.Run(GameLoop);
 
-    builder.Services.AddSingleton(_gameServer);
+    Console.WriteLine("Press any key to stop server...");
+    Console.ReadKey();
 
-    var app = builder.Build();
-
-    app.UseCors("AllowAll");
-    app.MapHub<GameHub>("/gameHub");
-
-    // Start game loop in background
-    _ = app.Services.GetRequiredService<IHostApplicationLifetime>().ApplicationStarted.Register(() =>
-    {
-      _ = GameLoop();
-    });
-
-    app.Run("http://0.0.0.0:5000");
+    _networkTransport.Stop();
   }
 
   private static async Task GameLoop()
@@ -51,11 +34,12 @@ public class Program
 
     while (true)
     {
+      _networkTransport.PollEvents();
+
       var gameTime = new GameTime(sw.Elapsed, System.TimeSpan.FromSeconds(tickRate));
       _gameServer.Update(gameTime);
+
       await Task.Delay((int)(tickRate * 1000));
     }
   }
-
-  public static GameServer GetGameServer() => _gameServer;
 }

@@ -16,8 +16,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\api\contracts\GameStateMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\api\contracts\InputMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\api\contracts\PlayerJoinRequest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\api\server\LocalGameServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\server\ServerManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\transport\IClientNetworkTransport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\api\transport\INetworkTransport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\transport\IServerNetworkTransport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\cohesion\KNearestNode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\cohesion\KNearestTree.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\collision\bounding_areas\AxisAlignedBoundingBox.cs" />
@@ -41,8 +43,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\BuildStateBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\menu\IState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\modules\controller\CameraModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\network\LiteNetLibClientTransport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\network\LiteNetLibServerTransport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\network\PacketType.cs" />
+    <Compile Include="..\Birds\src\player\IInputState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\player\InputConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)src\session\SessionGameState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\player\NetworkInputState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\session\world\WorldInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\session\world\WorldRenderer.cs" />
     <Compile Include="..\Birds\src\session\world\World.cs" />

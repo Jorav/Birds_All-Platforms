@@ -4,7 +4,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Birds.src.player;
 
-public class Input(InputConfiguration config, IPointerDevice pointer)
+public class Input(
+  InputConfiguration config,
+  IPointerDevice pointer) : IInputState
 {
   private bool pauseDown;
   private bool buildDown;
@@ -28,6 +30,10 @@ public class Input(InputConfiguration config, IPointerDevice pointer)
   public bool PauseClicked => CheckOnce(ref pauseDown, config.Pause);
   public bool BuildClicked => CheckOnce(ref buildDown, config.Build);
   public bool EnterClicked => CheckOnce(ref enterDown, config.Enter);
+
+  public Vector2 CameraPosition => Camera.Position;
+
+  public float CameraZoom => Camera.Zoom;
 
   private bool CheckOnce(ref bool wasDown, Keys key)
   {

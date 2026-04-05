@@ -25,7 +25,7 @@ public class World
   public void AddController(Controller c) => otherControllers.Add(c);
   public void RemoveController(Controller c) => otherControllers.Remove(c);
 
-  public Controller AddPlayer(Input input)
+  public Controller AddPlayer(IInputState input)
   {
     var playerController = ControllerFactory.Create(
         CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, CompositeControllerFactory.DEFAULT_SINGLE),

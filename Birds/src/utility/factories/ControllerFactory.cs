@@ -14,13 +14,13 @@ namespace Birds.src.factories
 {
   public class ControllerFactory
   {
-    public static Controller Create(List<IEntity> entities, ID_CONTROLLER id = ID_CONTROLLER.DEFAULT, Input input = null)
+    public static Controller Create(List<IEntity> entities, ID_CONTROLLER id = ID_CONTROLLER.DEFAULT, IInputState input = null)
     {
-      Controller c;
+      Controller c = new Controller(entities);
+      c.Id = id;
       switch (id)
       {
         case ID_CONTROLLER.DEFAULT:
-          c = new Controller(entities);
           c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupMassModule());
           c.AddModule(new GroupWeightedPositionModule());
@@ -35,7 +35,6 @@ namespace Birds.src.factories
           return c;
 
         case ID_CONTROLLER.PLAYER:
-          c = new Controller(entities);
           c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupMassModule());
           c.AddModule(new GroupWeightedPositionModule());
@@ -52,7 +51,6 @@ namespace Birds.src.factories
           return c;
 
         case ID_CONTROLLER.CHASER_AI:
-          c = new Controller(entities);
           c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupMassModule());
           c.AddModule(new GroupWeightedPositionModule());
@@ -68,13 +66,11 @@ namespace Birds.src.factories
           return c;
 
         case ID_CONTROLLER.BACKGROUND_SUN:
-          c = new Background(entities);//scale used to be 4
           c.AddModule(new GroupDrawModule());
           c.AddModule(new GroupRadiusModule());
           return c;
 
         case ID_CONTROLLER.FOREGROUND_CLOUD:
-          c = new Background(entities);//scale used to be 3
           c.AddModule(new GroupDrawModule());
           c.AddModule(new GroupRadiusModule());
           return c;

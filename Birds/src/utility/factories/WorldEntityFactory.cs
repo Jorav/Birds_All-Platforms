@@ -2,11 +2,8 @@
 using Birds.src.utility;
 using System;
 using System.Collections.Generic;
-using Birds.src.menu;
-using Birds.src.modules.entity;
 using Birds.src.containers.entity;
 using Birds.src.modules.entity.collision_handling;
-using Birds.src.collision.bounding_areas;
 using Birds.src.visual;
 using Birds.src.utility.factories;
 

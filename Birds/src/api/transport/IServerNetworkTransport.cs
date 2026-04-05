@@ -11,6 +11,7 @@ public interface IServerNetworkTransport : INetworkTransport
   event Action<PlayerJoinRequest> PlayerJoinRequested;
 
   void SendGameState(GameStateMessage state, string playerId);
+  void SendControllerSpawn(ControllerSpawnMessage message, string playerId);
   void Start();
   void Stop();
 }

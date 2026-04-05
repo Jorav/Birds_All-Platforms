@@ -24,7 +24,10 @@ public class Input(
 
   public Vector2 PositionGameCoords => Camera?.ScreenToWorld(ScreenPosition) ?? ScreenPosition;
 
-  public void Update(GameTime gameTime) => pointer.Update(gameTime);
+  public void Update(GameTime gameTime)
+  {
+    pointer.Update(gameTime);
+  }
   public void HandleZoom() => pointer.HandleZoom(Camera);
 
   public bool PauseClicked => CheckOnce(ref pauseDown, config.Pause);

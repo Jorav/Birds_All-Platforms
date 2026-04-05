@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Birds.src.modules.controller.steering;
 
-public class PlayerSteeringModule(Input playerInput) : SteeringModule()
+public class PlayerSteeringModule(IInputState playerInput) : SteeringModule()
 {
   private bool hasStartedMoving;
   private bool wasPressed;

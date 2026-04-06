@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace Birds.src.api.contracts;
 
@@ -12,9 +13,7 @@ public class GameStateMessage
 public class EntityStateUpdate
 {
   public string EntityId { get; set; }
-  public float? X { get; set; }
-  public float? Y { get; set; }
-  public float? VelX { get; set; }
-  public float? VelY { get; set; }
+  public Vector2? Position { get; set; }
+  public Vector2? Velocity { get; set; }
   public float? Rotation { get; set; }
 }

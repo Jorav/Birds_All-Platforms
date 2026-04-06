@@ -9,8 +9,8 @@ public interface IClientNetworkTransport : INetworkTransport
   event Action<GameStateMessage> StateReceived;
   event Action<ControllerSpawnMessage> ControllerSpawnReceived;
 
-  Task ConnectAsync();
-  Task DisconnectAsync();
-  Task SendPlayerJoinAsync(PlayerJoinRequest joinRequest);
-  Task SendInputAsync(InputMessage input);
+  Task Connect();
+  Task Disconnect();
+  void SendPlayerJoin(PlayerJoinRequest joinRequest);
+  void SendInput(InputMessage input);
 }

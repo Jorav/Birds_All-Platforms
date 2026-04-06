@@ -56,8 +56,8 @@ public class GameServer
   {
     var message = new ControllerSpawnMessage
     {
-      ControllerId = controller.GetEntityId(),
-      ControllerType = controller.Id,
+      Id = controller.Id,
+      ControllerType = controller.ControllerId,
       Position = controller.Position.Value
     };
 
@@ -72,7 +72,7 @@ public class GameServer
       {
         message.DirectEntities.Add(new EntitySpawnData
         {
-          EntityId = worldEntity.GetEntityId(),
+          Id = worldEntity.Id,
           EntityType = worldEntity.EntityID,
           Position = worldEntity.Position.Value,
           Rotation = worldEntity.Rotation.Value
@@ -92,14 +92,11 @@ public class GameServer
 
     foreach (var entity in allEntities)
     {
-      var entityId = entity.GetEntityId();
-      message.EntityUpdatesPerPlayer[entityId] = new EntityStateUpdate
+      message.EntityUpdatesPerPlayer[entity.Id] = new EntityStateUpdate
       {
-        EntityId = entityId,
-        X = entity.Position.Value.X,
-        Y = entity.Position.Value.Y,
-        VelX = entity.Velocity.Value.X,
-        VelY = entity.Velocity.Value.Y,
+        EntityId = entity.Id,
+        Position = entity.Position.Value,
+        Velocity = entity.Velocity.Value,
         Rotation = entity.Rotation.Value
       };
     }
@@ -160,14 +157,18 @@ public class GameServer
 
       foreach (var entity in allEntities)
       {
-        var entityId = entity.GetEntityId();
-        var update = new EntityStateUpdate { EntityId = entityId };
+        var update = new EntityStateUpdate { EntityId = entity.Id };
 
-        if (entity.Position.IsDirty) { update.X = entity.Position.Value.X; update.Y = entity.Position.Value.Y; }
-        if (entity.Velocity.IsDirty) { update.VelX = entity.Velocity.Value.X; update.VelY = entity.Velocity.Value.Y; }
-        if (entity.Rotation.IsDirty) update.Rotation = entity.Rotation.Value;
+        if (entity.Position.IsDirty)
+          update.Position = entity.Position.Value;
 
-        message.EntityUpdatesPerPlayer[entityId] = update;
+        if (entity.Velocity.IsDirty)
+          update.Velocity = entity.Velocity.Value;
+
+        if (entity.Rotation.IsDirty)
+          update.Rotation = entity.Rotation.Value;
+
+        message.EntityUpdatesPerPlayer[entity.Id] = update;
       }
 
       if (message.EntityUpdatesPerPlayer.Count > 0)

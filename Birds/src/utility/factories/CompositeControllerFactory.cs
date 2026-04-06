@@ -157,6 +157,16 @@ public static class CompositeControllerFactory
     };
   }
 
+  public static CompositeController GetComposite(List<IEntity> entities)
+  {
+    CompositeController compositeController = availableEntities.Count > 0 ? availableEntities.Pop() : new CompositeController();
+
+    compositeController.Entities.Set(entities);
+    SetCompositeModules(compositeController, ID_COMPOSITE.DEFAULT);
+
+    return compositeController;
+  }
+
   private static CompositeBlueprint CreateCrossShapeBlueprint()
   {
     return new CompositeBlueprint

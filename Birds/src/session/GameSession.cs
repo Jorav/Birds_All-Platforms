@@ -28,10 +28,10 @@ public abstract class GameSession(ClientSession session, Input input) : IState
     players.Remove(player.Id);
   }
 
-  public abstract Task InitializeAsync();
+  public abstract Task Initialize();
   public abstract void Update(GameTime gameTime);
   public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
-  public abstract Task ConnectAsync();
-  public abstract Task DisconnectAsync();
+  public abstract Task Connect();
+  public abstract Task Disconnect();
   public virtual void PostUpdate() { }
 }

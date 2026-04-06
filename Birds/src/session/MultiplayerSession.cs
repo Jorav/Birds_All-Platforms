@@ -37,27 +37,40 @@ public class MultiplayerSession(
 
   private WorldRenderer _worldRenderer;
   private bool _isInitialized = false;
-  private Dictionary<string, WorldEntity> _entityRegistry = new();
 
-  public override async Task InitializeAsync()
+  public override async Task Initialize()
   {
-    await ConnectAsync();
-    await SendPlayerJoinAsync();
-    await Task.Delay(1000);
+    var spawnReceived = new TaskCompletionSource<bool>();
+
+    void OnSpawn(ControllerSpawnMessage msg)
+    {
+      spawnReceived.TrySetResult(true);
+    }
+
+    _networkTransport.ControllerSpawnReceived += OnSpawn;
+
+    await Connect();
+    SendPlayerJoin();
+
+    await spawnReceived.Task;
+
+    _networkTransport.ControllerSpawnReceived -= OnSpawn;
+
     _worldRenderer = new WorldRenderer(world, LocalPlayer.Camera);
     _isInitialized = true;
   }
 
-  public override async Task ConnectAsync()
+
+  public override async Task Connect()
   {
-    await _networkTransport.ConnectAsync();
+    await _networkTransport.Connect();
     _networkTransport.StateReceived += OnGameStateReceived;
     _networkTransport.ControllerSpawnReceived += OnControllerSpawned;
   }
 
-  private async Task SendPlayerJoinAsync()
+  private void SendPlayerJoin()
   {
-    await _networkTransport.SendPlayerJoinAsync(new PlayerJoinRequest
+    _networkTransport.SendPlayerJoin(new PlayerJoinRequest
     {
       PlayerId = _localPlayerId,
       DisplayName = ClientSession.Current.DisplayName
@@ -70,27 +83,18 @@ public class MultiplayerSession(
 
     foreach (var entityData in msg.DirectEntities)
     {
-      var entity = BuildAndRegisterWorldEntity(entityData);
+      var entity = WorldEntityFactory.GetEntity(entityData.Position, entityData.EntityType);
+      entity.Rotation.Value = entityData.Rotation;
+      entity.Id = entityData.Id;
       allEntities.Add(entity);
     }
 
     foreach (var compositeData in msg.Composites)
     {
       var entities = NetworkMessageFactory.CreateEntitiesFromSpawnData(compositeData);
-
-      for (int i = 0; i < entities.Count; i++)
-      {
-        if (compositeData.ServerEntityIdByBlueprintIndex.TryGetValue(i, out string serverEntityId))
-        {
-          _entityRegistry[serverEntityId] = entities[i];
-        }
-      }
-
-      var composite = new CompositeController();
-      composite.Entities.Set(entities.Cast<IEntity>().ToList());
-      CompositeControllerFactory.SetCompositeModules(composite, ID_COMPOSITE.DEFAULT);
+      var composite = CompositeControllerFactory.GetComposite(entities.Cast<IEntity>().ToList());
+      composite.Id = compositeData.Id;
       composite.Position.Value = compositeData.SpawnPosition;
-
       allEntities.Add(composite);
     }
 
@@ -98,7 +102,10 @@ public class MultiplayerSession(
                          && !world.Controllers.Any();
 
     Controller controller = ControllerFactory.Create(allEntities, msg.ControllerType,
-        isLocalPlayer ? input : null);
+        isLocalPlayer
+        ? input
+        : null);
+    controller.Id = msg.Id;
     controller.Position.Value = msg.Position;
 
     if (isLocalPlayer)
@@ -124,14 +131,6 @@ public class MultiplayerSession(
     }
   }
 
-  private WorldEntity BuildAndRegisterWorldEntity(EntitySpawnData data)
-  {
-    var entity = WorldEntityFactory.GetEntity(data.Position, data.EntityType);
-    entity.Rotation.Value = data.Rotation;
-    _entityRegistry[data.EntityId] = entity;
-    return entity;
-  }
-
   private void OnGameStateReceived(GameStateMessage gameState)
   {
     if (!_isInitialized) return;
@@ -142,14 +141,18 @@ public class MultiplayerSession(
   {
     foreach (var update in gameState.EntityUpdatesPerPlayer.Values)
     {
-      if (!_entityRegistry.TryGetValue(update.EntityId, out var entity))
-        continue;
+      var entity = world.Controllers
+          .FlattenControllerHierarchy()
+          .OfType<WorldEntity>()
+          .FirstOrDefault(e => e.Id == update.EntityId);
 
-      if (update.X.HasValue && update.Y.HasValue)
-        entity.Position.Value = new Vector2(update.X.Value, update.Y.Value);
+      if (entity == null) continue;
 
-      if (update.VelX.HasValue && update.VelY.HasValue)
-        entity.Velocity.Value = new Vector2(update.VelX.Value, update.VelY.Value);
+      if (update.Position.HasValue)
+        entity.Position.Value = update.Position.Value;
+
+      if (update.Velocity.HasValue)
+        entity.Velocity.Value = update.Velocity.Value;
 
       if (update.Rotation.HasValue)
         entity.Rotation.Value = update.Rotation.Value;
@@ -165,9 +168,9 @@ public class MultiplayerSession(
     SendInputToServer(gameTime);
   }
 
-  private async void SendInputToServer(GameTime gameTime)
+  private void SendInputToServer(GameTime gameTime)
   {
-    await _networkTransport.SendInputAsync(new InputMessage
+    _networkTransport.SendInput(new InputMessage
     {
       PlayerId = _localPlayerId,
       Tick = (long)(gameTime.TotalGameTime.TotalSeconds * 20),
@@ -185,10 +188,10 @@ public class MultiplayerSession(
     _worldRenderer.Draw(spriteBatch);
   }
 
-  public override async Task DisconnectAsync()
+  public override async Task Disconnect()
   {
     _networkTransport.StateReceived -= OnGameStateReceived;
     _networkTransport.ControllerSpawnReceived -= OnControllerSpawned;
-    await _networkTransport.DisconnectAsync();
+    await _networkTransport.Disconnect();
   }
 }

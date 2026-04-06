@@ -13,6 +13,7 @@ public class Program
 
   public static void Main(string[] args)
   {
+    RuntimeContext.IsServer = true;
     _networkTransport = new LiteNetLibServerTransport(9050);
     _gameServer = new GameServer(_networkTransport);
 

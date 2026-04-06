@@ -2,6 +2,7 @@
 using Birds.src.containers.composite;
 using Birds.src.factories;
 using Birds.src.menu;
+using Birds.src.network;
 using Birds.src.player;
 using Birds.src.server;
 using Birds.src.utility;
@@ -37,7 +38,8 @@ public class Game1 : Game
   }
 
   protected override void Initialize()
-  { // use this and Content to load your game content here
+  {
+    RuntimeContext.IsServer = false;
     ClientSession.Initialize();
     _graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
     _graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
@@ -45,6 +47,7 @@ public class Game1 : Game
     ScreenHeight = _graphics.PreferredBackBufferHeight;
     _graphics.PreferMultiSampling = true;
     DrawModule.InitializePixel(GraphicsDevice);
+    GRAVITY = 10;
     base.Initialize();
   }
 
@@ -53,34 +56,9 @@ public class Game1 : Game
     _spriteBatch = new SpriteBatch(GraphicsDevice);
     _graphics.ApplyChanges();
 
-    GRAVITY = 10;
-
-    Texture2D[] textures = new Texture2D[Enum.GetNames(typeof(ID_SPRITE)).Length];
-    textures[(int)ID_SPRITE.HULL_RECTANGULAR_BAD] = Content.Load<Texture2D>("parts/HULL_RECTANGULAR_BAD");
-    textures[(int)ID_SPRITE.HULL_RECTANGULAR] = Content.Load<Texture2D>("parts/HULL_RECTANGULAR");
-    textures[(int)ID_SPRITE.HULL_RECTANGULAR_GOOD] = Content.Load<Texture2D>("parts/HULL_RECTANGULAR_GOOD");
-    textures[(int)ID_SPRITE.HULL_CIRCULAR] = Content.Load<Texture2D>("parts/HULL_CIRCULAR");
-    textures[(int)ID_SPRITE.HULL_LINK] = Content.Load<Texture2D>("parts/HULL_LINK");
-    textures[(int)ID_SPRITE.ENGINE_BAD] = Content.Load<Texture2D>("parts/ENGINE_BAD");
-    textures[(int)ID_SPRITE.ENGINE] = Content.Load<Texture2D>("parts/ENGINE");
-    textures[(int)ID_SPRITE.ENGINE_GOOD] = Content.Load<Texture2D>("parts/ENGINE_GOOD");
-    textures[(int)ID_SPRITE.GUN] = Content.Load<Texture2D>("parts/GUN");
-    textures[(int)ID_SPRITE.FILLER] = Content.Load<Texture2D>("parts/PART_EMPTY_DIRECTED");
-    textures[(int)ID_SPRITE.SPIKE] = Content.Load<Texture2D>("parts/SPIKE");
-    textures[(int)ID_SPRITE.HULL_THIN] = Content.Load<Texture2D>("parts/HULL_THIN");
-    textures[(int)ID_SPRITE.CLOUD] = Content.Load<Texture2D>("background/CLOUD");
-    textures[(int)ID_SPRITE.SUN] = Content.Load<Texture2D>("background/SUN");
-    textures[(int)ID_SPRITE.BACKGROUND_WHITE] = Content.Load<Texture2D>("background/WHITE_SMALL");
-    textures[(int)ID_SPRITE.BACKGROUND_GRAY] = Content.Load<Texture2D>("background/GRAY");
-    textures[(int)ID_SPRITE.BUTTON] = Content.Load<Texture2D>("menu/BUTTON");
-    textures[(int)ID_SPRITE.ENTITY_BUTTON] = Content.Load<Texture2D>("menu/BUTTON_ENTITY");
-    textures[(int)ID_SPRITE.ENTITY_BUTTON_MENU] = Content.Load<Texture2D>("menu/BUTTON_ENTITY_MENU");
-    textures[(int)ID_SPRITE.DELETE_X] = Content.Load<Texture2D>("menu/DELETE_X");
-    textures[(int)ID_SPRITE.DELETE_BUTTON] = Content.Load<Texture2D>("menu/DELETE_BUTTON");
-    textures[(int)ID_SPRITE.SAVE] = Content.Load<Texture2D>("menu/SAVE");
+    SpriteFactory.LoadTextures(Content);
 
     font = Content.Load<SpriteFont>("menu/FONT");
-    SpriteFactory.textures = textures;
     SpriteLoader.Initialize();
     WorldEntityFactory.InitializePreviews();
     CompositeControllerFactory.InitializePreviews();
@@ -100,11 +78,9 @@ public class Game1 : Game
     var dummyEntity = WorldEntityFactory.GetEntity(Vector2.Zero, ID_ENTITY.DEFAULT, false);
     dummyEntity.Update(new GameTime());
     dummyEntity.Dispose();
-
     var dummyComposite = CompositeControllerFactory.CreateComposites(Vector2.Zero, 1, CompositeControllerFactory.DEFAULT_SINGLE)[0] as CompositeController;
     dummyComposite?.Update(new GameTime());
     dummyComposite?.Dispose();
-
     var dummyController = ControllerFactory.Create(
         WorldEntityFactory.CreateEntities(Vector2.Zero, 1, ID_ENTITY.DEFAULT),
         ID_CONTROLLER.DEFAULT
@@ -116,6 +92,7 @@ public class Game1 : Game
   {
     nextState = state;
   }
+
   public IState GetNextState()
   {
     if (nextState == null)
@@ -128,18 +105,15 @@ public class Game1 : Game
     _input.Update(gameTime);
     currentState.Update(gameTime);
     currentState.PostUpdate();
-
     if (LOG_MODULE_PERFORMANCE)
     {
       ModuleProfiler.Summary();
     }
-
     if (nextState != null)
     {
       currentState = nextState;
       nextState = null;
     }
-
     base.Update(gameTime);
   }
 
@@ -147,7 +121,6 @@ public class Game1 : Game
   {
     ScreenWidth = _graphics.PreferredBackBufferWidth;
     ScreenHeight = _graphics.PreferredBackBufferHeight;
-
     currentState.Draw(gameTime, _spriteBatch);
     base.Draw(gameTime);
   }

@@ -15,7 +15,7 @@ public class SinglePlayerSession(ClientSession session, Input input, Game1 game,
   private readonly DoubleClickHelper doubleClickHelper = new(input, 400);
   private WorldRenderer worldRenderer;
 
-  public override async Task InitializeAsync()
+  public override async Task Initialize()
   {
     WorldInitializer.Initialize(world);
 
@@ -70,6 +70,6 @@ public class SinglePlayerSession(ClientSession session, Input input, Game1 game,
     // TODO: revisit when redoing build state
   }
 
-  public override Task ConnectAsync() => Task.CompletedTask;
-  public override Task DisconnectAsync() => Task.CompletedTask;
+  public override Task Connect() => Task.CompletedTask;
+  public override Task Disconnect() => Task.CompletedTask;
 }

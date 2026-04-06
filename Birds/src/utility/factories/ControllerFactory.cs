@@ -17,7 +17,7 @@ namespace Birds.src.factories
     public static Controller Create(List<IEntity> entities, ID_CONTROLLER id = ID_CONTROLLER.DEFAULT, IInputState input = null)
     {
       Controller c = new Controller(entities);
-      c.Id = id;
+      c.ControllerId = id;
       switch (id)
       {
         case ID_CONTROLLER.DEFAULT:

@@ -73,7 +73,7 @@ public class MainMenu : MenuState
 
     ButtonContainer container = new ButtonContainer(
       ID_POSITION.POSITION_MIDDLE,
-      new List<Button> { startSingleplayerButton, editorButton, hostGameButton, joinGameButton, quitButton }
+      new List<Button> { startSingleplayerButton, hostGameButton, editorButton, joinGameButton, quitButton }
     );
 
     components = new List<IComponent>()
@@ -86,7 +86,7 @@ public class MainMenu : MenuState
   private void StartSingleplayer_Click(object sender, EventArgs e)
   {
     var singlePlayerSession = new SinglePlayerSession(ClientSession.Current, input, game, graphicsDevice);
-    singlePlayerSession.InitializeAsync().GetAwaiter().GetResult();
+    singlePlayerSession.Initialize().GetAwaiter().GetResult();
     game.ChangeState(singlePlayerSession);
   }
 
@@ -119,7 +119,7 @@ public class MainMenu : MenuState
           isHost: true
       );
 
-      await multiplayerSession.InitializeAsync();
+      await multiplayerSession.Initialize();
       game.ChangeState(multiplayerSession);
     }
     catch (Exception ex)

@@ -1,8 +1,8 @@
-﻿using Birds.src.api.contracts;
+﻿// NetworkMessageFactory.cs
+using Birds.src.api.contracts;
 using Birds.src.containers.composite;
 using Birds.src.containers.composite.blueprints;
 using Birds.src.containers.entity;
-using Birds.src.events;
 using Birds.src.factories;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +19,7 @@ public static class NetworkMessageFactory
 
     var spawnData = new CompositeSpawnData
     {
-      CompositeId = composite.GetEntityId(),
+      Id = composite.Id,
       SpawnPosition = composite.Position.Value,
       Entities = blueprint.Entities,
       Connections = blueprint.Connections
@@ -27,7 +27,7 @@ public static class NetworkMessageFactory
 
     for (int i = 0; i < entities.Count; i++)
     {
-      spawnData.ServerEntityIdByBlueprintIndex[i] = entities[i].GetEntityId();
+      spawnData.ServerEntityIdByBlueprintIndex[i] = entities[i].Id;
     }
 
     return spawnData;
@@ -42,6 +42,16 @@ public static class NetworkMessageFactory
       Connections = spawnData.Connections
     };
 
-    return BlueprintFactory.CreateFromBlueprint(blueprint, spawnData.SpawnPosition);
+    var entities = BlueprintFactory.CreateFromBlueprint(blueprint, spawnData.SpawnPosition);
+
+    for (int i = 0; i < entities.Count; i++)
+    {
+      if (spawnData.ServerEntityIdByBlueprintIndex.TryGetValue(i, out string serverId))
+      {
+        entities[i].Id = serverId;
+      }
+    }
+
+    return entities;
   }
 }

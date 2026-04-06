@@ -5,28 +5,28 @@ using System.Collections.Generic;
 
 namespace Birds.src.api.contracts;
 
-public class ControllerSpawnMessage
+public class EntitySpawnData
 {
-  public string ControllerId { get; set; }
-  public ID_CONTROLLER ControllerType { get; set; }
+  public string Id { get; set; }
+  public ID_ENTITY EntityType { get; set; }
   public Vector2 Position { get; set; }
-  public List<EntitySpawnData> DirectEntities { get; set; } = new();
-  public List<CompositeSpawnData> Composites { get; set; } = new();
+  public float Rotation { get; set; }
 }
 
 public class CompositeSpawnData
 {
-  public string CompositeId { get; set; }
+  public string Id { get; set; }
   public Vector2 SpawnPosition { get; set; }
   public List<EntityPlacement> Entities { get; set; } = new();
   public List<Connection> Connections { get; set; } = new();
   public Dictionary<int, string> ServerEntityIdByBlueprintIndex { get; set; } = new();
 }
 
-public class EntitySpawnData
+public class ControllerSpawnMessage
 {
-  public string EntityId { get; set; }
-  public ID_ENTITY EntityType { get; set; }
+  public string Id { get; set; }
+  public ID_CONTROLLER ControllerType { get; set; }
   public Vector2 Position { get; set; }
-  public float Rotation { get; set; }
+  public List<EntitySpawnData> DirectEntities { get; set; } = new();
+  public List<CompositeSpawnData> Composites { get; set; } = new();
 }

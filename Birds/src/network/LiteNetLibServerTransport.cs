@@ -2,7 +2,6 @@
 using Birds.src.api.transport;
 using LiteNetLib;
 using LiteNetLib.Utils;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -53,29 +52,7 @@ public class LiteNetLibServerTransport(int port) : IServerNetworkTransport
 
     var writer = new NetDataWriter();
     writer.Put((byte)MessageType.GameState);
-    writer.Put(state.Tick);
-    writer.Put(state.PlayerId);
-    writer.Put(state.EntityUpdatesPerPlayer.Count);
-
-    foreach (var update in state.EntityUpdatesPerPlayer.Values)
-    {
-      writer.Put(update.EntityId);
-
-      writer.Put(update.X.HasValue);
-      if (update.X.HasValue) writer.Put(update.X.Value);
-
-      writer.Put(update.Y.HasValue);
-      if (update.Y.HasValue) writer.Put(update.Y.Value);
-
-      writer.Put(update.VelX.HasValue);
-      if (update.VelX.HasValue) writer.Put(update.VelX.Value);
-
-      writer.Put(update.VelY.HasValue);
-      if (update.VelY.HasValue) writer.Put(update.VelY.Value);
-
-      writer.Put(update.Rotation.HasValue);
-      if (update.Rotation.HasValue) writer.Put(update.Rotation.Value);
-    }
+    writer.PutGameStateMessage(state);
 
     peer.Send(writer, DeliveryMethod.Unreliable);
   }
@@ -86,45 +63,7 @@ public class LiteNetLibServerTransport(int port) : IServerNetworkTransport
 
     var writer = new NetDataWriter();
     writer.Put((byte)MessageType.ControllerSpawn);
-    writer.Put(message.ControllerId);
-    writer.Put((int)message.ControllerType);
-
-    // Direct entities
-    writer.Put(message.DirectEntities.Count);
-    foreach (var e in message.DirectEntities)
-    {
-      writer.Put(e.EntityId);
-      writer.Put((int)e.EntityType);
-      writer.Put(e.X);
-      writer.Put(e.Y);
-      writer.Put(e.Rotation);
-    }
-
-    // Composites
-    writer.Put(message.Composites.Count);
-    foreach (var c in message.Composites)
-    {
-      writer.Put(c.CompositeId);
-
-      writer.Put(c.Entities.Count);
-      foreach (var e in c.Entities)
-      {
-        writer.Put(e.EntityId);
-        writer.Put((int)e.EntityType);
-        writer.Put(e.X);
-        writer.Put(e.Y);
-        writer.Put(e.Rotation);
-      }
-
-      writer.Put(c.Connections.Count);
-      foreach (var conn in c.Connections)
-      {
-        writer.Put(conn.EntityId1);
-        writer.Put(conn.EntityId2);
-        writer.Put(conn.LinkIndex1);
-        writer.Put(conn.LinkIndex2);
-      }
-    }
+    writer.PutControllerSpawnMessage(message);
 
     peer.Send(writer, DeliveryMethod.ReliableOrdered);
   }
@@ -145,23 +84,14 @@ public class LiteNetLibServerTransport(int port) : IServerNetworkTransport
 
   private void HandlePlayerJoinRequest(NetPeer peer, NetPacketReader reader)
   {
-    string playerId = reader.GetString();
-    string displayName = reader.GetString();
-    _playerPeers[playerId] = peer;
-    PlayerJoinRequested?.Invoke(new PlayerJoinRequest { PlayerId = playerId, DisplayName = displayName });
+    var request = reader.GetPlayerJoinRequest();
+    _playerPeers[request.PlayerId] = peer;
+    PlayerJoinRequested?.Invoke(request);
   }
 
   private void HandleInput(NetPacketReader reader)
   {
-    var input = new InputMessage
-    {
-      PlayerId = reader.GetString(),
-      Tick = reader.GetLong(),
-      IsPressed = reader.GetBool(),
-      PositionGameCoords = new Vector2(reader.GetFloat(), reader.GetFloat()),
-      CameraPosition = new Vector2(reader.GetFloat(), reader.GetFloat()),
-      CameraZoom = reader.GetFloat()
-    };
+    var input = reader.GetInputMessage();
     InputReceived?.Invoke(input);
   }
 }

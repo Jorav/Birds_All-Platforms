@@ -11,6 +11,7 @@ using System.IO;
 using System.Text.Json;
 using System.Linq;
 using Birds.src.utility.factories.model.entity;
+using Birds.src.network;
 
 namespace Birds.src.utility.factories;
 
@@ -18,11 +19,9 @@ public class WorldEntityLoader
 {
   private const string CONFIG_PATH = "src/WorldEntities.json";
   public const string PARAM_LINKS = "Links";
-
   private static WorldEntityConfiguration _defaultConfig;
   private static Dictionary<ID_ENTITY, WorldEntityConfiguration> _entityConfigs = new();
   public static List<ID_ENTITY> Hulls { get; private set; } = new();
-
   private static readonly JsonSerializerOptions _jsonOptions = new()
   {
     PropertyNameCaseInsensitive = true,
@@ -36,17 +35,16 @@ public class WorldEntityLoader
   {
     string json = File.ReadAllText(CONFIG_PATH);
     var configFile = JsonSerializer.Deserialize<WorldEntityConfigurationFile>(json, _jsonOptions);
-
     _defaultConfig = configFile.Default;
     LoadEntityConfigurations(configFile);
     IdentifyHulls();
   }
+
   private static void LoadEntityConfigurations(WorldEntityConfigurationFile configFile)
   {
     foreach (ID_ENTITY entityId in Enum.GetValues(typeof(ID_ENTITY)))
     {
       string entityName = entityId.ToString();
-
       if (configFile.Entities.TryGetValue(entityName, out var config))
       {
         _entityConfigs[entityId] = MergeWithDefault(config);
@@ -64,7 +62,6 @@ public class WorldEntityLoader
     foreach (var kvp in _entityConfigs)
     {
       if (kvp.Key == ID_ENTITY.FILLER) continue;
-
       var linkModule = kvp.Value.Modules?.FirstOrDefault(m => m.Type == ID_MODULE.LinkModule);
       if (linkModule != null && linkModule.Parameters.TryGetValue(PARAM_LINKS, out var linksObj) && linksObj is JsonElement linksJson)
       {
@@ -86,7 +83,6 @@ public class WorldEntityLoader
         ? (entityConfig.Modules)
         : (_defaultConfig.Modules)
     };
-
     if (entityConfig.Properties != null)
     {
       foreach (var kvp in entityConfig.Properties)
@@ -94,7 +90,6 @@ public class WorldEntityLoader
         merged.Properties[kvp.Key] = kvp.Value;
       }
     }
-
     return merged;
   }
 
@@ -104,22 +99,30 @@ public class WorldEntityLoader
     {
       throw new ArgumentException($"No configuration found for entity type: {entityId}");
     }
-
     ApplyProperties(entity, config.Properties);
-    ID_SPRITE finalSpriteId = (spriteId == ID_SPRITE.FILLER && WorldEntityFactory.EntityToSpriteMap.TryGetValue(entityId, out var mappedId))
-        ? mappedId
-        : spriteId;
 
-    Sprite sprite = SpriteFactory.GetSprite(finalSpriteId, entity.Position.Value, entity.Scale.Value);
+    Sprite sprite = null;
 
-    if (entityId == ID_ENTITY.FILLER)
+    if (!RuntimeContext.IsServer)
     {
-      sprite.Alpha = 0.4f;
-      sprite.Color = Color.Lime;
+      ID_SPRITE finalSpriteId = (spriteId == ID_SPRITE.FILLER && WorldEntityFactory.EntityToSpriteMap.TryGetValue(entityId, out var mappedId))
+          ? mappedId
+          : spriteId;
+      sprite = SpriteFactory.GetSprite(finalSpriteId, entity.Position.Value, entity.Scale.Value);
+      if (entityId == ID_ENTITY.FILLER)
+      {
+        sprite.Alpha = 0.4f;
+        sprite.Color = Color.Lime;
+      }
     }
 
-    entity.Width.Value = sprite.Width;
-    entity.Height.Value = sprite.Height;
+    ID_SPRITE pathSpriteId = (spriteId == ID_SPRITE.FILLER && WorldEntityFactory.EntityToSpriteMap.TryGetValue(entityId, out var pathMappedId))
+        ? pathMappedId
+        : spriteId;
+    string pngPath = SpriteFactory.GetSpritePath(pathSpriteId);
+    var (width, height) = SizeReader.GetPngSize(pngPath);
+    entity.Width.Value = width;
+    entity.Height.Value = height;
 
     ApplyModules(entity, config.Modules, isPartOfComposite, sprite);
   }
@@ -130,14 +133,12 @@ public class WorldEntityLoader
     {
       var property = entity.GetType().GetProperty(kvp.Key);
       if (property == null) continue;
-
       if (property.PropertyType.IsGenericType &&
           property.PropertyType.GetGenericTypeDefinition() == typeof(SyncedProperty<>))
       {
         var syncedProp = property.GetValue(entity);
         var valueProperty = property.PropertyType.GetProperty("Value");
         var targetType = valueProperty.PropertyType;
-
         object convertedValue;
         if (kvp.Value is JsonElement jsonElement)
         {
@@ -147,7 +148,6 @@ public class WorldEntityLoader
         {
           convertedValue = Convert.ChangeType(kvp.Value, targetType);
         }
-
         valueProperty.SetValue(syncedProp, convertedValue);
       }
     }
@@ -165,7 +165,6 @@ public class WorldEntityLoader
   private static void ApplyModules(IEntity entity, List<ModuleConfigurationEntry> modules, bool isPartOfComposite, Sprite sprite)
   {
     entity.ClearModules();
-
     foreach (var moduleConfig in modules)
     {
       AddModule(entity, moduleConfig, isPartOfComposite, sprite);
@@ -179,21 +178,17 @@ public class WorldEntityLoader
       case ID_MODULE.CollisionHandlerModule:
         entity.AddModule(WorldEntityFactory.GetCollisionHandler(isPartOfComposite));
         break;
-
       case ID_MODULE.MovementModule:
         if (!isPartOfComposite)
           entity.AddModule(new MovementModule());
         break;
-
       case ID_MODULE.RotationModule:
         if (!isPartOfComposite)
           entity.AddModule(new RotationModule());
         break;
-
       case ID_MODULE.RadiusModule:
         entity.AddModule(new RadiusModule());
         break;
-
       case ID_MODULE.CollisionDetectionModule:
         entity.AddModule(new CollisionDetectionModule(
           BoundingAreaFactory.GetOBB(
@@ -203,7 +198,6 @@ public class WorldEntityLoader
             (int)entity.Height.Value)
         ));
         break;
-
       case ID_MODULE.LinkModule:
         var linkModule = new LinkModule();
         if (moduleConfig.Parameters.TryGetValue(PARAM_LINKS, out var linksObj) && linksObj is JsonElement linksJson)
@@ -213,9 +207,8 @@ public class WorldEntityLoader
         }
         entity.AddModule(linkModule);
         break;
-
       case ID_MODULE.DrawModule:
-        if (sprite != null)
+        if (!RuntimeContext.IsServer && sprite != null)
           entity.AddModule(new DrawModule(sprite));
         break;
     }

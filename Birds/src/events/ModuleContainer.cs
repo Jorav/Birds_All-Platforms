@@ -11,7 +11,7 @@ namespace Birds.src.events;
 
 public abstract class ModuleContainer : IModuleContainer
 {
-  public string Id { get; set; } = new Guid().ToString();
+  public string Id { get; set; } = Guid.NewGuid().ToString();
   private SyncedProperty<Vector2> _position;
   private SyncedProperty<float> _rotation;
   private SyncedProperty<float> _mass;

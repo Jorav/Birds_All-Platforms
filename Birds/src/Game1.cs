@@ -1,10 +1,10 @@
 ﻿using Birds.src.api.client;
+using Birds.src.api.server;
 using Birds.src.containers.composite;
 using Birds.src.factories;
 using Birds.src.menu;
 using Birds.src.network;
 using Birds.src.player;
-using Birds.src.server;
 using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,10 +25,12 @@ public class Game1 : Game
   public static float timeStep = (1f / 60f);
   private IState currentState;
   private IState nextState;
-  public static bool LOG_MODULE_PERFORMANCE = true;
+  public static bool LOG_MODULE_PERFORMANCE = false;
   public static bool DRAW_OBB_OUTLINE = false;
   public static bool DRAW_BC_OUTLINE = false;
   public static bool DRAW_AABB_OUTLINE = false;
+  public ServerManager ServerManager { get; } = new ServerManager();
+
 
   public Game1()
   {

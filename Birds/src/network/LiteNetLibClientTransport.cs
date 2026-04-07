@@ -3,6 +3,7 @@ using Birds.src.api.transport;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Birds.src.network;
@@ -18,6 +19,7 @@ public class LiteNetLibClientTransport(
 
   public event Action<GameStateMessage> StateReceived;
   public event Action<ControllerSpawnMessage> ControllerSpawnReceived;
+  public event Action<WorldSnapshotMessage> WorldSnapshotReceived;
 
   public async Task Connect()
   {
@@ -25,8 +27,17 @@ public class LiteNetLibClientTransport(
     _netManager = new NetManager(_listener) { AutoRecycle = true };
 
     _listener.ConnectionRequestEvent += request => request.AcceptIfKey("Birds");
-    _listener.PeerConnectedEvent += peer => { _serverPeer = peer; _connected = true; };
-    _listener.PeerDisconnectedEvent += (peer, info) => { _connected = false; };
+    _listener.PeerConnectedEvent += peer =>
+    {
+      Debug.WriteLine($"[Client] Connected to server: {peer.Address}");
+      _serverPeer = peer;
+      _connected = true;
+    };
+    _listener.PeerDisconnectedEvent += (peer, info) =>
+    {
+      Debug.WriteLine($"[Client] Disconnected from server, reason: {info.Reason}");
+      _connected = false;
+    };
     _listener.NetworkReceiveEvent += OnNetworkReceive;
 
     _netManager.Start();
@@ -40,18 +51,30 @@ public class LiteNetLibClientTransport(
       timeout++;
     }
 
-    if (!_connected) throw new Exception("Failed to connect to server");
+    if (!_connected)
+    {
+      Debug.WriteLine($"[Client] Failed to connect after {timeout * 100}ms");
+      throw new Exception("Failed to connect to server");
+    }
+
+    Debug.WriteLine("[Client] Connected successfully");
   }
 
   public async Task Disconnect()
   {
+    Debug.WriteLine("[Client] Disconnecting");
     _netManager?.Stop();
     await Task.Delay(100);
   }
 
   public void SendPlayerJoin(PlayerJoinRequest joinRequest)
   {
-    if (_serverPeer == null) return;
+    if (_serverPeer == null)
+    {
+      Debug.WriteLine("[Client] SendPlayerJoin failed - no server peer");
+      return;
+    }
+    Debug.WriteLine($"[Client] Sending PlayerJoinRequest (playerId: {joinRequest.PlayerId}, name: {joinRequest.DisplayName})");
     var writer = new NetDataWriter();
     writer.Put((byte)MessageType.PlayerJoinRequest);
     writer.PutPlayerJoinRequest(joinRequest);
@@ -72,6 +95,7 @@ public class LiteNetLibClientTransport(
   private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channel, DeliveryMethod deliveryMethod)
   {
     MessageType messageType = (MessageType)reader.GetByte();
+    Debug.WriteLine($"[Client] Received message type: {messageType}");
     switch (messageType)
     {
       case MessageType.GameState:
@@ -80,18 +104,33 @@ public class LiteNetLibClientTransport(
       case MessageType.ControllerSpawn:
         HandleControllerSpawn(reader);
         break;
+      case MessageType.WorldSnapshot:
+        HandleWorldSnapshot(reader);
+        break;
+      default:
+        Debug.WriteLine($"[Client] Unknown message type: {messageType}");
+        break;
     }
   }
 
   private void HandleGameState(NetPacketReader reader)
   {
     var gameState = reader.GetGameStateMessage();
+    Debug.WriteLine($"[Client] GameState received (tick: {gameState.Tick}, updates: {gameState.EntityUpdatesPerPlayer.Count})");
     StateReceived?.Invoke(gameState);
   }
 
   private void HandleControllerSpawn(NetPacketReader reader)
   {
     var message = reader.GetControllerSpawnMessage();
+    Debug.WriteLine($"[Client] ControllerSpawn received (id: {message.Id}, ownerId: {message.OwnerId ?? "none"}, type: {message.ControllerType})");
     ControllerSpawnReceived?.Invoke(message);
+  }
+
+  private void HandleWorldSnapshot(NetPacketReader reader)
+  {
+    var snapshot = reader.GetWorldSnapshotMessage();
+    Debug.WriteLine($"[Client] WorldSnapshot received ({snapshot.Controllers.Count} controllers)");
+    WorldSnapshotReceived?.Invoke(snapshot);
   }
 }

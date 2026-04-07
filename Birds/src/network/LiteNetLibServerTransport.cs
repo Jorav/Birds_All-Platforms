@@ -4,6 +4,7 @@ using LiteNetLib;
 using LiteNetLib.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Birds.src.network;
 
@@ -26,12 +27,12 @@ public class LiteNetLibServerTransport(int port) : IServerNetworkTransport
     _listener.ConnectionRequestEvent += request => request.AcceptIfKey("Birds");
     _listener.PeerConnectedEvent += peer =>
     {
-      Console.WriteLine($"Peer connected: {peer.Address}");
+      Debug.WriteLine($"[Server] Peer connected: {peer.Address} (id: {peer.Id})");
       PlayerConnected?.Invoke(peer.Id.ToString());
     };
     _listener.PeerDisconnectedEvent += (peer, info) =>
     {
-      Console.WriteLine($"Peer disconnected: {peer.Address}");
+      Debug.WriteLine($"[Server] Peer disconnected: {peer.Address} (id: {peer.Id})");
       if (_playerPeers.ContainsValue(peer))
       {
         var playerId = peer.Id.ToString();
@@ -48,29 +49,50 @@ public class LiteNetLibServerTransport(int port) : IServerNetworkTransport
 
   public void SendGameState(GameStateMessage state, string playerId)
   {
-    if (!_playerPeers.TryGetValue(playerId, out var peer)) return;
-
+    if (!_playerPeers.TryGetValue(playerId, out var peer))
+    {
+      Debug.WriteLine($"[Server] SendGameState failed - no peer for playerId: {playerId}");
+      return;
+    }
+    Debug.WriteLine($"[Server] Sending GameState to {playerId} ({state.EntityUpdatesPerPlayer.Count} updates)");
     var writer = new NetDataWriter();
     writer.Put((byte)MessageType.GameState);
     writer.PutGameStateMessage(state);
-
     peer.Send(writer, DeliveryMethod.Unreliable);
   }
 
   public void SendControllerSpawn(ControllerSpawnMessage message, string playerId)
   {
-    if (!_playerPeers.TryGetValue(playerId, out var peer)) return;
-
+    if (!_playerPeers.TryGetValue(playerId, out var peer))
+    {
+      Debug.WriteLine($"[Server] SendControllerSpawn failed - no peer for playerId: {playerId}");
+      return;
+    }
+    Debug.WriteLine($"[Server] Sending ControllerSpawn to {playerId} (controllerId: {message.Id}, ownerId: {message.OwnerId ?? "none"}, type: {message.ControllerType})");
     var writer = new NetDataWriter();
     writer.Put((byte)MessageType.ControllerSpawn);
     writer.PutControllerSpawnMessage(message);
+    peer.Send(writer, DeliveryMethod.ReliableOrdered);
+  }
 
+  public void SendWorldSnapshot(WorldSnapshotMessage snapshot, string playerId)
+  {
+    if (!_playerPeers.TryGetValue(playerId, out var peer))
+    {
+      Debug.WriteLine($"[Server] SendWorldSnapshot failed - no peer for playerId: {playerId}");
+      return;
+    }
+    Debug.WriteLine($"[Server] Sending WorldSnapshot to {playerId} ({snapshot.Controllers.Count} controllers)");
+    var writer = new NetDataWriter();
+    writer.Put((byte)MessageType.WorldSnapshot);
+    writer.PutWorldSnapshotMessage(snapshot);
     peer.Send(writer, DeliveryMethod.ReliableOrdered);
   }
 
   private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channel, DeliveryMethod deliveryMethod)
   {
     MessageType messageType = (MessageType)reader.GetByte();
+    Debug.WriteLine($"[Server] Received message type: {messageType} from peer: {peer.Id}");
     switch (messageType)
     {
       case MessageType.PlayerJoinRequest:
@@ -79,12 +101,16 @@ public class LiteNetLibServerTransport(int port) : IServerNetworkTransport
       case MessageType.Input:
         HandleInput(reader);
         break;
+      default:
+        Debug.WriteLine($"[Server] Unknown message type: {messageType}");
+        break;
     }
   }
 
   private void HandlePlayerJoinRequest(NetPeer peer, NetPacketReader reader)
   {
     var request = reader.GetPlayerJoinRequest();
+    Debug.WriteLine($"[Server] PlayerJoinRequest from {request.PlayerId} ({request.DisplayName}), peer: {peer.Id}");
     _playerPeers[request.PlayerId] = peer;
     PlayerJoinRequested?.Invoke(request);
   }

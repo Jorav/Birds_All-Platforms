@@ -5,14 +5,16 @@ using Birds.src.containers.composite;
 using Birds.src.containers.controller;
 using Birds.src.containers.entity;
 using Birds.src.events;
+using Birds.src.factories;
 using Birds.src.player;
 using Birds.src.session.world;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
-namespace Birds.Server;
+namespace Birds.src.api.server;
 
 public class GameServer
 {
@@ -38,18 +40,46 @@ public class GameServer
   private void OnPlayerJoinRequested(PlayerJoinRequest joinRequest)
   {
     string playerId = joinRequest.PlayerId;
-    if (_players.ContainsKey(playerId)) return;
+    Debug.WriteLine($"[Server] OnPlayerJoinRequested: {playerId}");
+
+    if (_players.ContainsKey(playerId))
+    {
+      Debug.WriteLine($"[Server] Player {playerId} already exists, ignoring");
+      return;
+    }
 
     var networkInput = new NetworkInputState();
     var player = new Player(playerId, networkInput);
-    var controller = _world.AddPlayer(networkInput);
-    player.SetController(controller);
+    var playerController = _world.AddPlayer(networkInput);
+    player.SetController(playerController);
     _players[playerId] = player;
 
-    foreach (var c in _world.Controllers)
-      _networkTransport.SendControllerSpawn(BuildSpawnMessage(c), playerId);
+    var snapshot = BuildWorldSnapshot(playerId, playerController);
+    Debug.WriteLine($"[Server] Sending world snapshot to {playerId} ({snapshot.Controllers.Count} controllers)");
+    _networkTransport.SendWorldSnapshot(snapshot, playerId);
 
-    SendFullWorldState(playerId);
+    var newPlayerSpawnMsg = BuildSpawnMessage(playerController);
+    foreach (var otherPlayerId in _players.Keys.Where(id => id != playerId))
+    {
+      Debug.WriteLine($"[Server] Notifying {otherPlayerId} of new player controller {playerController.Id}");
+      _networkTransport.SendControllerSpawn(newPlayerSpawnMsg, otherPlayerId);
+    }
+  }
+
+  private WorldSnapshotMessage BuildWorldSnapshot(string playerId, Controller playerController)
+  {
+    var ownSpawn = BuildSpawnMessage(playerController);
+    ownSpawn.OwnerId = playerId;
+
+    var snapshot = new WorldSnapshotMessage
+    {
+      OwnController = ownSpawn
+    };
+
+    foreach (var c in _world.Controllers.Where(c => c.Id != playerController.Id))
+      snapshot.Controllers.Add(BuildSpawnMessage(c));
+
+    return snapshot;
   }
 
   private ControllerSpawnMessage BuildSpawnMessage(Controller controller)
@@ -65,8 +95,7 @@ public class GameServer
     {
       if (entity is CompositeController composite)
       {
-        var spawnData = NetworkMessageFactory.CreateCompositeSpawnData(composite);
-        message.Composites.Add(spawnData);
+        message.Composites.Add(NetworkMessageFactory.CreateCompositeSpawnData(composite));
       }
       else if (entity is WorldEntity worldEntity)
       {
@@ -75,33 +104,13 @@ public class GameServer
           Id = worldEntity.Id,
           EntityType = worldEntity.EntityID,
           Position = worldEntity.Position.Value,
+          Velocity = worldEntity.Velocity.Value,
           Rotation = worldEntity.Rotation.Value
         });
       }
     }
 
     return message;
-  }
-
-  private void SendFullWorldState(string playerId)
-  {
-    var allEntities = _world.Controllers.FlattenControllerHierarchy()
-        .OfType<WorldEntity>();
-
-    var message = new GameStateMessage { Tick = _currentTick, PlayerId = playerId };
-
-    foreach (var entity in allEntities)
-    {
-      message.EntityUpdatesPerPlayer[entity.Id] = new EntityStateUpdate
-      {
-        EntityId = entity.Id,
-        Position = entity.Position.Value,
-        Velocity = entity.Velocity.Value,
-        Rotation = entity.Rotation.Value
-      };
-    }
-
-    _networkTransport.SendGameState(message, playerId);
   }
 
   private void OnInputReceived(InputMessage input)
@@ -111,12 +120,12 @@ public class GameServer
 
   private void OnPlayerConnected(string playerId)
   {
-    Console.WriteLine($"Player connected: {playerId}");
+    Debug.WriteLine($"[Server] Player connected: {playerId}");
   }
 
   private void OnPlayerDisconnected(string playerId)
   {
-    Console.WriteLine($"Player disconnected: {playerId}");
+    Debug.WriteLine($"[Server] Player disconnected: {playerId}");
     if (_players.TryGetValue(playerId, out var player))
     {
       _world.RemovePlayer(player.Controller);

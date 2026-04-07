@@ -1,21 +1,20 @@
 ﻿using Birds.src.api.client;
 using Birds.src.api.contracts;
-using Birds.src.api.network;
 using Birds.src.api.transport;
 using Birds.src.containers.composite;
 using Birds.src.containers.controller;
 using Birds.src.containers.entity;
 using Birds.src.events;
 using Birds.src.factories;
+using Birds.src.api.network;
 using Birds.src.player;
-using Birds.src.session;
 using Birds.src.session.world;
 using Birds.src.utility;
-using Birds.src.visual;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,48 +32,61 @@ public class MultiplayerSession(
   private readonly GraphicsDevice _graphicsDevice = graphicsDevice;
   private readonly IClientNetworkTransport _networkTransport = networkTransport;
   private readonly bool _isHost = isHost;
-  private readonly string _localPlayerId = Guid.NewGuid().ToString();
 
   private WorldRenderer _worldRenderer;
   private bool _isInitialized = false;
+  private bool _worldSnapshotReceived = false;
 
   public override async Task Initialize()
   {
-    var spawnReceived = new TaskCompletionSource<bool>();
-
-    void OnSpawn(ControllerSpawnMessage msg)
-    {
-      spawnReceived.TrySetResult(true);
-    }
-
-    _networkTransport.ControllerSpawnReceived += OnSpawn;
-
     await Connect();
     SendPlayerJoin();
 
-    await spawnReceived.Task;
+    int timeout = 0;
+    while ((LocalPlayer == null || !_worldSnapshotReceived) && timeout < 100)
+    {
+      _networkTransport.PollEvents();
+      await Task.Delay(50);
+      timeout++;
+    }
 
-    _networkTransport.ControllerSpawnReceived -= OnSpawn;
+    if (LocalPlayer == null)
+      throw new Exception("Timed out waiting for local player spawn");
+
+    if (!_worldSnapshotReceived)
+      throw new Exception("Timed out waiting for world snapshot");
 
     _worldRenderer = new WorldRenderer(world, LocalPlayer.Camera);
     _isInitialized = true;
   }
-
 
   public override async Task Connect()
   {
     await _networkTransport.Connect();
     _networkTransport.StateReceived += OnGameStateReceived;
     _networkTransport.ControllerSpawnReceived += OnControllerSpawned;
+    _networkTransport.WorldSnapshotReceived += OnWorldSnapshotReceived;
   }
 
   private void SendPlayerJoin()
   {
     _networkTransport.SendPlayerJoin(new PlayerJoinRequest
     {
-      PlayerId = _localPlayerId,
+      PlayerId = base.localPlayerId,
       DisplayName = ClientSession.Current.DisplayName
     });
+  }
+
+  private void OnWorldSnapshotReceived(WorldSnapshotMessage snapshot)
+  {
+    Debug.WriteLine($"[Client] World snapshot received ({snapshot.Controllers.Count} controllers)");
+
+    OnControllerSpawned(snapshot.OwnController);
+
+    foreach (var controllerSpawn in snapshot.Controllers)
+      OnControllerSpawned(controllerSpawn);
+
+    _worldSnapshotReceived = true;
   }
 
   private void OnControllerSpawned(ControllerSpawnMessage msg)
@@ -84,6 +96,7 @@ public class MultiplayerSession(
     foreach (var entityData in msg.DirectEntities)
     {
       var entity = WorldEntityFactory.GetEntity(entityData.Position, entityData.EntityType);
+      entity.Velocity.Value = entityData.Velocity;
       entity.Rotation.Value = entityData.Rotation;
       entity.Id = entityData.Id;
       allEntities.Add(entity);
@@ -98,19 +111,14 @@ public class MultiplayerSession(
       allEntities.Add(composite);
     }
 
-    bool isLocalPlayer = msg.ControllerType == ID_CONTROLLER.PLAYER
-                         && !world.Controllers.Any();
-
     Controller controller = ControllerFactory.Create(allEntities, msg.ControllerType,
-        isLocalPlayer
-        ? input
-        : null);
+        msg.OwnerId == localPlayerId ? input : null);
     controller.Id = msg.Id;
     controller.Position.Value = msg.Position;
 
-    if (isLocalPlayer)
+    if (msg.OwnerId == localPlayerId)
     {
-      var player = new Player(_localPlayerId, input);
+      var player = new Player(localPlayerId, input);
       player.SetController(controller);
       AddPlayer(player);
     }
@@ -172,7 +180,7 @@ public class MultiplayerSession(
   {
     _networkTransport.SendInput(new InputMessage
     {
-      PlayerId = _localPlayerId,
+      PlayerId = localPlayerId,
       Tick = (long)(gameTime.TotalGameTime.TotalSeconds * 20),
       IsPressed = input.IsPressed,
       PositionGameCoords = input.PositionGameCoords,
@@ -192,6 +200,7 @@ public class MultiplayerSession(
   {
     _networkTransport.StateReceived -= OnGameStateReceived;
     _networkTransport.ControllerSpawnReceived -= OnControllerSpawned;
+    _networkTransport.WorldSnapshotReceived -= OnWorldSnapshotReceived;
     await _networkTransport.Disconnect();
   }
 }

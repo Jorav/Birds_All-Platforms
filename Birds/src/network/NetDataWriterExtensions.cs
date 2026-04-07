@@ -57,6 +57,7 @@ public static class NetDataWriterExtensions
     writer.Put(entity.Id);
     writer.Put((int)entity.EntityType);
     writer.PutVector2(entity.Position);
+    writer.PutVector2(entity.Velocity);
     writer.Put(entity.Rotation);
   }
 
@@ -92,6 +93,9 @@ public static class NetDataWriterExtensions
   public static void PutControllerSpawnMessage(this NetDataWriter writer, ControllerSpawnMessage message)
   {
     writer.Put(message.Id);
+    writer.Put(message.OwnerId != null);
+    if (message.OwnerId != null)
+      writer.Put(message.OwnerId);
     writer.Put((int)message.ControllerType);
     writer.PutVector2(message.Position);
 
@@ -102,5 +106,14 @@ public static class NetDataWriterExtensions
     writer.Put(message.Composites.Count);
     foreach (var c in message.Composites)
       writer.PutCompositeSpawnData(c);
+  }
+
+  public static void PutWorldSnapshotMessage(this NetDataWriter writer, WorldSnapshotMessage snapshot)
+  {
+    writer.PutControllerSpawnMessage(snapshot.OwnController);
+
+    writer.Put(snapshot.Controllers.Count);
+    foreach (var c in snapshot.Controllers)
+      writer.PutControllerSpawnMessage(c);
   }
 }

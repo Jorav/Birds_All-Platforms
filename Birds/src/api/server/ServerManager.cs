@@ -1,62 +1,54 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Birds.src.server;
+namespace Birds.src.api.server;
 
-public static class ServerManager
+public class ServerManager
 {
-  private static Process _serverProcess;
-  private const string SERVER_EXE = "Birds.Server.exe";
-  private const string LOCAL_SERVER_ADDRESS = "localhost";
-  private const int LOCAL_SERVER_PORT = 9050;
+  private readonly ServerRunner _runner = new();
+  private Task _serverTask;
+  private CancellationTokenSource _cts;
 
-  public static async Task<bool> StartLocalServerAsync()
+  public bool IsRunning { get; private set; }
+  public string GetLocalServerAddress() => "localhost";
+  public int GetLocalServerPort() => 9050;
+
+  public async Task<bool> StartLocalServer()
   {
+    if (IsRunning) return true;
+
     try
     {
-      if (!File.Exists(SERVER_EXE))
+      _cts = new CancellationTokenSource();
+      _serverTask = Task.Run(() => _runner.Run(9050, _cts.Token));
+
+      await Task.Delay(300);
+
+      if (_serverTask.IsFaulted)
       {
-        throw new FileNotFoundException($"Server executable not found: {SERVER_EXE}");
+        Debug.WriteLine($"Server faulted: {_serverTask.Exception?.InnerException?.Message}");
+        return false;
       }
 
-      _serverProcess = new Process
-      {
-        StartInfo = new ProcessStartInfo
-        {
-          FileName = SERVER_EXE,
-          UseShellExecute = false,
-          CreateNoWindow = true,
-          RedirectStandardOutput = true,
-          RedirectStandardError = true
-        }
-      };
-
-      _serverProcess.Start();
-      await Task.Delay(2000);
-
-      return _serverProcess != null && !_serverProcess.HasExited;
+      IsRunning = true;
+      return true;
     }
-    catch
+    catch (Exception ex)
     {
+      Debug.WriteLine($"Failed to start server: {ex.Message}");
       return false;
     }
   }
 
-  public static void StopLocalServer()
+  public void StopLocalServer()
   {
-    try
-    {
-      if (_serverProcess != null && !_serverProcess.HasExited)
-      {
-        _serverProcess.Kill();
-        _serverProcess.Dispose();
-        _serverProcess = null;
-      }
-    }
-    catch { }
+    if (!IsRunning) return;
+    _cts?.Cancel();
+    _cts?.Dispose();
+    _cts = null;
+    _serverTask = null;
+    IsRunning = false;
   }
-
-  public static string GetLocalServerAddress() => LOCAL_SERVER_ADDRESS;
-  public static int GetLocalServerPort() => LOCAL_SERVER_PORT;
 }

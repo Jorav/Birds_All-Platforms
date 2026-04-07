@@ -71,6 +71,7 @@ public static class NetPacketReaderExtensions
       Id = reader.GetString(),
       EntityType = (ID_ENTITY)reader.GetInt(),
       Position = reader.GetVector2(),
+      Velocity = reader.GetVector2(),
       Rotation = reader.GetFloat()
     };
   }
@@ -88,7 +89,7 @@ public static class NetPacketReaderExtensions
     {
       composite.Entities.Add(new EntityPlacement
       {
-        Id = int.Parse(reader.GetString()),
+        Id = reader.GetInt(),
         EntityType = (ID_ENTITY)reader.GetInt()
       });
     }
@@ -98,8 +99,8 @@ public static class NetPacketReaderExtensions
     {
       composite.Connections.Add(new Connection
       {
-        EntityId1 = int.Parse(reader.GetString()),
-        EntityId2 = int.Parse(reader.GetString()),
+        EntityId1 = reader.GetInt(),
+        EntityId2 = reader.GetInt(),
         LinkIndex1 = reader.GetInt(),
         LinkIndex2 = reader.GetInt()
       });
@@ -121,6 +122,7 @@ public static class NetPacketReaderExtensions
     var message = new ControllerSpawnMessage
     {
       Id = reader.GetString(),
+      OwnerId = reader.GetBool() ? reader.GetString() : null,
       ControllerType = (ID_CONTROLLER)reader.GetInt(),
       Position = reader.GetVector2()
     };
@@ -134,5 +136,19 @@ public static class NetPacketReaderExtensions
       message.Composites.Add(reader.GetCompositeSpawnData());
 
     return message;
+  }
+
+  public static WorldSnapshotMessage GetWorldSnapshotMessage(this NetPacketReader reader)
+  {
+    var snapshot = new WorldSnapshotMessage
+    {
+      OwnController = reader.GetControllerSpawnMessage()
+    };
+
+    int count = reader.GetInt();
+    for (int i = 0; i < count; i++)
+      snapshot.Controllers.Add(reader.GetControllerSpawnMessage());
+
+    return snapshot;
   }
 }

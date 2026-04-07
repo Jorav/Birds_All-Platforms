@@ -3,7 +3,6 @@ using Birds.src.factories;
 using Birds.src.menu.controls;
 using Birds.src.network;
 using Birds.src.player;
-using Birds.src.server;
 using Birds.src.session;
 using Birds.src.utility;
 using Birds.src.visual;
@@ -99,15 +98,12 @@ public class MainMenu : MenuState
   {
     try
     {
-      bool serverStarted = await ServerManager.StartLocalServerAsync();
-      if (!serverStarted)
-      {
-        return;
-      }
+      bool serverStarted = await game.ServerManager.StartLocalServer();
+      if (!serverStarted) return;
 
       var networkTransport = new LiteNetLibClientTransport(
-          ServerManager.GetLocalServerAddress(),
-          ServerManager.GetLocalServerPort()
+          game.ServerManager.GetLocalServerAddress(),
+          game.ServerManager.GetLocalServerPort()
       );
 
       var multiplayerSession = new MultiplayerSession(

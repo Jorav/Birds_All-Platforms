@@ -16,7 +16,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)src\api\contracts\GameStateMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\api\contracts\InputMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\api\contracts\PlayerJoinRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\server\GameServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\api\server\ServerManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)src\api\server\ServerRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\api\transport\IClientNetworkTransport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\api\transport\INetworkTransport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)src\api\transport\IServerNetworkTransport.cs" />

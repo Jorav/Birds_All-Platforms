@@ -8,6 +8,7 @@ public interface IClientNetworkTransport : INetworkTransport
 {
   event Action<GameStateMessage> StateReceived;
   event Action<ControllerSpawnMessage> ControllerSpawnReceived;
+  event Action<WorldSnapshotMessage> WorldSnapshotReceived;
 
   Task Connect();
   Task Disconnect();

@@ -1,46 +1,21 @@
-using Birds.src.api.transport;
-using Birds.src.network;
-using Microsoft.Xna.Framework;
+using Birds.src.api.server;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Birds.Server;
 
 public class Program
 {
-  private static GameServer _gameServer;
-  private static IServerNetworkTransport _networkTransport;
-
-  public static void Main(string[] args)
+  public static async Task Main(string[] args)
   {
-    RuntimeContext.IsServer = true;
-    _networkTransport = new LiteNetLibServerTransport(9050);
-    _gameServer = new GameServer(_networkTransport);
-
-    _networkTransport.Start();
-    Console.WriteLine("Game server started on port 9050");
-
-    _ = Task.Run(GameLoop);
-
-    Console.WriteLine("Press any key to stop server...");
-    Console.ReadKey();
-
-    _networkTransport.Stop();
-  }
-
-  private static async Task GameLoop()
-  {
-    var sw = System.Diagnostics.Stopwatch.StartNew();
-    const float tickRate = 1f / 20f;
-
-    while (true)
+    using var cts = new CancellationTokenSource();
+    Console.CancelKeyPress += (_, e) =>
     {
-      _networkTransport.PollEvents();
+      e.Cancel = true;
+      cts.Cancel();
+    };
 
-      var gameTime = new GameTime(sw.Elapsed, System.TimeSpan.FromSeconds(tickRate));
-      _gameServer.Update(gameTime);
-
-      await Task.Delay((int)(tickRate * 1000));
-    }
+    await new ServerRunner().Run(port: 9050, cts.Token);
   }
 }

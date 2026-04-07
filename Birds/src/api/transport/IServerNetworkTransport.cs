@@ -12,6 +12,7 @@ public interface IServerNetworkTransport : INetworkTransport
 
   void SendGameState(GameStateMessage state, string playerId);
   void SendControllerSpawn(ControllerSpawnMessage message, string playerId);
+  void SendWorldSnapshot(WorldSnapshotMessage snapshot, string playerId);
   void Start();
   void Stop();
 }

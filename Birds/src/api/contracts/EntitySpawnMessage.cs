@@ -10,6 +10,7 @@ public class EntitySpawnData
   public string Id { get; set; }
   public ID_ENTITY EntityType { get; set; }
   public Vector2 Position { get; set; }
+  public Vector2 Velocity { get; set; }
   public float Rotation { get; set; }
 }
 
@@ -25,8 +26,15 @@ public class CompositeSpawnData
 public class ControllerSpawnMessage
 {
   public string Id { get; set; }
+  public string? OwnerId { get; set; }
   public ID_CONTROLLER ControllerType { get; set; }
   public Vector2 Position { get; set; }
   public List<EntitySpawnData> DirectEntities { get; set; } = new();
   public List<CompositeSpawnData> Composites { get; set; } = new();
+}
+
+public class WorldSnapshotMessage
+{
+  public ControllerSpawnMessage OwnController { get; set; }
+  public List<ControllerSpawnMessage> Controllers { get; set; } = new();
 }

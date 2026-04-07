@@ -72,7 +72,6 @@ public class MultiplayerSession(
   {
     _networkTransport.SendPlayerJoin(new PlayerJoinRequest
     {
-      PlayerId = base.localPlayerId,
       DisplayName = ClientSession.Current.DisplayName
     });
   }
@@ -81,6 +80,7 @@ public class MultiplayerSession(
   {
     Debug.WriteLine($"[Client] World snapshot received ({snapshot.Controllers.Count} controllers)");
 
+    localPlayerId = snapshot.OwnController.OwnerId;
     OnControllerSpawned(snapshot.OwnController);
 
     foreach (var controllerSpawn in snapshot.Controllers)

@@ -12,13 +12,13 @@ namespace Birds.src.session;
 public abstract class GameSession(ClientSession session, Input input) : IState
 {
   protected readonly Input input = input;
-  protected readonly string localPlayerId = session.ClientId;
+  protected string localPlayerId;
   protected readonly World world = new();
   protected readonly Dictionary<string, Player> players = new();
 
   public bool IsLocked { get; set; }
 
-  public Player LocalPlayer => players.TryGetValue(localPlayerId, out var p) ? p : null;
+  public Player LocalPlayer => localPlayerId != null && players.TryGetValue(localPlayerId, out var p) ? p : null;
   public IReadOnlyDictionary<string, Player> Players => players;
 
   protected void AddPlayer(Player player) => players[player.Id] = player;

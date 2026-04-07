@@ -24,7 +24,6 @@ public static class NetDataWriterExtensions
 
   public static void PutPlayerJoinRequest(this NetDataWriter writer, PlayerJoinRequest request)
   {
-    writer.Put(request.PlayerId);
     writer.Put(request.DisplayName);
   }
 

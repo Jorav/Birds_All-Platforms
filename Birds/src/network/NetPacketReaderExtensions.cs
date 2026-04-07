@@ -30,7 +30,6 @@ public static class NetPacketReaderExtensions
   {
     return new PlayerJoinRequest
     {
-      PlayerId = reader.GetString(),
       DisplayName = reader.GetString()
     };
   }

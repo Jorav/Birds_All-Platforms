@@ -17,6 +17,7 @@ public class SinglePlayerSession(ClientSession session, Input input, Game1 game,
 
   public override async Task Initialize()
   {
+    localPlayerId = session.ClientId;
     WorldInitializer.Initialize(world);
 
     var player = new Player(localPlayerId, input);
@@ -67,7 +68,6 @@ public class SinglePlayerSession(ClientSession session, Input input, Game1 game,
 
   private void OpenBuildState(Player localPlayer)
   {
-    // TODO: revisit when redoing build state
   }
 
   public override Task Connect() => Task.CompletedTask;

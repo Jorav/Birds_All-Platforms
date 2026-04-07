@@ -50,6 +50,21 @@ namespace Birds.src.factories
           c.AddModule(new GroupDrawModule());
           return c;
 
+        case ID_CONTROLLER.REMOTE_PLAYER:
+          c.AddModule(new GroupCollisionClearer());
+          c.AddModule(new GroupMassModule());
+          c.AddModule(new GroupWeightedPositionModule());
+          c.AddModule(new GroupMovementModule());
+          c.AddModule(new GroupRotationModule());
+          c.AddModule(new GroupRadiusModule());
+          c.AddModule(new GroupCollisionDetectionModule(
+              new AABBTree(),
+              evaluateInternalCollisions: true
+          ));
+          c.AddModule(new FlockingCohesionModule());
+          c.AddModule(new GroupDrawModule());
+          return c;
+
         case ID_CONTROLLER.CHASER_AI:
           c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupMassModule());
@@ -80,7 +95,6 @@ namespace Birds.src.factories
       }
     }
 
-
     public static Controller Create(Vector2 position, int numberOfEntities, ID_CONTROLLER id, Input input = null)
     {
       Controller c;
@@ -88,6 +102,7 @@ namespace Birds.src.factories
       {
         case ID_CONTROLLER.DEFAULT:
           c = new Controller(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.HULL_RECTANGULAR_BAD));
+          c.ControllerId = id;
           c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupMassModule());
           c.AddModule(new GroupWeightedPositionModule());
@@ -104,6 +119,7 @@ namespace Birds.src.factories
 
         case ID_CONTROLLER.PLAYER:
           c = new Controller(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.HULL_RECTANGULAR_BAD));
+          c.ControllerId = id;
           c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupMassModule());
           c.AddModule(new GroupWeightedPositionModule());
@@ -120,8 +136,27 @@ namespace Birds.src.factories
           c.Position.Value = position;
           return c;
 
+        case ID_CONTROLLER.REMOTE_PLAYER:
+          c = new Controller(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.HULL_RECTANGULAR_BAD));
+          c.ControllerId = id;
+          c.AddModule(new GroupCollisionClearer());
+          c.AddModule(new GroupMassModule());
+          c.AddModule(new GroupWeightedPositionModule());
+          c.AddModule(new GroupMovementModule());
+          c.AddModule(new GroupRotationModule());
+          c.AddModule(new GroupRadiusModule());
+          c.AddModule(new CohesionModule());
+          c.AddModule(new GroupCollisionDetectionModule(
+              new AABBTree(),
+              evaluateInternalCollisions: true
+          ));
+          c.AddModule(new GroupDrawModule());
+          c.Position.Value = position;
+          return c;
+
         case ID_CONTROLLER.CHASER_AI:
           c = new Controller(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.HULL_RECTANGULAR_BAD));
+          c.ControllerId = id;
           c.AddModule(new GroupCollisionClearer());
           c.AddModule(new GroupMassModule());
           c.AddModule(new GroupWeightedPositionModule());
@@ -138,14 +173,16 @@ namespace Birds.src.factories
           return c;
 
         case ID_CONTROLLER.BACKGROUND_SUN:
-          c = new Background(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.SUN, isBackground: true));//scale used to be 4
+          c = new Background(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.SUN, isBackground: true));
+          c.ControllerId = id;
           c.AddModule(new GroupDrawModule());
           c.AddModule(new GroupRadiusModule());
           c.Position.Value = position;
           return c;
 
         case ID_CONTROLLER.FOREGROUND_CLOUD:
-          c = new Background(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.CLOUD, isBackground: true));//scale used to be 3
+          c = new Background(WorldEntityFactory.CreateEntities(position, numberOfEntities, ID_ENTITY.CLOUD, isBackground: true));
+          c.ControllerId = id;
           c.AddModule(new GroupDrawModule());
           c.AddModule(new GroupRadiusModule());
           c.Position.Value = position;

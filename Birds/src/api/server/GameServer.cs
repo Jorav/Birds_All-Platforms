@@ -8,6 +8,7 @@ using Birds.src.events;
 using Birds.src.factories;
 using Birds.src.player;
 using Birds.src.session.world;
+using Birds.src.utility;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -37,10 +38,9 @@ public class GameServer
     WorldInitializer.Initialize(_world);
   }
 
-  private void OnPlayerJoinRequested(PlayerJoinRequest joinRequest)
+  private void OnPlayerJoinRequested(PlayerJoinRequest joinRequest, string playerId)
   {
-    string playerId = joinRequest.PlayerId;
-    Debug.WriteLine($"[Server] OnPlayerJoinRequested: {playerId}");
+    Debug.WriteLine($"[Server] OnPlayerJoinRequested: playerId {playerId} for {joinRequest.DisplayName}");
 
     if (_players.ContainsKey(playerId))
     {
@@ -59,6 +59,7 @@ public class GameServer
     _networkTransport.SendWorldSnapshot(snapshot, playerId);
 
     var newPlayerSpawnMsg = BuildSpawnMessage(playerController);
+    newPlayerSpawnMsg.ControllerType = ID_CONTROLLER.REMOTE_PLAYER;
     foreach (var otherPlayerId in _players.Keys.Where(id => id != playerId))
     {
       Debug.WriteLine($"[Server] Notifying {otherPlayerId} of new player controller {playerController.Id}");
@@ -77,7 +78,12 @@ public class GameServer
     };
 
     foreach (var c in _world.Controllers.Where(c => c.Id != playerController.Id))
-      snapshot.Controllers.Add(BuildSpawnMessage(c));
+    {
+      var spawnMsg = BuildSpawnMessage(c);
+      if (c.ControllerId == ID_CONTROLLER.PLAYER)
+        spawnMsg.ControllerType = ID_CONTROLLER.REMOTE_PLAYER;
+      snapshot.Controllers.Add(spawnMsg);
+    }
 
     return snapshot;
   }

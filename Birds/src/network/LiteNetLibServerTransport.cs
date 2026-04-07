@@ -17,7 +17,8 @@ public class LiteNetLibServerTransport(int port) : IServerNetworkTransport
   public event Action<string> PlayerConnected;
   public event Action<string> PlayerDisconnected;
   public event Action<InputMessage> InputReceived;
-  public event Action<PlayerJoinRequest> PlayerJoinRequested;
+  public event Action<PlayerJoinRequest, string> PlayerJoinRequested;
+
 
   public void Start()
   {
@@ -110,9 +111,10 @@ public class LiteNetLibServerTransport(int port) : IServerNetworkTransport
   private void HandlePlayerJoinRequest(NetPeer peer, NetPacketReader reader)
   {
     var request = reader.GetPlayerJoinRequest();
-    Debug.WriteLine($"[Server] PlayerJoinRequest from {request.PlayerId} ({request.DisplayName}), peer: {peer.Id}");
-    _playerPeers[request.PlayerId] = peer;
-    PlayerJoinRequested?.Invoke(request);
+    string playerId = Guid.NewGuid().ToString();
+    Debug.WriteLine($"[Server] PlayerJoinRequest from {request.DisplayName}, peer: {peer.Id}");
+    _playerPeers[playerId] = peer;
+    PlayerJoinRequested?.Invoke(request, playerId);
   }
 
   private void HandleInput(NetPacketReader reader)

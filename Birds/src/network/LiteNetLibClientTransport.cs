@@ -74,7 +74,7 @@ public class LiteNetLibClientTransport(
       Debug.WriteLine("[Client] SendPlayerJoin failed - no server peer");
       return;
     }
-    Debug.WriteLine($"[Client] Sending PlayerJoinRequest (playerId: {joinRequest.PlayerId}, name: {joinRequest.DisplayName})");
+    Debug.WriteLine($"[Client] Sending PlayerJoinRequest (name: {joinRequest.DisplayName})");
     var writer = new NetDataWriter();
     writer.Put((byte)MessageType.PlayerJoinRequest);
     writer.PutPlayerJoinRequest(joinRequest);

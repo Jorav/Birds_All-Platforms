@@ -30,6 +30,7 @@ public enum ID_COMPOSITE
 public enum ID_CONTROLLER
 {
   PLAYER,
+  REMOTE_PLAYER,
   DEFAULT,
   CHASER_AI,
   CIRCULAR_AI,

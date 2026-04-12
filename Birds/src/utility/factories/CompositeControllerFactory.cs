@@ -1,27 +1,29 @@
-﻿using Microsoft.Xna.Framework;
-using Birds.src.utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Birds.src.collision.BVH;
+using Birds.src.containers.composite;
 using Birds.src.containers.composite.blueprints;
 using Birds.src.containers.composite.blueprints.parts;
 using Birds.src.containers.entity;
-using Birds.src.containers.composite;
-using Birds.src.modules.controller;
+using Birds.src.events;
 using Birds.src.modules.composite;
+using Birds.src.modules.controller;
 using Birds.src.modules.entity.collision_handling;
 using Birds.src.modules.shared.collision_detection;
-using Birds.src.collision.BVH;
-using Birds.src.visual;
+using Birds.src.utility;
 using Birds.src.utility.factories;
-using Birds.src.events;
+using Birds.src.visual;
+using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Birds.src.factories;
 
 public static class CompositeControllerFactory
 {
-  public static Stack<CompositeController> availableEntities = new(100);
+  public static readonly ThreadLocal<Stack<CompositeController>> availableEntities =
+      new(() => new Stack<CompositeController>(100));
   public static Dictionary<string, ISprite> Previews { get; set; } = new();
 
   public const string DEFAULT_SINGLE = "HULL_RECTANGULAR_BAD";
@@ -29,7 +31,8 @@ public static class CompositeControllerFactory
 
   public static CompositeController GetComposite(Vector2 position, string blueprintName, bool useGeometricCenter = false)
   {
-    CompositeController compositeController = availableEntities.Count > 0 ? availableEntities.Pop() : new CompositeController();
+    var stack = availableEntities.Value;
+    CompositeController compositeController = stack.Count > 0 ? stack.Pop() : new CompositeController();
 
     var blueprint = GetBlueprintByName(blueprintName);
     var entities = BlueprintFactory.CreateFromBlueprint(blueprint, position, useGeometricCenter);
@@ -159,10 +162,12 @@ public static class CompositeControllerFactory
 
   public static CompositeController GetComposite(List<IEntity> entities)
   {
-    CompositeController compositeController = availableEntities.Count > 0 ? availableEntities.Pop() : new CompositeController();
+    var stack = availableEntities.Value;
+    CompositeController compositeController = stack.Count > 0 ? stack.Pop() : new CompositeController();
+    //compositeController.EntityID = ID_COMPOSITE.DEFAULT; Add in future
 
-    compositeController.Entities.Set(entities);
     SetCompositeModules(compositeController, ID_COMPOSITE.DEFAULT);
+    compositeController.Entities.Set(entities);
 
     return compositeController;
   }
@@ -173,20 +178,20 @@ public static class CompositeControllerFactory
     {
       Name = DEFAULT_CROSS,
       Entities = new List<EntityPlacement>
-      {
-          new EntityPlacement { Id = 0, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
-          new EntityPlacement { Id = 1, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
-          new EntityPlacement { Id = 2, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
-          new EntityPlacement { Id = 3, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
-          new EntityPlacement { Id = 4, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD }
-      },
+            {
+                new EntityPlacement { Id = 0, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
+                new EntityPlacement { Id = 1, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
+                new EntityPlacement { Id = 2, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
+                new EntityPlacement { Id = 3, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD },
+                new EntityPlacement { Id = 4, EntityType = ID_ENTITY.HULL_RECTANGULAR_BAD }
+            },
       Connections = new List<Connection>
-      {
-          new Connection { EntityId1 = 0, EntityId2 = 1, LinkIndex1 = 0, LinkIndex2 = 2 },
-          new Connection { EntityId1 = 0, EntityId2 = 2, LinkIndex1 = 1, LinkIndex2 = 2 },
-          new Connection { EntityId1 = 0, EntityId2 = 3, LinkIndex1 = 2, LinkIndex2 = 2 },
-          new Connection { EntityId1 = 0, EntityId2 = 4, LinkIndex1 = 3, LinkIndex2 = 2 }
-      }
+            {
+                new Connection { EntityId1 = 0, EntityId2 = 1, LinkIndex1 = 0, LinkIndex2 = 2 },
+                new Connection { EntityId1 = 0, EntityId2 = 2, LinkIndex1 = 1, LinkIndex2 = 2 },
+                new Connection { EntityId1 = 0, EntityId2 = 3, LinkIndex1 = 2, LinkIndex2 = 2 },
+                new Connection { EntityId1 = 0, EntityId2 = 4, LinkIndex1 = 3, LinkIndex2 = 2 }
+            }
     };
   }
 }

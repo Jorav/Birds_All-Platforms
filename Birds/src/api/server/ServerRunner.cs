@@ -15,7 +15,6 @@ public class ServerRunner
 
   public async Task Run(int port, CancellationToken token)
   {
-    RuntimeContext.IsServer = true;
     _networkTransport = new LiteNetLibServerTransport(port);
     _gameServer = new GameServer(_networkTransport);
 

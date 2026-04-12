@@ -192,6 +192,6 @@ public class AxisAlignedBoundingBox : IBoundingArea, IRectangle
 
   public void Dispose()
   {
-    BoundingAreaFactory.AABBs.Append(this);
+    BoundingAreaFactory.AABBs.Value.Append(this);
   }
 }

@@ -68,6 +68,6 @@ public class Sprite : ISprite
   public void Dispose()
   {
     Reset();
-    SpriteFactory.availableSprites.Push(this);
+    SpriteFactory.availableSprites.Value.Push(this);
   }
 }

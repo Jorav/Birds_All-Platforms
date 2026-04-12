@@ -168,7 +168,7 @@ public class OrientedBoundingBox : IBoundingArea, IRectangle
 
   public void Dispose()
   {
-    BoundingAreaFactory.OBBs.Push(this);
+    BoundingAreaFactory.OBBs.Value.Push(this);
   }
 
   public object Clone()

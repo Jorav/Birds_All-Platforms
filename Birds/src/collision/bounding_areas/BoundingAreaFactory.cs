@@ -1,33 +1,40 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Birds.src.collision.bounding_areas;
 
 public class BoundingAreaFactory
 {
-  public static Stack<BoundingCircle> circles = new();
-  public static Stack<AxisAlignedBoundingBox> AABBs = new();
-  public static Stack<OrientedBoundingBox> OBBs = new();
+  public static readonly ThreadLocal<Stack<BoundingCircle>> circles =
+      new(() => new Stack<BoundingCircle>());
+  public static readonly ThreadLocal<Stack<AxisAlignedBoundingBox>> AABBs =
+      new(() => new Stack<AxisAlignedBoundingBox>());
+  public static readonly ThreadLocal<Stack<OrientedBoundingBox>> OBBs =
+      new(() => new Stack<OrientedBoundingBox>());
 
   public static BoundingCircle GetCircle(Vector2 position, float radius)
   {
-    if (circles.Count == 0)
+    var stack = circles.Value;
+    if (stack.Count == 0)
       return new BoundingCircle(position, radius);
     else
     {
-      BoundingCircle circle = circles.Pop();
+      BoundingCircle circle = stack.Pop();
       circle.Position = position;
       circle.Radius = radius;
       return circle;
     }
   }
+
   public static AxisAlignedBoundingBox GetAABB(Vector2 upperLeftCorner, int width, int height)
   {
-    if (AABBs.Count == 0)
+    var stack = AABBs.Value;
+    if (stack.Count == 0)
       return new AxisAlignedBoundingBox(upperLeftCorner, width, height);
     else
     {
-      AxisAlignedBoundingBox AABB = AABBs.Pop();
+      AxisAlignedBoundingBox AABB = stack.Pop();
       AABB.SetBox(upperLeftCorner, width, height);
       return AABB;
     }
@@ -35,11 +42,12 @@ public class BoundingAreaFactory
 
   public static OrientedBoundingBox GetOBB(Vector2 upperLeftCorner, float rotation, int width, int height)
   {
-    if (OBBs.Count == 0)
+    var stack = OBBs.Value;
+    if (stack.Count == 0)
       return new OrientedBoundingBox(upperLeftCorner, rotation, width, height);
     else
     {
-      OrientedBoundingBox OBB = OBBs.Pop();
+      OrientedBoundingBox OBB = stack.Pop();
       OBB.SetBox(upperLeftCorner, rotation, width, height);
       return OBB;
     }

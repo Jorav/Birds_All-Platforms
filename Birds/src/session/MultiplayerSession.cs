@@ -122,20 +122,21 @@ public class MultiplayerSession(
       player.SetController(controller);
       AddPlayer(player);
     }
-    else
+    switch (msg.ControllerType)
     {
-      switch (msg.ControllerType)
-      {
-        case ID_CONTROLLER.BACKGROUND_SUN:
-          world.Backgrounds.Add((Background)controller);
-          break;
-        case ID_CONTROLLER.FOREGROUND_CLOUD:
-          world.Foregrounds.Add((Background)controller);
-          break;
-        default:
-          world.AddController(controller);
-          break;
-      }
+      case ID_CONTROLLER.BACKGROUND_SUN:
+        world.Backgrounds.Add((Background)controller);
+        break;
+      case ID_CONTROLLER.FOREGROUND_CLOUD:
+        world.Foregrounds.Add((Background)controller);
+        break;
+      case ID_CONTROLLER.PLAYER:
+      case ID_CONTROLLER.REMOTE_PLAYER:
+        world.AddPlayerController(controller);
+        break;
+      default:
+        world.AddController(controller);
+        break;
     }
   }
 
@@ -173,6 +174,7 @@ public class MultiplayerSession(
 
     _networkTransport.PollEvents();
     world.Update(gameTime);
+    LocalPlayer?.Update(gameTime);
     SendInputToServer(gameTime);
   }
 

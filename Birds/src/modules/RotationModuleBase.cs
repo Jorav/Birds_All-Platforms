@@ -11,6 +11,9 @@ public abstract class RotationModuleBase : ModuleBase
   public static float CalculateRotation(Vector2 positionLookedAt, Vector2 currentPosition)
   {
     Vector2 position = positionLookedAt - currentPosition;
+    if (position == Vector2.Zero)
+      return 0f;
+
     if (position.X >= 0)
       return (float)Math.Atan(position.Y / position.X);
     else

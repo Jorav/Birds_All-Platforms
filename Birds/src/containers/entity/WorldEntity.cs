@@ -21,7 +21,7 @@ public class WorldEntity : ModuleContainer, IEntity
   public override void Dispose()
   {
     base.Dispose();
-    WorldEntityFactory.availableEntities.Push(this);
+    WorldEntityFactory.availableEntities.Value.Push(this);
   }
 }
 

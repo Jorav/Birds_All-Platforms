@@ -56,7 +56,7 @@ public class AABBNode
   public void RefitBoundingBox()
   {
     if (AABB != null)
-      BoundingAreaFactory.AABBs.Push(AABB);
+      BoundingAreaFactory.AABBs.Value.Push(AABB);
     if (children.Count(x => x != null) == 1)
     {
       if (children[0] != null)
@@ -81,7 +81,7 @@ public class AABBNode
   public void Reset()
   {
     if (entity == null && AABB != null)
-      BoundingAreaFactory.AABBs.Push(AABB);
+      BoundingAreaFactory.AABBs.Value.Push(AABB);
     AABB = null;
     entity = null;
     children[0] = null;

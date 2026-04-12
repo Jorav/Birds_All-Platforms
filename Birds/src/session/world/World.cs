@@ -24,6 +24,7 @@ public class World
 
   public void AddController(Controller c) => otherControllers.Add(c);
   public void RemoveController(Controller c) => otherControllers.Remove(c);
+  public void AddPlayerController(Controller c) => playerControllers.Add(c);
 
   public Controller AddPlayer(IInputState input)
   {

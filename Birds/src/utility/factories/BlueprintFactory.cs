@@ -18,7 +18,7 @@ namespace Birds.src.factories;
 
 public static class BlueprintFactory
 {
-  private static IBlueprintStorage _storage = new JsonBlueprintStorage();
+  public static IBlueprintStorage _storage = new JsonBlueprintStorage();
 
   public static List<WorldEntity> CreateFromBlueprint(CompositeBlueprint blueprint, Vector2 spawnPosition, bool useGeometricCenter = false)
   {

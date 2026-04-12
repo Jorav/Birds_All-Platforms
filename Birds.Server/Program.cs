@@ -1,4 +1,5 @@
 using Birds.src.api.server;
+using Birds.src.network;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ public class Program
 {
   public static async Task Main(string[] args)
   {
+    RuntimeContext.IsServer = true;
     using var cts = new CancellationTokenSource();
     Console.CancelKeyPress += (_, e) =>
     {

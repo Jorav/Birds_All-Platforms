@@ -1,37 +1,39 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Birds.src.containers.entity;
+using Birds.src.modules.entity.collision_handling;
 using Birds.src.utility;
+using Birds.src.utility.factories;
+using Birds.src.visual;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using Birds.src.containers.entity;
-using Birds.src.modules.entity.collision_handling;
-using Birds.src.visual;
-using Birds.src.utility.factories;
+using System.Threading;
 
 namespace Birds.src.factories;
 
 public static class WorldEntityFactory
 {
-  public static Stack<WorldEntity> availableEntities = new(100);
+  public static readonly ThreadLocal<Stack<WorldEntity>> availableEntities =
+      new(() => new Stack<WorldEntity>(100));
 
   public static Dictionary<ID_ENTITY, ISprite> Previews { get; private set; } = new();
 
   public static readonly Dictionary<ID_ENTITY, ID_SPRITE> EntityToSpriteMap = new()
-  {
-    { ID_ENTITY.HULL_RECTANGULAR_BAD, ID_SPRITE.HULL_RECTANGULAR_BAD },
-    { ID_ENTITY.DEFAULT, ID_SPRITE.HULL_RECTANGULAR },
-    { ID_ENTITY.HULL_RECTANGULAR_GOOD, ID_SPRITE.HULL_RECTANGULAR_GOOD },
-    { ID_ENTITY.CIRCULAR, ID_SPRITE.HULL_CIRCULAR },
-    { ID_ENTITY.LINK_COMPOSITE, ID_SPRITE.HULL_LINK },
-    { ID_ENTITY.ENGINE_BAD, ID_SPRITE.ENGINE_BAD },
-    { ID_ENTITY.ENGINE, ID_SPRITE.ENGINE },
-    { ID_ENTITY.ENGINE_GOOD, ID_SPRITE.ENGINE_GOOD },
-    { ID_ENTITY.SHOOTER, ID_SPRITE.GUN },
-    { ID_ENTITY.SPIKE, ID_SPRITE.SPIKE },
-    { ID_ENTITY.FILLER, ID_SPRITE.FILLER },
-    { ID_ENTITY.SUN, ID_SPRITE.SUN },
-    { ID_ENTITY.CLOUD, ID_SPRITE.CLOUD },
-    { ID_ENTITY.HULL_THIN, ID_SPRITE.HULL_THIN},
-  };
+    {
+        { ID_ENTITY.HULL_RECTANGULAR_BAD, ID_SPRITE.HULL_RECTANGULAR_BAD },
+        { ID_ENTITY.DEFAULT, ID_SPRITE.HULL_RECTANGULAR },
+        { ID_ENTITY.HULL_RECTANGULAR_GOOD, ID_SPRITE.HULL_RECTANGULAR_GOOD },
+        { ID_ENTITY.CIRCULAR, ID_SPRITE.HULL_CIRCULAR },
+        { ID_ENTITY.LINK_COMPOSITE, ID_SPRITE.HULL_LINK },
+        { ID_ENTITY.ENGINE_BAD, ID_SPRITE.ENGINE_BAD },
+        { ID_ENTITY.ENGINE, ID_SPRITE.ENGINE },
+        { ID_ENTITY.ENGINE_GOOD, ID_SPRITE.ENGINE_GOOD },
+        { ID_ENTITY.SHOOTER, ID_SPRITE.GUN },
+        { ID_ENTITY.SPIKE, ID_SPRITE.SPIKE },
+        { ID_ENTITY.FILLER, ID_SPRITE.FILLER },
+        { ID_ENTITY.SUN, ID_SPRITE.SUN },
+        { ID_ENTITY.CLOUD, ID_SPRITE.CLOUD },
+        { ID_ENTITY.HULL_THIN, ID_SPRITE.HULL_THIN},
+    };
 
   static WorldEntityFactory()
   {
@@ -50,16 +52,17 @@ public static class WorldEntityFactory
 
   public static WorldEntity GetEntity(Vector2 position, ID_ENTITY id, bool isComposite = false, ID_SPRITE spriteId = ID_SPRITE.FILLER)
   {
+    var stack = availableEntities.Value;
     WorldEntity we;
-    if (availableEntities.Count > 0)
+    if (stack.Count > 0)
     {
-      we = availableEntities.Pop();
+      we = stack.Pop();
     }
     else
     {
       we = new WorldEntity();
     }
-    
+
     we.EntityID = id;
     we.Position.Value = position;
     WorldEntityLoader.ApplyConfiguration(we, id, isComposite, spriteId);

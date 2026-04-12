@@ -79,7 +79,7 @@ public class AABBTree : ICollisionStructure
     //step 1: DECIDE WHAT AXIS TO SPLIT
     AxisAlignedBoundingBox AABB = AxisAlignedBoundingBox.SurroundingAABB(newEntities, start, count);
     int axis = AxisAlignedBoundingBox.MajorAxis(AABB);
-    BoundingAreaFactory.AABBs.Append(AABB);
+    BoundingAreaFactory.AABBs.Value.Append(AABB);
 
     //step 2: SPLIT ON CHOSEN AXIS
     if (axis == 0)
@@ -137,8 +137,8 @@ public class AABBTree : ICollisionStructure
           minCost = total;
           minCostAxis = axis;
         }
-        BoundingAreaFactory.AABBs.Append(AABB1);
-        BoundingAreaFactory.AABBs.Append(AABB2);
+        BoundingAreaFactory.AABBs.Value.Append(AABB1);
+        BoundingAreaFactory.AABBs.Value.Append(AABB2);
       }
     }
 
@@ -176,7 +176,7 @@ public class AABBTree : ICollisionStructure
     AABBNode bestSibling = root;
     AxisAlignedBoundingBox combinedBest = AxisAlignedBoundingBox.SurroundingAABB(root.AABB, leafNew.AABB);
     float bestCost = combinedBest.Area;
-    BoundingAreaFactory.AABBs.Append(combinedBest);
+    BoundingAreaFactory.AABBs.Value.Append(combinedBest);
     PriorityQueue<AABBNode, float> queue = new();
     queue.Enqueue(root, 0);
 
@@ -191,7 +191,7 @@ public class AABBTree : ICollisionStructure
         return bestSibling;
       AxisAlignedBoundingBox combined = AxisAlignedBoundingBox.SurroundingAABB(currentNode.AABB, leafNew.AABB);
       float combinedArea = combined.Area;
-      BoundingAreaFactory.AABBs.Append(combined);
+      BoundingAreaFactory.AABBs.Value.Append(combined);
       float currentCost = combinedArea + inheritedCost;
       if (currentCost < bestCost)
       {

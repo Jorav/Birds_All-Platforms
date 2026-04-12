@@ -64,7 +64,7 @@ public class BoundingCircle : IBoundingArea
 
   public void Dispose()
   {
-    BoundingAreaFactory.circles.Append(this);
+    BoundingAreaFactory.circles.Value.Append(this);
   }
 
   public object Clone()

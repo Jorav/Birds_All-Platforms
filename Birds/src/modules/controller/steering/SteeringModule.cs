@@ -37,8 +37,12 @@ public abstract class SteeringModule : ModuleBase
   {
     foreach (IEntity e in container.Entities)
     {
-      Vector2 accelerationVector = Vector2.Normalize(PositionLookedAt - e.Position);
-      e.Accelerate(accelerationVector);
+      Vector2 diff = PositionLookedAt - e.Position.Value;
+      if (diff != Vector2.Zero)
+      {
+        Vector2 accelerationVector = Vector2.Normalize(diff);
+        e.Accelerate(accelerationVector);
+      }
     }
   }
 
